@@ -12,7 +12,15 @@ public struct IconRowView: View {
     let label: String
     let color: Color
     let badgeCount: Int
-    var badgeColor = Color.pink
+    var badgeColor: Color
+    
+    init(icon: String, label: String, color: Color, badgeCount: Int, badgeColor: SwiftUI.Color = Color.pink) {
+        self.icon = icon
+        self.label = label
+        self.color = color
+        self.badgeCount = badgeCount
+        self.badgeColor = badgeColor
+    }
     
     public var body: some View {
         HStack(spacing: 10) {

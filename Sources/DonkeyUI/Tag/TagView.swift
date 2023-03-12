@@ -18,6 +18,17 @@ public struct TagView: View {
     var selected: Bool = false
     var verySmall: Bool = false
     @Environment(\.colorScheme) var colorScheme
+    
+    init(title: String, color: Color, dull: Bool = false, delete: Bool = false, deleteAction: @escaping (UUID) -> Void = {_ in}, holdAction: @escaping () -> Void = {}, selected: Bool = false, verySmall: Bool = false) {
+        self.title = title
+        self.color = color
+        self.dull = dull
+        self.delete = delete
+        self.deleteAction = deleteAction
+        self.holdAction = holdAction
+        self.selected = selected
+        self.verySmall = verySmall
+    }
 
     var textColor: Color {
         return Color(UIColor(color).darker(componentDelta: colorScheme == .light ? 0.3 : 0))

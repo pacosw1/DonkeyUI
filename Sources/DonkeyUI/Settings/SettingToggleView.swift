@@ -13,6 +13,15 @@ public struct SettingToggleView: View {
     var systemIcon: String
     var iconColor: Color
     var caption: String = ""
+    
+    init(isOn: Binding<Bool>, label: String, systemIcon: String, iconColor: Color, caption: String = "") {
+        _isOn = isOn
+        self.label = label
+        self.systemIcon = systemIcon
+        self.iconColor = iconColor
+        self.caption = caption
+    }
+    
     public var body: some View {
         VStack(alignment: .leading) {
             Toggle(isOn: $isOn, label: {
@@ -52,10 +61,8 @@ public struct SettingToggleView: View {
 struct SettingToggleView_Previews: PreviewProvider {
     static var previews: some View {
         
-        StatefulPreviewWrapper(true) { val in
-            SettingToggleView(isOn: val, label: "monka", systemIcon: "xmark", iconColor: .blue, caption: "Automatically rollover uncompleted tasks to the following day")
-//                .card()
+        SettingToggleView(isOn: .constant(false), label: "monka", systemIcon: "xmark", iconColor: .blue, caption: "Automatically rollover uncompleted tasks to the following day")
                 .preferredColorScheme(.dark)
-        }
+        
     }
 }

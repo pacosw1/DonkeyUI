@@ -15,15 +15,27 @@ case filled,
 
 public struct ButtonView: View {
     let label: String
-    var color: Color = .accentColor
-    var buttonTyoe: ButtonType = .bordered
+    var color: Color
+    var buttonTyoe: ButtonType
     var action: () -> Void
-    var padding: CGFloat = 1.5
+    var padding: CGFloat
 
-    var font: Font = .body
-    var fontWeight: Font.Weight = .heavy
-    var fullWidth: Bool = false
+    var font: Font
+    var fontWeight: Font.Weight
+    var fullWidth: Bool
     @Environment(\.colorScheme) var colorScheme
+    
+    
+    init(label: String, color: Color = .accentColor, buttonTyoe: ButtonType = .filled, action: @escaping () -> Void = {}, padding: CGFloat = 1.5, font: Font = .body, fontWeight: Font.Weight = .heavy, fullWidth: Bool = false) {
+        self.label = label
+        self.color = color
+        self.buttonTyoe = buttonTyoe
+        self.action = action
+        self.padding = padding
+        self.font = font
+        self.fontWeight = fontWeight
+        self.fullWidth = fullWidth
+    }
     
     
     var labelColor: Color {
@@ -53,6 +65,6 @@ public struct ButtonView: View {
 
 struct ButtonView_Previews: PreviewProvider {
     static var previews: some View {
-        ButtonView(label: "Start", color: .pink, buttonTyoe: .filled, action: {}, fullWidth: true)
+        ButtonView(label: "Start", color: .pink, buttonTyoe: .filled, action: {}, fullWidth: false)
     }
 }

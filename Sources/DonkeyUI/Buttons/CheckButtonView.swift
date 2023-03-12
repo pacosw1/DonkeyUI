@@ -19,7 +19,7 @@ public struct CheckButtonView: View {
     let active: Bool
 
     let size: ButtonSize
-    var color: Color = .accentColor
+    var color: Color
     
     var radius: CGFloat {
         return percent * 10
@@ -43,6 +43,12 @@ public struct CheckButtonView: View {
             return 15
             
         }
+    }
+    
+    init(active: Bool, size: ButtonSize, color: Color = .accentColor) {
+        self.active = active
+        self.size = size
+        self.color = color
     }
     
     public var body: some View {

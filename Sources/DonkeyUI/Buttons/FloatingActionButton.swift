@@ -10,7 +10,13 @@ import SwiftUI
 public struct FloatingActionButton: ViewModifier {
     let systemIcon: String
     let action: () -> Void
-    var hidden: Bool = false
+    var hidden: Bool
+    
+    init(systemIcon: String, action: @escaping () -> Void = {}, hidden: Bool = false) {
+        self.systemIcon = systemIcon
+        self.action = action
+        self.hidden = hidden
+    }
     
     @State private var animationScale = 1.0
     

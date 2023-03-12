@@ -10,6 +10,12 @@ import SwiftUI
 public struct BadgeLabelView: View {
     let count: Int
     var color = Color.pink
+    
+    init(count: Int, color: SwiftUI.Color = Color.pink) {
+        self.count = count
+        self.color = color
+    }
+    
     public var body: some View {
         Text("\(count)")
             .foregroundColor(color == .clear ? .gray : .white)

@@ -23,6 +23,13 @@ public struct IconView: View {
     let color: Color
     var size: IconSize = .large
     
+    
+    init(image: String, color: Color, size: IconSize = .large) {
+        self.image = image
+        self.color = color
+        self.size = size
+        
+    }
     var fontSize: CGFloat {
         switch size {
         case .micro:

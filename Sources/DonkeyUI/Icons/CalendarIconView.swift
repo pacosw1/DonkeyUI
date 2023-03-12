@@ -18,6 +18,11 @@ public struct CalendarIconView: View {
         return "\(date.day)"
     }
     
+    init(date: Date, dots: Bool = false) {
+        self.date = date
+        self.dots = dots
+    }
+    
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Rectangle()

@@ -10,6 +10,11 @@ import SwiftUI
 public struct CloseButton: View {
     var size: ButtonSize = .medium
     var action: () -> Void
+    
+    init(size: ButtonSize = .medium, action: @escaping () -> Void) {
+        self.size = size
+        self.action = action
+    }
 
     var getSizeInFont: Font {
         switch size {

@@ -12,6 +12,11 @@ public struct ProgressBarView: View {
     var fullWidth: Bool = false
     @Binding var progress: CGFloat
     
+    init(width: CGFloat = 100.0, fullWidth: Bool = false, progress: Binding<CGFloat>) {
+        self.width = width
+        self.fullWidth = fullWidth
+        _progress = progress
+    }
     
     func getWidth(proxy: GeometryProxy) -> CGFloat {
         if fullWidth {
