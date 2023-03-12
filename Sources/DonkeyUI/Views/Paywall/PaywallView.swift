@@ -22,18 +22,16 @@ public struct PaywallView: View {
     var closeAction: () -> Void = {}
     
     @State var selectedPlan: Int = 0
-    @State var lastUpdate: Int64 = 0
     
     var activePlan: PaywallPlan {
         return plans[selectedPlan]
     }
     
-    public init(plans: [PaywallPlan] = [], views: [IdentifiableView] = [], closeAction: @escaping () -> Void = {}, selectedPlan: Int = 0, lastUpdate: Int64) {
+    public init(plans: [PaywallPlan] = [], views: [IdentifiableView] = [], closeAction: @escaping () -> Void = {}, selectedPlan: Int = 0) {
         self.plans = plans
         self.views = views
         self.closeAction = closeAction
         self.selectedPlan = selectedPlan
-        self.lastUpdate = lastUpdate
     }
     
     public var body: some View {
@@ -61,6 +59,6 @@ struct PaywallView_Previews: PreviewProvider {
             .init(view: AnyView(ListsPromotionView()), maxWidth: 300),
             .init(view: AnyView(TagsPromotionView())),
             .init(view: AnyView(IndieDevPromotion()), maxWidth: 400)
-        ], lastUpdate: 40)
+        ])
     }
 }
