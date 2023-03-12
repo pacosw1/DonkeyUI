@@ -16,7 +16,7 @@ struct PaywallPlan: Identifiable {
     let billingPeriod: String
 }
 
-struct PaywallView: View {
+public struct PaywallView: View {
     var plans: [PaywallPlan] = []
     var views: [IdentifiableView] = []
     var closeAction: () -> Void = {}
@@ -28,7 +28,7 @@ struct PaywallView: View {
         return plans[selectedPlan]
     }
     
-    var body: some View {
+    public var body: some View {
         VStack(alignment: .leading) {
             PaywallHeaderView(closeAction: closeAction)
             Divider()

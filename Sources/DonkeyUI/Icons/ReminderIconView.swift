@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-struct ReminderIconView: View {
+public struct ReminderIconView: View {
     let timeLabel: String
     let optionLabel: String
     let selected: Bool
     var small: Bool = false
     
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 0) {
             Text("\(timeLabel)")
                 .fontWeight(.heavy)

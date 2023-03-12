@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct FloatingActionButton: ViewModifier {
+public struct FloatingActionButton: ViewModifier {
     let systemIcon: String
     let action: () -> Void
     var hidden: Bool = false
     
     @State private var animationScale = 1.0
     
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         ZStack(alignment: .bottomTrailing) {
             content
             Button(action: {

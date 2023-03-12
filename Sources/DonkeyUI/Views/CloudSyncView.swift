@@ -7,11 +7,11 @@
 
 import SwiftUI
 
-struct CloudSyncView: View {
+public struct CloudSyncView: View {
     @Binding var cloudSync: Bool
     @State var alertShown = false
 
-    var body: some View {
+    public var body: some View {
         
         SettingToggleView(isOn: $cloudSync, label: "iCloud Sync", systemIcon: "cloud.fill", iconColor: .accentColor, caption: "")
         //You may need to restart the app after toggling this option for changes to take effect.

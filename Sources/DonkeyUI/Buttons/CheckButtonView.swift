@@ -15,7 +15,7 @@ enum ButtonSize: CGFloat {
          large = 30
 }
 
-struct CheckButtonView: View {
+public struct CheckButtonView: View {
     let active: Bool
 
     let size: ButtonSize
@@ -45,7 +45,7 @@ struct CheckButtonView: View {
         }
     }
     
-    var body: some View {
+    public var body: some View {
         
         RoundedRectangle(cornerRadius: radius, style: .continuous).fill(active ? Color(UIColor(color).lighter(componentDelta: 0.05)) : .clear)
             .frame(width: size.rawValue, height: size.rawValue)

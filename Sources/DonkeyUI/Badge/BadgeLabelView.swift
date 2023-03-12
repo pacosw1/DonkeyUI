@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-struct BadgeLabelView: View {
+public struct BadgeLabelView: View {
     let count: Int
     var color = Color.pink
-    var body: some View {
+    public var body: some View {
         Text("\(count)")
             .foregroundColor(color == .clear ? .gray : .white)
         .fontWeight(.semibold)

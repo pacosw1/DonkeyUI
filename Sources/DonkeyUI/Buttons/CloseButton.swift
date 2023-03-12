@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CloseButton: View {
+public struct CloseButton: View {
     var size: ButtonSize = .medium
     var action: () -> Void
 
@@ -26,7 +26,7 @@ struct CloseButton: View {
         }
     }
     
-    var body: some View {
+    public var body: some View {
         Button {
             action()
         } label: {
