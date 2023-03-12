@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct PaywallPlan: Identifiable {
-    let id: Int
+public struct PaywallPlan: Identifiable {
+    public let id: Int
     let title: String
     let subText: String
     let price: Double
@@ -26,6 +26,14 @@ public struct PaywallView: View {
     
     var activePlan: PaywallPlan {
         return plans[selectedPlan]
+    }
+    
+    public init(plans: [PaywallPlan] = [], views: [IdentifiableView] = [], closeAction: @escaping () -> Void = {}, selectedPlan: Int = 0, lastUpdate: Int64) {
+        self.plans = plans
+        self.views = views
+        self.closeAction = closeAction
+        self.selectedPlan = selectedPlan
+        self.lastUpdate = lastUpdate
     }
     
     public var body: some View {
@@ -53,6 +61,6 @@ struct PaywallView_Previews: PreviewProvider {
             .init(view: AnyView(ListsPromotionView()), maxWidth: 300),
             .init(view: AnyView(TagsPromotionView())),
             .init(view: AnyView(IndieDevPromotion()), maxWidth: 400)
-        ])
+        ], lastUpdate: 40)
     }
 }

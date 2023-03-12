@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct IdentifiableView: Identifiable {
-    var id = UUID()
+public struct IdentifiableView: Identifiable {
+    public var id = UUID()
     var view: AnyView
     var maxWidth: CGFloat = 300
 }
