@@ -8,6 +8,14 @@
 import SwiftUI
 
 public struct IdentifiableView: Identifiable {
+    
+    
+    public init(id: UUID = UUID(), view: AnyView, maxWidth: CGFloat = 300) {
+        self.id = id
+        self.view = view
+        self.maxWidth = maxWidth
+    }
+    
     public var id = UUID()
     var view: AnyView
     var maxWidth: CGFloat = 300

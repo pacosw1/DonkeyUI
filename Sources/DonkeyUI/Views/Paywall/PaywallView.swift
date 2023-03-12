@@ -8,6 +8,16 @@
 import SwiftUI
 
 public struct PaywallPlan: Identifiable {
+    
+    public init(id: Int, title: String, subText: String, price: Double, billingType: String, billingPeriod: String) {
+        self.id = id
+        self.title = title
+        self.subText = subText
+        self.price = price
+        self.billingType = billingType
+        self.billingPeriod = billingPeriod
+    }
+    
     public let id: Int
     let title: String
     let subText: String
