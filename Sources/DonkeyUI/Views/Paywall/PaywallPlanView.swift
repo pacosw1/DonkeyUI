@@ -22,7 +22,7 @@ struct PaywallPlanSectionView: View {
             }
         }
         .padding(.vertical)
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, minHeight: 50)
     }
 }
 
@@ -61,3 +61,5 @@ struct PaywallPlanView: View {
         .padding(.horizontal)
     }
 }
+
+
