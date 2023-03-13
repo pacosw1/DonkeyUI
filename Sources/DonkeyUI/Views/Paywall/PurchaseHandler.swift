@@ -45,13 +45,14 @@ class PurchaseHandler: ObservableObject {
             if customerInfo?.entitlements[self.entitlementId]?.isActive == true {
                 // Unlock that great "pro" content
                 successAction()
+                self.loadingPurchaseScreen = false
             } else {
                 // Handle error gracefully
                 errorAction(error, userCancelled)
+                self.loadingPurchaseScreen = false
             }
             
         }
-        self.loadingPurchaseScreen = false
     }
     
     private func convertOfferingsToUIOptions() {
