@@ -4,11 +4,17 @@ import RevenueCat
 class PurchaseHandler: ObservableObject {
     @Published var offerings: Offerings? = nil
     @Published var plans: [PaywallPlan] = []
+    @Published var packageMap = [String: Package]()
+    let entitlementId: String
+    
+    init(entitlementId: String) {
+        self.entitlementId = entitlementId
+    }
     
     // Fetch products from RevenueCat API
-    func fetchProducts(revenueCatApi: Purchases) async -> Bool {
+    func fetchProducts() async -> Bool {
         do {
-            offerings = try await revenueCatApi.offerings()
+            offerings = try await Purchases.shared.offerings()
             self.convertOfferingsToUIOptions()
             return true
         } catch {
@@ -32,6 +38,18 @@ class PurchaseHandler: ObservableObject {
         }
     }
     
+    func initiatePurchase(selectedPackageId: String, successAction: @escaping() -> Void, errorAction: @escaping (PublicError?, Bool) -> Void) {
+        Purchases.shared.purchase(package: self.packageMap[selectedPackageId]!) { (transaction, customerInfo, error, userCancelled) in
+            if customerInfo?.entitlements[self.entitlementId]?.isActive == true {
+                // Unlock that great "pro" content
+                successAction()
+            } else {
+                // Handle error gracefully
+                errorAction(error, userCancelled)
+            }
+        }
+    }
+    
     private func convertOfferingsToUIOptions() {
         var plans: [PaywallPlan] = []
         
@@ -40,6 +58,8 @@ class PurchaseHandler: ObservableObject {
                 var index = 0
                     // Map items to paywall UI
                 for package in packages {
+                    // Map cause we need this for api call later
+                    self.packageMap[package.id] = package
                     let plan = PaywallPlan(
                         id: package.id,
                         title: package.storeProduct.localizedTitle,

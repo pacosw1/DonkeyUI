@@ -33,17 +33,20 @@ public struct PaywallPlan: Identifiable {
 public struct PaywallView: View {
     var views: [IdentifiableView] = []
     var closeAction: () -> Void = {}
-    @ObservedObject var purchaseHandler: PurchaseHandler
-    @State var loading: Bool = false
+    var successAction: () -> Void = {}
+    var errorAction: (PublicError?, Bool) -> Void = {_, _ in}
     
+    @ObservedObject var purchaseHandler: PurchaseHandler
+    
+    @State var loading: Bool = false
     @State var selectedPlan: PaywallPlan?
     @State var progress: CGFloat = 0.3
   
-    public init(plans: [PaywallPlan] = [], views: [IdentifiableView] = [], closeAction: @escaping () -> Void = {}, selectedPlan: PaywallPlan?) {
+    public init(plans: [PaywallPlan] = [], views: [IdentifiableView] = [], successAction: @escaping () -> Void, errorAction: (PublicError?, Bool) -> Void, closeAction: @escaping () -> Void = {}, proEntitlementId: String) {
         self.views = views
         self.closeAction = closeAction
         self.selectedPlan = nil
-        self.purchaseHandler = PurchaseHandler()
+        self.purchaseHandler = PurchaseHandler(entitlementId: proEntitlementId)
     }
     
     public var body: some View {
@@ -53,7 +56,9 @@ public struct PaywallView: View {
                 Divider()
                 PaywallFeatureSectionView(views: views)
                 PaywallPlanSectionView(plans: purchaseHandler.plans, selectedPlan: $selectedPlan)
-                PaywallActionView(selectePrice: selectedPlan?.price ?? "9", billingType: selectedPlan?.billingType ?? "", billingPeriod: selectedPlan?.billingPeriod ?? "")
+                PaywallActionView(selectePrice: selectedPlan?.price ?? "9", billingType: selectedPlan?.billingType ?? "", billingPeriod: selectedPlan?.billingPeriod ?? "", buyAction: {
+                    purchaseHandler.initiatePurchase(selectedPackageId: selectedPlan!.id, successAction: successAction, errorAction: errorAction)
+                }, isDisabled: loading || selectedPlan == nil)
                 Spacer()
                 PaywallPolicyView()
             }
@@ -81,18 +86,19 @@ public struct PaywallView: View {
                 }
                 .opacity(loading ? 1 : 0)
             }
-           
             
         .task {
+//            Purchases.configure(withAPIKey: "")
             loading = true
             withAnimation {
                 progress = 0.95
             }
-            let worked = await self.purchaseHandler.fetchProducts(revenueCatApi: Purchases.shared)
+            let worked = await self.purchaseHandler.fetchProducts()
             if worked && !purchaseHandler.plans.isEmpty  {
                 selectedPlan = purchaseHandler.plans[0]
-                loading = false
+                loading = true
             }
+            loading = false
         }
     }
 }
@@ -109,6 +115,6 @@ struct PaywallView_Previews: PreviewProvider {
             .init(view: AnyView(ListsPromotionView()), maxWidth: 300),
             .init(view: AnyView(TagsPromotionView())),
             .init(view: AnyView(IndieDevPromotion()), maxWidth: 400)
-        ], selectedPlan: nil)
+        ], successAction: {}, errorAction: {_,_ in}, proEntitlementId: "Premium")
     }
 }

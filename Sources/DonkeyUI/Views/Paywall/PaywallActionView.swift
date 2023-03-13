@@ -11,31 +11,32 @@ struct PaywallActionView: View {
     var selectePrice: String = "$2.99"
     var billingType: String = "Recurring Billing"
     var billingPeriod: String = "Month"
+    var buyAction: () -> Void
+    var isDisabled: Bool
     var body: some View {
         VStack(alignment: .center) {
-            Button {
-
-            } label: {
-                HStack {
-                    Text("Start Free Trial")
-                        .padding(.vertical, 20)
-                        .font(.subheadline)
-                        .foregroundColor(.white)
-                        .fontWeight(.heavy)
-                        .padding(.horizontal)
-                        .frame(maxWidth: .infinity)
-
-                        .bgOverlay(bgColor: .blue, radius: 12)
-                }
-                .padding(.horizontal)
-            }
             
-                Text("1-week trial - Then \(selectePrice) / \(billingPeriod) - \(billingType) - Cancel Anytime")
-                .multilineTextAlignment(.center)
-                    .font(.caption)
-                    .padding(.bottom, 10)
-                    .foregroundColor(.black.opacity(0.7))
-                    .padding(.horizontal)
+            
+            ButtonView(
+                label: "Start Free Trial",
+                buttonTyoe: .filled, action: {
+                    buyAction()
+                },
+                padding: 4,
+                font: .subheadline,
+                fontWeight: .heavy,
+                fullWidth: true,
+                disabled: isDisabled
+            )
+            .padding(.horizontal)
+
+            
+            Text("1-week trial - Then \(selectePrice) / \(billingPeriod) - \(billingType) - Cancel Anytime")
+            .multilineTextAlignment(.center)
+                .font(.caption)
+                .padding(.bottom, 10)
+                .foregroundColor(.black.opacity(0.7))
+                .padding(.horizontal)
         }
     }
 }
