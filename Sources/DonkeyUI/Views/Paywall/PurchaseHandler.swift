@@ -18,6 +18,20 @@ class PurchaseHandler: ObservableObject {
         }
     }
     
+    
+    private func getBillingPeriod(packageType: PackageType) -> String {
+        switch packageType {
+        case .lifetime:
+            return "One Time"
+        case .monthly:
+            return "Month"
+        case .annual:
+            return "Year"
+        default:
+            return "Month"
+        }
+    }
+    
     private func convertOfferingsToUIOptions() {
         var plans: [PaywallPlan] = []
         
@@ -28,11 +42,11 @@ class PurchaseHandler: ObservableObject {
                 for package in packages {
                     let plan = PaywallPlan(
                         id: package.id,
-                        title: package.identifier,
-                        subText: "",
+                        title: package.storeProduct.localizedTitle,
+                        subText: package.storeProduct.localizedDescription,
                         price: package.localizedPriceString,
                         billingType: package.packageType == .lifetime ? "One Time Purchase" : "Recurring Billing",
-                        billingPeriod: package.description,
+                        billingPeriod: getBillingPeriod(packageType: package.packageType),
                         index: index
                     )
                     plans.append(plan)
