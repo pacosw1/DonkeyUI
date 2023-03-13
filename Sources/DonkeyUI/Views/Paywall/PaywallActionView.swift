@@ -28,7 +28,7 @@ struct PaywallActionView: View {
                 font: .subheadline,
                 fontWeight: .heavy,
                 fullWidth: true,
-                disabled: true,
+                disabled: isDisabled,
                 isLoading: isLoading 
             )
             .padding(.horizontal)
