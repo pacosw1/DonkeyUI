@@ -5,6 +5,7 @@ class PurchaseHandler: ObservableObject {
     @Published var offerings: Offerings? = nil
     @Published var plans: [PaywallPlan] = []
     @Published var packageMap = [String: Package]()
+    @Published var loadingPurchaseScreen: Bool = false
     let entitlementId: String
     
     init(entitlementId: String) {
@@ -39,6 +40,7 @@ class PurchaseHandler: ObservableObject {
     }
     
     func initiatePurchase(selectedPackageId: String, successAction: @escaping() -> Void, errorAction: @escaping (PublicError?, Bool) -> Void) {
+        self.loadingPurchaseScreen = true
         Purchases.shared.purchase(package: self.packageMap[selectedPackageId]!) { (transaction, customerInfo, error, userCancelled) in
             if customerInfo?.entitlements[self.entitlementId]?.isActive == true {
                 // Unlock that great "pro" content
@@ -47,7 +49,9 @@ class PurchaseHandler: ObservableObject {
                 // Handle error gracefully
                 errorAction(error, userCancelled)
             }
+            
         }
+        self.loadingPurchaseScreen = false
     }
     
     private func convertOfferingsToUIOptions() {

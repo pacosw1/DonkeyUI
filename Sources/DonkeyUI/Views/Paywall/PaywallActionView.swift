@@ -13,6 +13,7 @@ struct PaywallActionView: View {
     var billingPeriod: String = "Month"
     var buyAction: () -> Void
     var isDisabled: Bool
+    var isLoading: Bool
     var body: some View {
         VStack(alignment: .center) {
             
@@ -26,7 +27,8 @@ struct PaywallActionView: View {
                 font: .subheadline,
                 fontWeight: .heavy,
                 fullWidth: true,
-                disabled: isDisabled
+                disabled: isDisabled,
+                isLoading: isLoading 
             )
             .padding(.horizontal)
 

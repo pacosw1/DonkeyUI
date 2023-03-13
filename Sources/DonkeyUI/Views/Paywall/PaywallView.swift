@@ -40,7 +40,7 @@ public struct PaywallView: View {
     
     @State var loading: Bool = false
     @State var selectedPlan: PaywallPlan?
-    @State var progress: CGFloat = 0.3
+    @State var progress: CGFloat = 0
   
     public init(plans: [PaywallPlan] = [], views: [IdentifiableView] = [], successAction: @escaping () -> Void, errorAction: (PublicError?, Bool) -> Void, closeAction: @escaping () -> Void = {}, proEntitlementId: String) {
         self.views = views
@@ -58,7 +58,7 @@ public struct PaywallView: View {
                 PaywallPlanSectionView(plans: purchaseHandler.plans, selectedPlan: $selectedPlan)
                 PaywallActionView(selectePrice: selectedPlan?.price ?? "9", billingType: selectedPlan?.billingType ?? "", billingPeriod: selectedPlan?.billingPeriod ?? "", buyAction: {
                     purchaseHandler.initiatePurchase(selectedPackageId: selectedPlan!.id, successAction: successAction, errorAction: errorAction)
-                }, isDisabled: loading || selectedPlan == nil)
+                }, isDisabled: loading || selectedPlan == nil || purchaseHandler.loadingPurchaseScreen, isLoading: purchaseHandler.loadingPurchaseScreen)
                 Spacer()
                 PaywallPolicyView()
             }
@@ -76,6 +76,7 @@ public struct PaywallView: View {
                         Spacer()
                         HStack {
                             Spacer()
+//                            SpinnerLoadingView()
                             ProgressBarView(fullWidth: true, progress: $progress)
                                 .padding(.horizontal, 50)
                                 .padding(.bottom, 50)
@@ -88,11 +89,26 @@ public struct PaywallView: View {
             }
             
         .task {
-//            Purchases.configure(withAPIKey: "")
+            Purchases.configure(withAPIKey: "")
             loading = true
-            withAnimation {
-                progress = 0.95
-            }
+                
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    withAnimation {
+                        progress = 0.2
+                    }
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    withAnimation {
+                        progress = 0.6
+                    }
+                }
+                
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                    progress = 0.89
+                }
+                
+            
             let worked = await self.purchaseHandler.fetchProducts()
             if worked && !purchaseHandler.plans.isEmpty  {
                 selectedPlan = purchaseHandler.plans[0]

@@ -27,11 +27,12 @@ public struct ButtonView: View {
     var fullWidth: Bool
     var radius: CGFloat
     var disabled: Bool = false
+    var isLoading: Bool = false
     
     @Environment(\.colorScheme) var colorScheme
     
     
-    public init(label: String, color: Color = .accentColor, buttonTyoe: ButtonType = .filled, action: @escaping () -> Void = {}, padding: CGFloat = 1.5, font: Font = .body, fontWeight: Font.Weight = .heavy, fullWidth: Bool = false, disabled: Bool = false, radius: CGFloat = 12) {
+    public init(label: String, color: Color = .accentColor, buttonTyoe: ButtonType = .filled, action: @escaping () -> Void = {}, padding: CGFloat = 1.5, font: Font = .body, fontWeight: Font.Weight = .heavy, fullWidth: Bool = false, disabled: Bool = false, radius: CGFloat = 12, isLoading: Bool = false) {
         self.label = label
         self.color = color
         self.buttonType = buttonTyoe
@@ -42,8 +43,8 @@ public struct ButtonView: View {
         self.fullWidth = fullWidth
         self.disabled = disabled
         self.radius = radius
+        self.isLoading = isLoading
     }
-    
     
     var labelColor: Color {
         
@@ -60,11 +61,14 @@ public struct ButtonView: View {
         Button {
             action()
         } label: {
-            Text(label)
-                .font(font)
-                .fontWeight(fontWeight)
-                .foregroundColor(labelColor)
-                
+            if isLoading {
+                SpinnerLoadingView()
+            } else {
+                Text(label)
+                    .font(font)
+                    .fontWeight(fontWeight)
+                    .foregroundColor(labelColor)
+            }
         }
         .padding(.horizontal, padding * 10)
         .padding(.vertical, padding * 5)
