@@ -80,7 +80,6 @@ public struct PaywallView: View {
                     }
                 }
                 .opacity(loading ? 1 : 0)
-                .animation(.easeOut, value: loading)
             }
            
             
