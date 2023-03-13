@@ -85,7 +85,6 @@ public struct PaywallView: View {
            
             
         .task {
-            Purchases.configure(withAPIKey: "")
             withAnimation {
                 progress = 0.95
             }
