@@ -22,9 +22,11 @@ struct PaywallPlanSectionView: View {
             }
         }
         .padding(.vertical)
-        .frame(maxWidth: .infinity, minHeight: 50)
+        .frame(maxWidth: .infinity)
     }
 }
+
+
 
 
 
@@ -59,6 +61,28 @@ struct PaywallPlanView: View {
         .padding(.horizontal)
         .selected(selected, radius: 12, fill: false, color: colorScheme == .dark ? .white : .black)
         .padding(.horizontal)
+    }
+}
+
+struct PaywallPlanView_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack {
+            PaywallPlanView(title: "Hello", subText: "Hello this is the newest plan ever made and its very cool", price: "500", selected: true)
+            PaywallPlanView(title: "Hello", subText: "Hello this is the newest plan ever made and its very cool", price: "500", selected: true)
+
+            PaywallPlanView(title: "Hello", subText: "Hello this is the newest plan ever made and its very cool", price: "500", selected: true)
+            PaywallPlanView(title: "Hello", subText: "Hello this is the newest plan ever made and its very cool", price: "500", selected: true)
+            PaywallPlanView(title: "Hello", subText: "Hello this is the newest plan ever made and its very cool", price: "500", selected: true)
+            PaywallPlanView(title: "Hello", subText: "Hello this is the newest plan ever made and its very cool", price: "500", selected: true)
+            PaywallPlanView(title: "Hello", subText: "Hello this is the newest plan ever made and its very cool", price: "500", selected: true)
+            PaywallPlanView(title: "Hello", subText: "Hello this is the newest plan ever made and its very cool", price: "500", selected: true)
+            PaywallPlanView(title: "Hello", subText: "Hello this is the newest plan ever made and its very cool", price: "500", selected: true)
+            PaywallPlanView(title: "Hello", subText: "Hello this is the newest plan ever made and its very cool", price: "500", selected: true)
+
+
+
+        }
+            
     }
 }
 

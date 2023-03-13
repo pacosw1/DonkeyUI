@@ -40,7 +40,7 @@ struct SpinnerLoadingView_Previews: PreviewProvider {
     static var previews: some View {
         HStack {
             SpinnerLoadingView()
-            SpinnerLoadingView(color: .purple, disabled: false)
+//            SpinnerLoadingView(color: .purple, disabled: false)
         }
 
     }

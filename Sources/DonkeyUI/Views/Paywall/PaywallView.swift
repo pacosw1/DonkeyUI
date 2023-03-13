@@ -55,6 +55,7 @@ public struct PaywallView: View {
                 PaywallHeaderView(closeAction: closeAction)
                 Divider()
                 PaywallFeatureSectionView(views: views)
+                    .frame(maxHeight: 280)
                 PaywallPlanSectionView(plans: purchaseHandler.plans, selectedPlan: $selectedPlan)
                 PaywallActionView(selectePrice: selectedPlan?.price ?? "9", billingType: selectedPlan?.billingType ?? "", billingPeriod: selectedPlan?.billingPeriod ?? "", buyAction: {
                     purchaseHandler.initiatePurchase(selectedPackageId: selectedPlan!.id, successAction: successAction, errorAction: errorAction)
