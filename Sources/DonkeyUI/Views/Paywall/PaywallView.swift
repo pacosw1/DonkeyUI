@@ -37,6 +37,7 @@ public struct PaywallView: View {
     @State var loading: Bool = true
     
     @State var selectedPlan: PaywallPlan?
+    @State var progress: CGFloat = 0.3
   
     public init(plans: [PaywallPlan] = [], views: [IdentifiableView] = [], closeAction: @escaping () -> Void = {}, selectedPlan: PaywallPlan?) {
         self.views = views
@@ -46,17 +47,48 @@ public struct PaywallView: View {
     }
     
     public var body: some View {
-        VStack(alignment: .leading) {
-            PaywallHeaderView(closeAction: closeAction)
-            Divider()
-            Text(loading ? "worked \(purchaseHandler.plans.count)" : "didn't work")
-            PaywallFeatureSectionView(views: views)
-            PaywallPlanSectionView(plans: purchaseHandler.plans, selectedPlan: $selectedPlan)
-            PaywallActionView(selectePrice: selectedPlan?.price ?? "9", billingType: selectedPlan?.billingType ?? "", billingPeriod: selectedPlan?.billingPeriod ?? "")
-            Spacer()
-            PaywallPolicyView()
-        }
+            
+            VStack {
+                PaywallHeaderView(closeAction: closeAction)
+                Divider()
+                PaywallFeatureSectionView(views: views)
+                PaywallPlanSectionView(plans: purchaseHandler.plans, selectedPlan: $selectedPlan)
+                PaywallActionView(selectePrice: selectedPlan?.price ?? "9", billingType: selectedPlan?.billingType ?? "", billingPeriod: selectedPlan?.billingPeriod ?? "")
+                Spacer()
+                PaywallPolicyView()
+            }
+            .overlay {
+                ZStack {
+                    Color.white
+                        .ignoresSafeArea()
+                    VStack {
+                        HStack {
+                            Spacer()
+                            CloseButton(action: {})
+                        }
+                        .padding(.trailing)
+                        .padding(.top)
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            ProgressBarView(fullWidth: true, progress: $progress)
+                                .padding(.horizontal, 50)
+                                .padding(.bottom, 50)
+                            Spacer()
+                        }
+                        Spacer()
+                    }
+                }
+                .opacity(loading ? 1 : 0)
+                .animation(.easeOut, value: loading)
+            }
+           
+            
         .task {
+            Purchases.configure(withAPIKey: "")
+            withAnimation {
+                progress = 0.95
+            }
             let worked = await self.purchaseHandler.fetchProducts(revenueCatApi: Purchases.shared)
             if worked && !purchaseHandler.plans.isEmpty  {
                 selectedPlan = purchaseHandler.plans[0]
