@@ -96,13 +96,15 @@ public struct ButtonView: View {
                     .foregroundColor(labelColor)
                     .opacity(isLoading ? 0 : 1)
             }
+            .padding(.horizontal, padding * 10)
+            .padding(.vertical, padding * 5)
+            .frame(maxWidth: fullWidth ? .infinity : nil)
+            .bgOverlay(bgColor: bgColor, radius: radius, borderColor: buttonType == .bordered ? color : .clear, borderWidth: 1.5)
+            .contentShape(Rectangle())
+
             
         }
-        .padding(.horizontal, padding * 10)
-        .padding(.vertical, padding * 5)
-        .frame(maxWidth: fullWidth ? .infinity : nil)
-        .contentShape(Rectangle())
-        .bgOverlay(bgColor: bgColor, radius: radius, borderColor: buttonType == .bordered ? color : .clear, borderWidth: 1.5)
+        
         .disabled(isDisabled)
         
     }
@@ -111,11 +113,11 @@ public struct ButtonView: View {
 struct ButtonView_Previews: PreviewProvider {
     static var previews: some View {
         HStack {
-            ButtonView(label: "Start", color: .pink, buttonTyoe: .filled, action: {}, fullWidth: false, disabled: true)
+            ButtonView(label: "Start", color: .pink, buttonTyoe: .filled, action: {}, padding: 3, fullWidth: false, disabled: false)
             ButtonView(label: "Start", color: .blue, buttonTyoe: .bordered, action: {}, fullWidth: false)
             ButtonView(label: "Start", color: .purple, buttonTyoe: .filled, action: {}, fullWidth: false, disabled: true)
-            ButtonView(label: "Start", color: .purple, buttonTyoe: .bordered, action: {}, fullWidth: false, disabled: false, isLoading: true)
-            ButtonView(label: "Start", color: .purple, buttonTyoe: .text, action: {}, fullWidth: false, disabled: true, isLoading: true)
+//            ButtonView(label: "Start", color: .purple, buttonTyoe: .bordered, action: {}, fullWidth: false, disabled: false, isLoading: true)
+//            ButtonView(label: "Start", color: .purple, buttonTyoe: .text, action: {}, fullWidth: false, disabled: true, isLoading: true)
 
 
         }
