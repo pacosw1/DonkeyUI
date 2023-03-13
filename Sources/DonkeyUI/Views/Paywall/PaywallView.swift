@@ -109,8 +109,10 @@ public struct PaywallView: View {
                 }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                withAnimation {
                     progress = 0.89
                 }
+            }
                 
             
             let worked = await self.purchaseHandler.fetchProducts()
