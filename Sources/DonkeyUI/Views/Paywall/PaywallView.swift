@@ -64,7 +64,7 @@ public struct PaywallView: View {
                     VStack {
                         HStack {
                             Spacer()
-                            CloseButton(action: {})
+                            CloseButton(action: {closeAction()})
                         }
                         .padding(.trailing)
                         .padding(.top)
