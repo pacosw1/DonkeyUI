@@ -48,8 +48,8 @@ public struct ButtonView: View {
     
     var labelColor: Color {
         
-        if buttonType == .filled {
-            return color.buttonText(darkMode: colorScheme == .dark)
+        if buttonType == .filled && !disabled {
+            return color.buttonText(darkMode: false)
         }
         if disabled {
             return color.opacity(0.3)
@@ -67,11 +67,11 @@ public struct ButtonView: View {
     }
     
     var bgColor: Color {
-        if disabled {
+        if isDisabled {
             if buttonType == .text {
                 return .clear
             } else {
-                return color.opacity(0.19)
+                return color.opacity(0.3)
             }
         } else {
             if buttonType == .filled {
@@ -80,6 +80,18 @@ public struct ButtonView: View {
                 return .clear
             }
         }
+    }
+    
+    
+    var borderColor: Color {
+        if buttonType == .bordered {
+            if !isDisabled {
+                return color
+            }
+            return color.opacity(0.3)
+        }
+        
+        return .clear
     }
 
     public var body: some View {
@@ -99,7 +111,7 @@ public struct ButtonView: View {
             .padding(.horizontal, padding * 10)
             .padding(.vertical, padding * 5)
             .frame(maxWidth: fullWidth ? .infinity : nil)
-            .bgOverlay(bgColor: bgColor, radius: radius, borderColor: buttonType == .bordered ? color : .clear, borderWidth: 1.5)
+            .bgOverlay(bgColor: bgColor, radius: radius, borderColor: borderColor, borderWidth: 1.5)
             .contentShape(Rectangle())
 
             
@@ -113,13 +125,13 @@ public struct ButtonView: View {
 struct ButtonView_Previews: PreviewProvider {
     static var previews: some View {
         HStack {
-            ButtonView(label: "Start", color: .pink, buttonTyoe: .filled, action: {}, padding: 3, fullWidth: false, disabled: false)
-            ButtonView(label: "Start", color: .blue, buttonTyoe: .bordered, action: {}, fullWidth: false)
-            ButtonView(label: "Start", color: .purple, buttonTyoe: .filled, action: {}, fullWidth: false, disabled: true)
-//            ButtonView(label: "Start", color: .purple, buttonTyoe: .bordered, action: {}, fullWidth: false, disabled: false, isLoading: true)
-//            ButtonView(label: "Start", color: .purple, buttonTyoe: .text, action: {}, fullWidth: false, disabled: true, isLoading: true)
+            ButtonView(label: "Start", color: .pink, buttonTyoe: .filled, action: {}, padding: 3, fullWidth: false, disabled: true)
+            ButtonView(label: "Start", color: .purple, buttonTyoe: .filled, action: {}, fullWidth: false, disabled: false)
+            ButtonView(label: "Start", color: .purple, buttonTyoe: .filled, action: {}, fullWidth: false, disabled: false, isLoading: true)
+            ButtonView(label: "Start", color: .purple, buttonTyoe: .filled, action: {}, fullWidth: false, disabled: true, isLoading: false)
 
 
         }
+        .preferredColorScheme(.dark)
     }
 }

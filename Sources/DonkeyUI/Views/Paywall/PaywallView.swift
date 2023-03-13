@@ -60,11 +60,11 @@ public struct PaywallView: View {
                     purchaseHandler.initiatePurchase(selectedPackageId: selectedPlan!.id, successAction: successAction, errorAction: errorAction)
                 }, isDisabled: loading || selectedPlan == nil || purchaseHandler.loadingPurchaseScreen, isLoading: purchaseHandler.loadingPurchaseScreen)
                 Spacer()
-                PaywallPolicyView()
+                PaywallPolicyView(restorePurchasesAction: purchaseHandler.restorePurchases)
             }
             .overlay {
                 ZStack {
-                    Color.white
+                    Color(UIColor.systemBackground)
                         .ignoresSafeArea()
                     VStack {
                         HStack {
@@ -113,6 +113,12 @@ public struct PaywallView: View {
                     progress = 0.89
                 }
             }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.1) {
+                withAnimation {
+                    progress = 0.99
+                }
+            }
                 
             
             let worked = await self.purchaseHandler.fetchProducts()
@@ -138,5 +144,6 @@ struct PaywallView_Previews: PreviewProvider {
             .init(view: AnyView(TagsPromotionView())),
             .init(view: AnyView(IndieDevPromotion()), maxWidth: 400)
         ], successAction: {}, errorAction: {_,_ in}, proEntitlementId: "Premium")
+        .preferredColorScheme(.dark)
     }
 }

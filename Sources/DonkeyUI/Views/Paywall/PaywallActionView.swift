@@ -20,6 +20,7 @@ struct PaywallActionView: View {
             
             ButtonView(
                 label: "Start Free Trial",
+                color: .blue,
                 buttonTyoe: .filled, action: {
                     buyAction()
                 },
@@ -27,7 +28,7 @@ struct PaywallActionView: View {
                 font: .subheadline,
                 fontWeight: .heavy,
                 fullWidth: true,
-                disabled: isDisabled,
+                disabled: true,
                 isLoading: isLoading 
             )
             .padding(.horizontal)
@@ -37,13 +38,14 @@ struct PaywallActionView: View {
             .multilineTextAlignment(.center)
                 .font(.caption)
                 .padding(.bottom, 0)
-                .foregroundColor(.black.opacity(0.7))
+                .foregroundColor(.primary.opacity(0.7))
                 .padding(.horizontal)
         }
     }
 }
 
 struct PaywallPolicyView: View {
+    var restorePurchasesAction: () -> Void
     var body: some View {
         
         HStack(alignment: .center, spacing: 10) {
@@ -51,9 +53,9 @@ struct PaywallPolicyView: View {
             Text("Privacy")
                 .font(.caption)
                 .foregroundColor(.gray)
-            Text("Restore Purchases")
-                .font(.caption)
-                .foregroundColor(.gray)
+            
+            ButtonView(label: "Restore Purchases", color: .accentColor.opacity(0.9), buttonTyoe: .text, action: restorePurchasesAction, font: .caption, fontWeight: .regular)
+     
             Text("Terms")
                 .font(.caption)
                 .foregroundColor(.gray)

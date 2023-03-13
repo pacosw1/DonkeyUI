@@ -39,6 +39,19 @@ class PurchaseHandler: ObservableObject {
         }
     }
     
+    
+    func restorePurchases() {
+        self.loadingPurchaseScreen = true
+        Purchases.shared.restorePurchases { customerInfo, error in
+        
+            //TODO check if restored, show success message.
+            //TODO check if not restored, show no purchases message
+            //TODO handle errors
+            //... check customerInfo to see if entitlement is now active
+            self.loadingPurchaseScreen = false
+        }
+    }
+    
     func initiatePurchase(selectedPackageId: String, successAction: @escaping() -> Void, errorAction: @escaping (PublicError?, Bool) -> Void) {
         self.loadingPurchaseScreen = true
         Purchases.shared.purchase(package: self.packageMap[selectedPackageId]!) { (transaction, customerInfo, error, userCancelled) in

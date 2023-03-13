@@ -53,14 +53,14 @@ struct ListsPromotionView: View {
             FeatureView(title: "Unlimited lists", image: "list.bullet.clipboard.fill", text: "Keep track of all your projects in one place", color: .purple)
             VStack(alignment: .leading, spacing: 7) {
                 HStack(spacing: 10) {
-//                    CircularProgressView(progress: 1, size: 8)
+                    CircularProgressView(progress: 0.9, size: 8)
                     Text("WFH Setup")
                         .fontWeight(.semibold)
                 }
                 .card()
 
                 HStack(spacing: 10) {
-//                    CircularProgressView(color: .pink, progress: 0.8, size: 8)
+                    CircularProgressView(color: .pink, progress: 0.8, size: 8)
                     Text("Kitchen Renovation")
                         .fontWeight(.semibold)
                 }
