@@ -34,7 +34,7 @@ public struct PaywallView: View {
     var views: [IdentifiableView] = []
     var closeAction: () -> Void = {}
     @ObservedObject var purchaseHandler: PurchaseHandler
-    @State var loading: Bool = true
+    @State var loading: Bool = false
     
     @State var selectedPlan: PaywallPlan?
     @State var progress: CGFloat = 0.3
@@ -85,6 +85,7 @@ public struct PaywallView: View {
            
             
         .task {
+            loading = true
             withAnimation {
                 progress = 0.95
             }
