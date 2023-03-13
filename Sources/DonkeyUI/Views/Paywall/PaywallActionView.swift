@@ -36,7 +36,7 @@ struct PaywallActionView: View {
             Text("1-week trial - Then \(selectePrice) / \(billingPeriod) - \(billingType) - Cancel Anytime")
             .multilineTextAlignment(.center)
                 .font(.caption)
-                .padding(.bottom, 10)
+                .padding(.bottom, 0)
                 .foregroundColor(.black.opacity(0.7))
                 .padding(.horizontal)
         }
@@ -63,6 +63,6 @@ struct PaywallPolicyView: View {
 
         }
         .padding(.horizontal)
-        .padding(.vertical)
+        .padding(.top)
     }
 }
