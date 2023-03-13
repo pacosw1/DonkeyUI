@@ -11,7 +11,7 @@ public struct BadgeLabelView: View {
     let count: Int
     var color = Color.pink
     
-    init(count: Int, color: SwiftUI.Color = Color.pink) {
+    public init(count: Int, color: SwiftUI.Color = Color.pink) {
         self.count = count
         self.color = color
     }

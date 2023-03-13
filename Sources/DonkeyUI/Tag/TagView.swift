@@ -19,7 +19,7 @@ public struct TagView: View {
     var verySmall: Bool = false
     @Environment(\.colorScheme) var colorScheme
     
-    init(title: String, color: Color, dull: Bool = false, delete: Bool = false, deleteAction: @escaping (UUID) -> Void = {_ in}, holdAction: @escaping () -> Void = {}, selected: Bool = false, verySmall: Bool = false) {
+    public init(title: String, color: Color, dull: Bool = false, delete: Bool = false, deleteAction: @escaping (UUID) -> Void = {_ in}, holdAction: @escaping () -> Void = {}, selected: Bool = false, verySmall: Bool = false) {
         self.title = title
         self.color = color
         self.dull = dull
@@ -78,6 +78,15 @@ public struct TagView: View {
                     .font(titleFont)
                     .foregroundColor(dull ? .primary.opacity(0.6) : textColor)
                     .animation(.none, value: label)
+            
+            if delete {
+                Button {
+                    deleteAction(UUID())
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(textColor)
+                }
+            }
                 
         }
 
@@ -94,21 +103,14 @@ public struct TagView: View {
 struct TagView_Previews: PreviewProvider {
     static var previews: some View {
         
-            ScrollView(.horizontal) {
                 HStack {
-//                    TagView(label: "Health", color: .pink, dull: true)
-//                    TagView(tagItem: TestTag(title: "hello", hue: .pink), delete: false, deleteAction: {_ in})
+                    Spacer()
                     TagView(title: "No way", color: .blue, delete: false, deleteAction: {_ in},verySmall: true)
-//                TagView(label: "Home", color: .pink)
-
-
-
-
+                    TagView(title: "No way", color: .pink, delete: false, deleteAction: {_ in},verySmall: false)
+                    TagView(title: "No way", color: .pink, delete: true, deleteAction: {_ in},verySmall: false)
+                    Spacer()
             }
-                .frame(maxWidth: .infinity, minHeight: 50)
                 
-        }
-            .frame(maxWidth: .infinity, minHeight: 50)
 
     }
 }

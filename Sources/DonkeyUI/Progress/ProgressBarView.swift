@@ -12,7 +12,7 @@ public struct ProgressBarView: View {
     var fullWidth: Bool = false
     @Binding var progress: CGFloat
     
-    init(width: CGFloat = 100.0, fullWidth: Bool = false, progress: Binding<CGFloat>) {
+    public init(width: CGFloat = 100.0, fullWidth: Bool = false, progress: Binding<CGFloat>) {
         self.width = width
         self.fullWidth = fullWidth
         _progress = progress
@@ -51,11 +51,9 @@ public struct ProgressBarView: View {
 struct ProgressBarView_Previews: PreviewProvider {
     static var previews: some View {
         HStack {
-            ProgressBarView(width: 100, progress: .constant(0.3))
+            ProgressBarView(width: 100,  progress: .constant(0.3))
                 .padding()
             
-            Spacer()
-            CloseButton(action: {})
         }
         .padding()
     }

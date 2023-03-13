@@ -7,13 +7,14 @@
 
 import SwiftUI
 
-enum ButtonType {
+public enum ButtonType {
 case filled,
     bordered,
     text
 }
 
 public struct ButtonView: View {
+
     let label: String
     var color: Color
     var buttonTyoe: ButtonType
@@ -26,7 +27,7 @@ public struct ButtonView: View {
     @Environment(\.colorScheme) var colorScheme
     
     
-    init(label: String, color: Color = .accentColor, buttonTyoe: ButtonType = .filled, action: @escaping () -> Void = {}, padding: CGFloat = 1.5, font: Font = .body, fontWeight: Font.Weight = .heavy, fullWidth: Bool = false) {
+    public init(label: String, color: Color = .accentColor, buttonTyoe: ButtonType = .filled, action: @escaping () -> Void = {}, padding: CGFloat = 1.5, font: Font = .body, fontWeight: Font.Weight = .heavy, fullWidth: Bool = false) {
         self.label = label
         self.color = color
         self.buttonTyoe = buttonTyoe
@@ -65,6 +66,11 @@ public struct ButtonView: View {
 
 struct ButtonView_Previews: PreviewProvider {
     static var previews: some View {
-        ButtonView(label: "Start", color: .pink, buttonTyoe: .filled, action: {}, fullWidth: false)
+        HStack {
+            ButtonView(label: "Start", color: .pink, buttonTyoe: .filled, action: {}, fullWidth: false)
+            ButtonView(label: "Start", color: .blue, buttonTyoe: .bordered, action: {}, fullWidth: false)
+            ButtonView(label: "Start", color: .purple, buttonTyoe: .text, action: {}, fullWidth: false)
+
+        }
     }
 }

@@ -13,7 +13,7 @@ public struct ReminderIconView: View {
     let selected: Bool
     var small: Bool = false
     
-    init(timeLabel: String, optionLabel: String, selected: Bool, small: Bool = false) {
+    public init(timeLabel: String, optionLabel: String, selected: Bool, small: Bool = false) {
         self.timeLabel = timeLabel
         self.optionLabel = optionLabel
         self.selected = selected

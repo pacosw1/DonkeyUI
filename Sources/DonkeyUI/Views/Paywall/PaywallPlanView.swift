@@ -9,15 +9,15 @@ import SwiftUI
 
 struct PaywallPlanSectionView: View {
     let plans: [PaywallPlan]
-    @Binding var selectedId: Int
+    @Binding var selectedPlan: PaywallPlan?
     
     var body: some View {
         VStack(spacing: 10) {
             ForEach(plans) { plan in
-                PaywallPlanView(title: plan.title, subText: plan.subText, price: plan.price, selected: plan.id == selectedId)
+                PaywallPlanView(title: plan.title, subText: plan.subText, price: plan.price, selected: plan.id == selectedPlan?.id)
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        selectedId = plan.id
+                        selectedPlan = plan
                     }
             }
         }
@@ -31,20 +31,11 @@ struct PaywallPlanSectionView: View {
 struct PaywallPlanView: View {
     let title: String
     var subText: String = ""
-    let price: Double
+    let price: String
     let selected: Bool
     
     @Environment(\.colorScheme) var colorScheme
 
-    var localePrice: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        if let formattedTipAmount = formatter.string(from: price as NSNumber) {
-            return "\(formattedTipAmount)"
-        }
-        
-        return String(format:"$%.02f", price)
-    }
     
     var body: some View {
         HStack {
@@ -56,7 +47,7 @@ struct PaywallPlanView: View {
                     .font(.caption)
             }
             Spacer()
-            Text("\(localePrice)")
+            Text(price)
                 .fontWeight(.semibold)
                 .foregroundColor(selected ? .primary : .secondary.opacity(0.9))
                 .font(.body)

@@ -14,7 +14,7 @@ public struct SettingToggleView: View {
     var iconColor: Color
     var caption: String = ""
     
-    init(isOn: Binding<Bool>, label: String, systemIcon: String, iconColor: Color, caption: String = "") {
+    public init(isOn: Binding<Bool>, label: String, systemIcon: String, iconColor: Color, caption: String = "") {
         _isOn = isOn
         self.label = label
         self.systemIcon = systemIcon
@@ -61,7 +61,7 @@ public struct SettingToggleView: View {
 struct SettingToggleView_Previews: PreviewProvider {
     static var previews: some View {
         
-        SettingToggleView(isOn: .constant(false), label: "monka", systemIcon: "xmark", iconColor: .blue, caption: "Automatically rollover uncompleted tasks to the following day")
+        SettingToggleView(isOn: .constant(false), label: "Test", systemIcon: "xmark", iconColor: .blue, caption: "Automatically rollover uncompleted tasks to the following day")
                 .preferredColorScheme(.dark)
         
     }

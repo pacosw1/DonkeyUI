@@ -11,7 +11,7 @@ public struct CloseButton: View {
     var size: ButtonSize = .medium
     var action: () -> Void
     
-    init(size: ButtonSize = .medium, action: @escaping () -> Void) {
+    public init(size: ButtonSize = .medium, action: @escaping () -> Void) {
         self.size = size
         self.action = action
     }

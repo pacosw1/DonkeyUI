@@ -38,5 +38,6 @@ public struct CloudSyncView: View {
 struct CloudSyncView_Previews: PreviewProvider {
     static var previews: some View {
         CloudSyncView(cloudSync: .constant(false))
+            .padding()
     }
 }

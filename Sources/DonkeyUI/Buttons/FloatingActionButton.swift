@@ -12,7 +12,7 @@ public struct FloatingActionButton: ViewModifier {
     let action: () -> Void
     var hidden: Bool
     
-    init(systemIcon: String, action: @escaping () -> Void = {}, hidden: Bool = false) {
+    public init(systemIcon: String, action: @escaping () -> Void = {}, hidden: Bool = false) {
         self.systemIcon = systemIcon
         self.action = action
         self.hidden = hidden

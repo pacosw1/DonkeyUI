@@ -6,53 +6,62 @@
 //
 
 import SwiftUI
+import RevenueCat
 
 public struct PaywallPlan: Identifiable {
     
-    public init(id: Int, title: String, subText: String, price: Double, billingType: String, billingPeriod: String) {
+    public init(id: String, title: String, subText: String, price: String, billingType: String, billingPeriod: String, index: Int) {
         self.id = id
+        self.index = index
         self.title = title
         self.subText = subText
         self.price = price
         self.billingType = billingType
         self.billingPeriod = billingPeriod
+//        self.purchaseHandler = PurchaseHandler()
     }
     
-    public let id: Int
+    public let id: String
     let title: String
     let subText: String
-    let price: Double
+    let price: String
     let billingType: String
     let billingPeriod: String
+    let index: Int
 }
 
 public struct PaywallView: View {
-    var plans: [PaywallPlan] = []
     var views: [IdentifiableView] = []
     var closeAction: () -> Void = {}
+    @ObservedObject var purchaseHandler: PurchaseHandler
+    @State var loading: Bool = true
     
-    @State var selectedPlan: Int = 0
-    
-    var activePlan: PaywallPlan {
-        return plans[selectedPlan]
-    }
-    
-    public init(plans: [PaywallPlan] = [], views: [IdentifiableView] = [], closeAction: @escaping () -> Void = {}, selectedPlan: Int = 0) {
-        self.plans = plans
+    @State var selectedPlan: PaywallPlan?
+  
+    public init(plans: [PaywallPlan] = [], views: [IdentifiableView] = [], closeAction: @escaping () -> Void = {}, selectedPlan: PaywallPlan?) {
         self.views = views
         self.closeAction = closeAction
-        self.selectedPlan = selectedPlan
+        self.selectedPlan = nil
+        self.purchaseHandler = PurchaseHandler()
     }
     
     public var body: some View {
         VStack(alignment: .leading) {
             PaywallHeaderView(closeAction: closeAction)
             Divider()
+            Text(loading ? "worked \(purchaseHandler.plans.count)" : "didn't work")
             PaywallFeatureSectionView(views: views)
-            PaywallPlanSectionView(plans: plans, selectedId: $selectedPlan)
-            PaywallActionView(selectePrice: activePlan.price, billingType: activePlan.billingType, billingPeriod: activePlan.billingPeriod)
+            PaywallPlanSectionView(plans: purchaseHandler.plans, selectedPlan: $selectedPlan)
+            PaywallActionView(selectePrice: selectedPlan?.price ?? "9", billingType: selectedPlan?.billingType ?? "", billingPeriod: selectedPlan?.billingPeriod ?? "")
             Spacer()
             PaywallPolicyView()
+        }
+        .task {
+            let worked = await self.purchaseHandler.fetchProducts(revenueCatApi: Purchases.shared)
+            if worked && !purchaseHandler.plans.isEmpty  {
+                selectedPlan = purchaseHandler.plans[0]
+                loading = false
+            }
         }
     }
 }
@@ -61,14 +70,14 @@ public struct PaywallView: View {
 struct PaywallView_Previews: PreviewProvider {
     static var previews: some View {
         PaywallView(plans: [
-            .init(id: 0, title: "Monthly", subText: "Our most affordable plan", price: 2.99, billingType: "Recurring Billing", billingPeriod: "Month"),
-            .init(id: 1, title: "Yearly", subText: "Save 30%", price: 24.99, billingType: "Recurring Billing", billingPeriod: "Year"),
-            .init(id: 2, title: "Lifetime Deal", subText: "One-time payment", price: 49.99, billingType: "One Time Payment", billingPeriod: "Once")
+            .init(id: "0", title: "Monthly", subText: "Our most affordable plan", price: "2.99", billingType: "Recurring Billing", billingPeriod: "Month", index: 0),
+            .init(id: "1", title: "Yearly", subText: "Save 30%", price: "24.99", billingType: "Recurring Billing", billingPeriod: "Year", index: 1),
+            .init(id: "2", title: "Lifetime Deal", subText: "One-time payment", price: "49.99", billingType: "One Time Payment", billingPeriod: "Once", index: 2)
         ], views: [
             .init(view: AnyView(RemindersPromotionView()), maxWidth: 300),
             .init(view: AnyView(ListsPromotionView()), maxWidth: 300),
             .init(view: AnyView(TagsPromotionView())),
             .init(view: AnyView(IndieDevPromotion()), maxWidth: 400)
-        ])
+        ], selectedPlan: nil)
     }
 }

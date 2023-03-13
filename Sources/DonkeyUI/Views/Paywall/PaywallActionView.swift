@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PaywallActionView: View {
-    var selectePrice: Double = 2.99
+    var selectePrice: String = "$2.99"
     var billingType: String = "Recurring Billing"
     var billingPeriod: String = "Month"
     var body: some View {
@@ -30,7 +30,7 @@ struct PaywallActionView: View {
                 .padding(.horizontal)
             }
             
-                Text("1-week trial - Then \(String(format:"$%.02f", selectePrice)) / \(billingPeriod) - \(billingType) - Cancel Anytime")
+                Text("1-week trial - Then \(selectePrice) / \(billingPeriod) - \(billingType) - Cancel Anytime")
                 .multilineTextAlignment(.center)
                     .font(.caption)
                     .padding(.bottom, 10)

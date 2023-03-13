@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum ButtonSize: CGFloat {
+public enum ButtonSize: CGFloat {
     case tiny = 10,
          verySmall = 15,
          small = 20,
@@ -45,7 +45,7 @@ public struct CheckButtonView: View {
         }
     }
     
-    init(active: Bool, size: ButtonSize, color: Color = .accentColor) {
+    public init(active: Bool, size: ButtonSize = .medium, color: Color = .accentColor) {
         self.active = active
         self.size = size
         self.color = color

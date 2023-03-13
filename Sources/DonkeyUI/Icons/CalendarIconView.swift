@@ -18,7 +18,7 @@ public struct CalendarIconView: View {
         return "\(date.day)"
     }
     
-    init(date: Date, dots: Bool = false) {
+    public init(date: Date, dots: Bool = false) {
         self.date = date
         self.dots = dots
     }

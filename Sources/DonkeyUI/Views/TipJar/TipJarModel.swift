@@ -17,8 +17,13 @@ import Foundation
 //}
 
 
-struct TipJarOption: Identifiable {
-    let id = UUID()
+public struct TipJarOption: Identifiable {
+    public init(label: String, price: Float) {
+        self.label = label
+        self.price = price
+    }
+    
+    public let id = UUID()
     let label: String
     let price: Float
 }

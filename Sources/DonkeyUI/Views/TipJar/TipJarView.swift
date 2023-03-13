@@ -8,6 +8,18 @@
 import SwiftUI
 
 public struct TipJarView: View {
+    public init(titleIcon: String, options: [TipJarOption], titleLabel: String, titleDescription: String, confirmPurchaseLabel: String, optionalDisclaimer: String? = nil, purchaseAction: @escaping () -> Void, closeAction: @escaping () -> Void, selected: UUID = UUID()) {
+        self.titleIcon = titleIcon
+        self.options = options
+        self.titleLabel = titleLabel
+        self.titleDescription = titleDescription
+        self.confirmPurchaseLabel = confirmPurchaseLabel
+        self.optionalDisclaimer = optionalDisclaimer
+        self.purchaseAction = purchaseAction
+        self.closeAction = closeAction
+        self.selected = selected
+    }
+    
     // TODO add options, we also need an api to make diff implementations under the hood.
     let titleIcon: String
     let options: [TipJarOption]

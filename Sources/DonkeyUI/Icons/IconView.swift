@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum IconSize: CGFloat {
+public enum IconSize: CGFloat {
     case tiny = 25,
          micro = 10,
          verySmall = 30,
@@ -24,7 +24,7 @@ public struct IconView: View {
     var size: IconSize = .large
     
     
-    init(image: String, color: Color, size: IconSize = .large) {
+    public init(image: String, color: Color, size: IconSize = .large) {
         self.image = image
         self.color = color
         self.size = size
@@ -62,7 +62,17 @@ public struct IconView: View {
 
 struct IconView_Previews: PreviewProvider {
     static var previews: some View {
-        IconView(image: "xmark", color: .pink, size: .small)
+        HStack {
+            IconView(image: "xmark", color: .pink, size: .micro)
+            IconView(image: "xmark", color: .pink, size: .verySmall)
+            IconView(image: "xmark", color: .pink, size: .small)
+            IconView(image: "xmark", color: .pink, size: .medium)
+            IconView(image: "xmark", color: .pink, size: .large)
+            IconView(image: "xmark", color: .pink, size: .veryLarge)
+
+
+
+        }
     }
 }
 
