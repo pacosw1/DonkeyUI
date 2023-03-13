@@ -61,14 +61,17 @@ public struct ButtonView: View {
         Button {
             action()
         } label: {
-            if isLoading {
+            ZStack {
                 SpinnerLoadingView()
-            } else {
+                    .opacity(isLoading ? 1 : 0)
+                
                 Text(label)
                     .font(font)
                     .fontWeight(fontWeight)
                     .foregroundColor(labelColor)
+                    .opacity(isLoading ? 0 : 1)
             }
+            
         }
         .padding(.horizontal, padding * 10)
         .padding(.vertical, padding * 5)
@@ -85,6 +88,8 @@ struct ButtonView_Previews: PreviewProvider {
             ButtonView(label: "Start", color: .pink, buttonTyoe: .filled, action: {}, fullWidth: false, disabled: true)
             ButtonView(label: "Start", color: .blue, buttonTyoe: .bordered, action: {}, fullWidth: false)
             ButtonView(label: "Start", color: .purple, buttonTyoe: .text, action: {}, fullWidth: false, disabled: true)
+            ButtonView(label: "Start", color: .purple, buttonTyoe: .text, action: {}, fullWidth: false, disabled: true, isLoading: true)
+
 
         }
     }

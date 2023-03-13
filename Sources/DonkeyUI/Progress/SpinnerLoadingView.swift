@@ -11,6 +11,8 @@ import SwiftUI
 
 
 struct SpinnerLoadingView: View {
+    var color: Color = .accentColor
+    var disabled: Bool = false
     @State private var isAnimating = false
     
     var body: some View {
@@ -23,7 +25,7 @@ struct SpinnerLoadingView: View {
             Circle()
                 .trim(from: 0, to: 0.4)
                 .stroke(style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-                .foregroundColor(.blue)
+                .foregroundColor(color.opacity(disabled ? 0.5 : 1))
                 .rotationEffect(Angle(degrees: isAnimating ? 360 : 0))
                 .animation(.linear(duration: 0.8).repeatForever(autoreverses: false), value: isAnimating)
         }
@@ -36,7 +38,11 @@ struct SpinnerLoadingView: View {
 
 struct SpinnerLoadingView_Previews: PreviewProvider {
     static var previews: some View {
-        SpinnerLoadingView()
+        HStack {
+            SpinnerLoadingView()
+            SpinnerLoadingView(color: .purple, disabled: false)
+        }
+
     }
 }
 

@@ -87,6 +87,10 @@ public struct PaywallView: View {
                 }
                 .opacity(loading ? 1 : 0)
             }
+            .overlay {
+                Color.black.opacity(purchaseHandler.loadingPurchaseScreen ? 0.3 : 0)
+                    .ignoresSafeArea()
+            }
             
         .task {
 //            Purchases.configure(withAPIKey: "")
@@ -97,13 +101,13 @@ public struct PaywallView: View {
                         progress = 0.2
                     }
                 }
-                
+
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     withAnimation {
                         progress = 0.6
                     }
                 }
-                
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                     progress = 0.89
                 }
