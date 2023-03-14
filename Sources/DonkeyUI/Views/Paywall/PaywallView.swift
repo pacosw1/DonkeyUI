@@ -52,8 +52,8 @@ public struct PaywallView: View {
     public var body: some View {
             
             VStack {
+                
                 PaywallHeaderView(closeAction: closeAction)
-                .errorToast(presented: $purchaseHandler.showErrorMessage)
 
 
                 Divider()
@@ -134,6 +134,8 @@ public struct PaywallView: View {
             }
             loading = false
         }
+            .errorToast(presented: $purchaseHandler.showErrorMessage)
+
     }
 }
 
