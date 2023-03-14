@@ -91,6 +91,7 @@ public struct PaywallView: View {
                 Color.black.opacity(purchaseHandler.loadingPurchaseScreen ? 0.3 : 0)
                     .ignoresSafeArea()
             }
+            .errorToast(presented: $purchaseHandler.showErrorMessage)
             
         .task {
 //            Purchases.configure(withAPIKey: "")
