@@ -62,6 +62,8 @@ public struct PaywallView: View {
                 Spacer()
                 PaywallPolicyView(restorePurchasesAction: purchaseHandler.restorePurchases)
             }
+            .errorToast(presented: $purchaseHandler.showErrorMessage)
+
             .overlay {
                 ZStack {
                     Color(UIColor.systemBackground)
@@ -91,7 +93,6 @@ public struct PaywallView: View {
                 Color.black.opacity(purchaseHandler.loadingPurchaseScreen ? 0.3 : 0)
                     .ignoresSafeArea()
             }
-            .errorToast(presented: $purchaseHandler.showErrorMessage)
             
         .task {
 //            Purchases.configure(withAPIKey: "")
