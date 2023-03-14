@@ -10,12 +10,12 @@ import SwiftUI
 public struct ProgressBarView: View {
     var width: CGFloat = 100.0
     var fullWidth: Bool = false
-    @Binding var progress: CGFloat
+    var progress: CGFloat
     
-    public init(width: CGFloat = 100.0, fullWidth: Bool = false, progress: Binding<CGFloat>) {
+    public init(width: CGFloat = 100.0, fullWidth: Bool = false, progress: CGFloat) {
         self.width = width
         self.fullWidth = fullWidth
-        _progress = progress
+        self.progress = progress
     }
     
     func getWidth(proxy: GeometryProxy) -> CGFloat {
@@ -51,7 +51,7 @@ public struct ProgressBarView: View {
 struct ProgressBarView_Previews: PreviewProvider {
     static var previews: some View {
         HStack {
-            ProgressBarView(width: 100,  progress: .constant(0.3))
+            ProgressBarView(width: 100,  progress: 0.5)
                 .padding()
             
         }

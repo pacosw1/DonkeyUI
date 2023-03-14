@@ -84,7 +84,7 @@ public struct PaywallView: View {
                         HStack {
                             Spacer()
 //                            SpinnerLoadingView()
-                            ProgressBarView(fullWidth: true, progress: $progress)
+                            ProgressBarView(fullWidth: true, progress: progress)
                                 .padding(.horizontal, 50)
                                 .padding(.bottom, 50)
                             Spacer()
