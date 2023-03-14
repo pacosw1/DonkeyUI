@@ -37,7 +37,7 @@ public struct ErrorModifier: ViewModifier {
                     .type(.floater())
                     .position(.top)
                     .animation(.spring())
-                    .closeOnTapOutside(true)
+                    .closeOnTapOutside(false)
                     .autohideIn(3)
             }
     }

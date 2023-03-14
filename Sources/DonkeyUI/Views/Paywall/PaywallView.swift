@@ -53,6 +53,9 @@ public struct PaywallView: View {
             
             VStack {
                 PaywallHeaderView(closeAction: closeAction)
+                .errorToast(presented: $purchaseHandler.showErrorMessage)
+
+
                 Divider()
                 PaywallFeatureSectionView(views: views)
                 PaywallPlanSectionView(plans: purchaseHandler.plans, selectedPlan: $selectedPlan)
@@ -62,8 +65,10 @@ public struct PaywallView: View {
                 Spacer()
                 PaywallPolicyView(restorePurchasesAction: purchaseHandler.restorePurchases)
             }
-            .errorToast(presented: $purchaseHandler.showErrorMessage)
-
+        
+            .onTapGesture {
+                purchaseHandler.showErrorMessage = true
+            }
             .overlay {
                 ZStack {
                     Color(UIColor.systemBackground)
@@ -93,8 +98,7 @@ public struct PaywallView: View {
                 Color.black.opacity(purchaseHandler.loadingPurchaseScreen ? 0.3 : 0)
                     .ignoresSafeArea()
             }
-            
-        .task {
+            .task {
 //            Purchases.configure(withAPIKey: "")
             loading = true
                 
