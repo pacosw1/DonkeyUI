@@ -6,6 +6,8 @@ class PurchaseHandler: ObservableObject {
     @Published var plans: [PaywallPlan] = []
     @Published var packageMap = [String: Package]()
     @Published var loadingPurchaseScreen: Bool = false
+    @Published var showErrorMessage: Bool = false
+    @Published var errorMessage: String = "Connection Error"
     let entitlementId: String
     
     init(entitlementId: String) {
@@ -26,6 +28,11 @@ class PurchaseHandler: ObservableObject {
     }
     
     
+    private func handleError(error: PublicError?) {
+        self.errorMessage = error?.localizedDescription ?? self.errorMessage
+        self.showErrorMessage = true
+    }
+    
     private func getBillingPeriod(packageType: PackageType) -> String {
         switch packageType {
         case .lifetime:
@@ -44,6 +51,9 @@ class PurchaseHandler: ObservableObject {
         self.loadingPurchaseScreen = true
         Purchases.shared.restorePurchases { customerInfo, error in
         
+            if (error != nil) {
+                self.handleError(error: error)
+            }
             //TODO check if restored, show success message.
             //TODO check if not restored, show no purchases message
             //TODO handle errors
@@ -62,6 +72,7 @@ class PurchaseHandler: ObservableObject {
             } else {
                 // Handle error gracefully
                 errorAction(error, userCancelled)
+                self.handleError(error: error)
                 self.loadingPurchaseScreen = false
             }
             

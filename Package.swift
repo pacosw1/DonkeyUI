@@ -18,6 +18,7 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
 //        .package(url: "https://github.com/maustinstar/liquid.git", from: "0.0.1"),
+        .package(url: "https://github.com/exyte/PopupView.git", .upToNextMajor(from: "2.1.1")),
         .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0")),
         .package(url: "https://github.com/RevenueCat/purchases-ios.git", .upToNextMajor(from: "4.0.0"))
         
@@ -30,7 +31,8 @@ let package = Package(
             name: "DonkeyUI",
             dependencies: [
                 .product(name: "WrappingHStack", package: "WrappingHStack"),
-                .product(name: "RevenueCat", package: "purchases-ios")
+                .product(name: "RevenueCat", package: "purchases-ios"),
+                .product(name: "PopupView", package: "PopupView")
             ]),
         .testTarget(
             name: "DonkeyUITests",
