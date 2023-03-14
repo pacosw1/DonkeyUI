@@ -38,20 +38,24 @@ public struct ProgressBarView: View {
                     Color.clear
                         .bgOverlay(bgColor: .blue.opacity(0.8), radius: 20)
                         .frame(width: progress * getWidth(proxy: proxy), height: 10)
+                        .animation(.spring(), value: progress)
                     
                 }
             }
             .frame(width: getWidth(proxy: proxy), height: 10)
         }
         .frame(height: 10)
+        .task {
+        }
         
     }
+    
 }
 
 struct ProgressBarView_Previews: PreviewProvider {
     static var previews: some View {
         HStack {
-            ProgressBarView(width: 100,  progress: 0.5)
+            ProgressBarView(width: 100,  progress: 0.3)
                 .padding()
             
         }
