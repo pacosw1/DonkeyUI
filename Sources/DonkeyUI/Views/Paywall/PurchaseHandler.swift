@@ -71,8 +71,11 @@ class PurchaseHandler: ObservableObject {
                 self.loadingPurchaseScreen = false
             } else {
                 // Handle error gracefully
-                errorAction(error, userCancelled)
-                self.handleError(error: error)
+                
+                if error != nil {
+                    errorAction(error, userCancelled)
+                    self.handleError(error: error)
+                }
                 self.loadingPurchaseScreen = false
             }
             
