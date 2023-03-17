@@ -34,14 +34,14 @@ struct PaywallActionView: View {
             .padding(.horizontal)
 
             
-            Text("\(billingType == "Recurring Billing" ? "1-week trial - Then" : "") \(selectePrice) / \(billingPeriod) - \(billingType) - Cancel Anytime")
+            Text("\(billingType == "Recurring Billing" ? "1-week trial - Then" : "Instant Purchase -") \(selectePrice) / \(billingPeriod) - \(billingType) - Cancel Anytime")
                 .multilineTextAlignment(.center)
                 .font(.caption)
                 .padding(.bottom, 0)
                 .padding(.top, 0)
                 .foregroundColor(.primary.opacity(0.7))
                 .padding(.horizontal)
-                .frame(minHeight: 30)
+//                .frame(minHeight: 30)
         }
     }
 }
