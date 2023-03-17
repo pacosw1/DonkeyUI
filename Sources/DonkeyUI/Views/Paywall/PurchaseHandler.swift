@@ -2,31 +2,18 @@ import Foundation
 import RevenueCat
 
 class PurchaseHandler: ObservableObject {
-    @Published var offerings: Offerings? = nil
+//    @Published var offerings: Offerings? = nil
     @Published var plans: [PaywallPlan] = []
     @Published var packageMap = [String: Package]()
     @Published var loadingPurchaseScreen: Bool = false
     @Published var showErrorMessage: Bool = false
     @Published var errorMessage: String = "Connection Error"
-    let entitlementId: String
-    
-    init(entitlementId: String) {
-        self.entitlementId = entitlementId
-    }
-    
+
     // Fetch products from RevenueCat API
-    func fetchProducts() async -> Bool {
-        do {
-            self.offerings = UserViewModel.shared.
+    func fetchProducts() -> Bool {
             self.convertOfferingsToUIOptions()
             return true
-        } catch {
-            // TODO
-            print("Error fetching offerings: \(error)")
-            return false
-        }
     }
-    
     
     private func handleError(error: PublicError?) {
         self.errorMessage = error?.localizedDescription ?? self.errorMessage
@@ -65,7 +52,7 @@ class PurchaseHandler: ObservableObject {
     func initiatePurchase(selectedPackageId: String, successAction: @escaping() -> Void, errorAction: @escaping (PublicError?, Bool) -> Void) {
         self.loadingPurchaseScreen = true
         Purchases.shared.purchase(package: self.packageMap[selectedPackageId]!) { (transaction, customerInfo, error, userCancelled) in
-            if customerInfo?.entitlements[self.entitlementId]?.isActive == true {
+            if customerInfo?.entitlements[UserViewModel.shared.etitlementId]?.isActive == true {
                 // Unlock that great "pro" content
                 successAction()
                 self.loadingPurchaseScreen = false
@@ -99,6 +86,8 @@ class PurchaseHandler: ObservableObject {
     
     private func convertOfferingsToUIOptions() {
         var plans: [PaywallPlan] = []
+        
+            let offerings = UserViewModel.shared.offerings
         
             if let packages = offerings?.current?.availablePackages {
                 
