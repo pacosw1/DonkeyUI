@@ -101,6 +101,7 @@ public struct PaywallView: View {
                 }
                 .ignoresSafeArea()
                 .opacity(purchaseHandler.loadingPurchaseScreen ? 1 : 0)
+                .animation(.interactiveSpring(), value: purchaseHandler.loadingPurchaseScreen)
 
             }
             .task {
