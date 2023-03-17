@@ -24,7 +24,7 @@ struct PaywallActionView: View {
                 buttonTyoe: .filled, action: {
                     buyAction()
                 },
-                padding: 3,
+                padding: 4,
                 font: .subheadline,
                 fontWeight: .heavy,
                 fullWidth: true,

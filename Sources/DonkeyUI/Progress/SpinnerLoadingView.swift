@@ -29,7 +29,7 @@ struct SpinnerLoadingView: View {
                 .rotationEffect(Angle(degrees: isAnimating ? 360 : 0))
                 .animation(.linear(duration: 0.8).repeatForever(autoreverses: false), value: isAnimating)
         }
-        .frame(width: 50, height: 50)
+        .frame(width: 25, height: 25)
         .onAppear() {
             self.isAnimating = true
         }

@@ -13,10 +13,6 @@ public class UserViewModel: ObservableObject {
     public static let shared = UserViewModel()
     var etitlementId: String = "premium"
     
-    public func setEntitlementId(id: String) {
-        self.etitlementId = id
-    }
-    
     /* The latest CustomerInfo from RevenueCat. Updated by PurchasesDelegate whenever the Purchases SDK updates the cache */
     @Published public var customerInfo: CustomerInfo? {
         didSet {
@@ -27,6 +23,7 @@ public class UserViewModel: ObservableObject {
     /* Set from the didSet method of customerInfo above, based on the entitlement set in Constants.swift */
     @Published public var subscriptionActive: Bool = false
     
+    @Published var offerings: Offerings? = nil
     /*
      How to login and identify your users with the Purchases SDK.
      

@@ -17,7 +17,7 @@ class PurchaseHandler: ObservableObject {
     // Fetch products from RevenueCat API
     func fetchProducts() async -> Bool {
         do {
-            offerings = try await Purchases.shared.offerings()
+            self.offerings = UserViewModel.shared.
             self.convertOfferingsToUIOptions()
             return true
         } catch {

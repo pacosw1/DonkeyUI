@@ -99,7 +99,7 @@ public struct PaywallView: View {
                     .ignoresSafeArea()
             }
             .task {
-//            Purchases.configure(withAPIKey: "")
+            Purchases.configure(withAPIKey: "")
             loading = true
                 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
