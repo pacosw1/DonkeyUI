@@ -54,13 +54,12 @@ class PurchaseHandler: ObservableObject {
         Purchases.shared.purchase(package: self.packageMap[selectedPackageId]!) { (transaction, customerInfo, error, userCancelled) in
             if customerInfo?.entitlements[UserViewModel.shared.etitlementId]?.isActive == true {
                 // Unlock that great "pro" content
-                successAction()
+                UserViewModel.shared.subscriptionActive = true
                 self.loadingPurchaseScreen = false
             } else {
                 // Handle error gracefully
                 
-                if error != nil {
-                    
+                if error != nil && !userCancelled {
                     errorAction(error, userCancelled)
                     self.handleError(error: error)
                 }
