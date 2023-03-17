@@ -31,10 +31,13 @@ class PurchaseHandler: ObservableObject {
     
     func restorePurchases() {
         self.loadingPurchaseScreen = true
-        Purchases.shared.restorePurchases { customerInfo, error in
+        Purchases.shared.restorePurchases { customerInfo, genericError in
         
-            if (error != nil) {
-                self.handleError(error: error)
+            if let error = genericError as? RevenueCat.ErrorCode {
+                
+                if error != .purchaseCancelledError {
+                    self.handleError(error: genericError)
+                }
             }
             //TODO check if restored, show success message.
             //TODO check if not restored, show no purchases message
