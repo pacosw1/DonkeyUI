@@ -10,12 +10,6 @@ class PurchaseHandler: ObservableObject {
     @Published var errorMessage: String = "Connection Error"
 
     // Fetch products from RevenueCat API
-    func fetchProducts() -> Bool {
-        
-            self.convertOfferingsToUIOptions()
-            return true
-    }
-    
     private func handleError(error: PublicError?) {
         self.errorMessage = error?.localizedDescription ?? self.errorMessage
         self.showErrorMessage = true
@@ -84,9 +78,8 @@ class PurchaseHandler: ObservableObject {
         }
     }
     
-    private func convertOfferingsToUIOptions() async {
+    public func fetchProducts() async -> Bool {
         var plans: [PaywallPlan] = []
-        
         var offerings = UserViewModel.shared.offerings
         
         if offerings == nil {
@@ -94,6 +87,7 @@ class PurchaseHandler: ObservableObject {
                 offerings = try await Purchases.shared.offerings()
             } catch {
                 print(error)
+                return false
             }
         }
         
@@ -119,6 +113,7 @@ class PurchaseHandler: ObservableObject {
         }
         
         self.plans = plans
+        return true
     }
     
     // Login to make purchase
