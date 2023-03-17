@@ -10,16 +10,17 @@ import SwiftUI
 
 /* Static shared model for UserView */
 public class UserViewModel: ObservableObject {
-    private var entitlementId: String
+    static let shared = UserViewModel()
+    var etitlementId: String = "premium"
     
-    public init(entitlementId: String) {
-        self.entitlementId = entitlementId
+    public func setEntitlementId(id: String) {
+        self.etitlementId = id
     }
     
     /* The latest CustomerInfo from RevenueCat. Updated by PurchasesDelegate whenever the Purchases SDK updates the cache */
     @Published public var customerInfo: CustomerInfo? {
         didSet {
-            subscriptionActive = customerInfo?.entitlements["premium"]?.isActive == true
+            subscriptionActive = customerInfo?.entitlements[self.etitlementId]?.isActive == true
         }
     }
     
