@@ -34,7 +34,7 @@ struct PaywallActionView: View {
             .padding(.horizontal)
 
             
-            Text("1-week trial - Then \(selectePrice) / \(billingPeriod) - \(billingType) - Cancel Anytime")
+            Text("\(billingType == "RecurringBilling" ? "1-week trial - Then" : "") - Then \(selectePrice) / \(billingPeriod) - \(billingType) - Cancel Anytime")
             .multilineTextAlignment(.center)
                 .font(.caption)
                 .padding(.bottom, 0)
