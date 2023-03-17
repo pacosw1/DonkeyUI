@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PaywallActionView: View {
-    var selectePrice: String = "$2.99"
+    var selectePrice: String
     var billingType: String
     var billingPeriod: String
     var buyAction: () -> Void
@@ -40,6 +40,7 @@ struct PaywallActionView: View {
                 .padding(.bottom, 0)
                 .foregroundColor(.primary.opacity(0.7))
                 .padding(.horizontal)
+                .frame(minHeight: 50)
         }
     }
 }
