@@ -95,8 +95,13 @@ public struct PaywallView: View {
                 .opacity(loading ? 1 : 0)
             }
             .overlay {
-                Color.black.opacity(purchaseHandler.loadingPurchaseScreen ? 0.3 : 0)
-                    .ignoresSafeArea()
+                ZStack {
+                    Color.black.opacity(0.8)
+                    SpinnerLoadingView()
+                }
+                .ignoresSafeArea()
+                .opacity(purchaseHandler.loadingPurchaseScreen ? 1 : 0)
+
             }
             .task {
 //            Purchases.configure(withAPIKey: "")
