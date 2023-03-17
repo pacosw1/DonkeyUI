@@ -11,9 +11,9 @@ import RevenueCat
  The class we'll use to publish CustomerInfo data to our Magic Weather app.
  */
 
-class PurchasesDelegateHandler: NSObject, ObservableObject {
+public class PurchasesDelegateHandler: NSObject, ObservableObject {
 
-    static let shared = PurchasesDelegateHandler()
+    public static let shared = PurchasesDelegateHandler()
 
 }
 
@@ -26,7 +26,7 @@ extension PurchasesDelegateHandler: PurchasesDelegate {
      This delegate method is only called when the SDK updates its cache after an app launch, purchase, restore, or fetch.
      You still need to call `Purchases.shared.customerInfo` to fetch CustomerInfo regularly.
      */
-    func purchases(_ purchases: Purchases, receivedUpdated customerInfo: CustomerInfo) {
+    public func purchases(_ purchases: Purchases, receivedUpdated customerInfo: CustomerInfo) {
         
         /// - Update our published customerInfo object
         UserViewModel.shared.customerInfo = customerInfo
@@ -36,7 +36,7 @@ extension PurchasesDelegateHandler: PurchasesDelegate {
      - Note: this can be tested by opening a link like:
      itms-services://?action=purchaseIntent&bundleId=<BUNDLE_ID>&productIdentifier=<SKPRODUCT_ID>
      */
-    func purchases(_ purchases: Purchases,
+    public func purchases(_ purchases: Purchases,
                    readyForPromotedProduct product: StoreProduct,
                    purchase startPurchase: @escaping StartPurchaseBlock) {
         startPurchase { (transaction, info, error, cancelled) in
