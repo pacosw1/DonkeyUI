@@ -9,8 +9,8 @@ import SwiftUI
 
 struct PaywallActionView: View {
     var selectePrice: String = "$2.99"
-    var billingType: String = "Recurring Billing"
-    var billingPeriod: String = "Month"
+    var billingType: String
+    var billingPeriod: String
     var buyAction: () -> Void
     var isDisabled: Bool
     var isLoading: Bool
@@ -34,7 +34,7 @@ struct PaywallActionView: View {
             .padding(.horizontal)
 
             
-            Text("\(billingType == "Recurring Billing" ? "1-week trial - Then" : "-") \(selectePrice) / \(billingPeriod) - \(billingType) - Cancel Anytime")
+            Text("\(billingType == "Recurring Billing" ? "1-week trial - Then" : "") \(selectePrice) / \(billingPeriod) - \(billingType) - Cancel Anytime")
             .multilineTextAlignment(.center)
                 .font(.caption)
                 .padding(.bottom, 0)
