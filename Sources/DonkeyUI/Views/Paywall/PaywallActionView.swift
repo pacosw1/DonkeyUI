@@ -35,12 +35,13 @@ struct PaywallActionView: View {
 
             
             Text("\(billingType == "Recurring Billing" ? "1-week trial - Then" : "") \(selectePrice) / \(billingPeriod) - \(billingType) - Cancel Anytime")
-            .multilineTextAlignment(.center)
+                .multilineTextAlignment(.center)
                 .font(.caption)
                 .padding(.bottom, 0)
+                .padding(.top, 0)
                 .foregroundColor(.primary.opacity(0.7))
                 .padding(.horizontal)
-                .frame(minHeight: 50)
+                .frame(minHeight: 30)
         }
     }
 }
