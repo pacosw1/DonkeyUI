@@ -1,6 +1,7 @@
 import Foundation
 import RevenueCat
 
+@MainActor
 class PurchaseHandler: ObservableObject {
 //    @Published var offerings: Offerings? = nil
     @Published var plans: [PaywallPlan] = []
