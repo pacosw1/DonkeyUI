@@ -10,7 +10,7 @@ import SwiftUI
 
 /* Static shared model for UserView */
 public class UserViewModel: ObservableObject {
-    static let shared = UserViewModel()
+    public static let shared = UserViewModel()
     var etitlementId: String = "premium"
     
     public func setEntitlementId(id: String) {
