@@ -35,7 +35,7 @@ class PurchaseHandler: ObservableObject {
         
             if let error = genericError as? RevenueCat.ErrorCode {
                 
-                if error != .purchaseCancelledError {
+                if error != .purchaseCancelledError && error != .missingReceiptFileError {
                     self.handleError(error: genericError)
                 }
             }
