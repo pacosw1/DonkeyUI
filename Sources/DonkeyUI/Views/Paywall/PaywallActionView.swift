@@ -19,7 +19,7 @@ struct PaywallActionView: View {
             
             
             ButtonView(
-                label: "Start Free Trial",
+                label: billingType == "Recurring Billing" ? "Start Free Trial" : "Continue",
                 color: .blue,
                 buttonTyoe: .filled, action: {
                     buyAction()
@@ -34,7 +34,7 @@ struct PaywallActionView: View {
             .padding(.horizontal)
 
             
-            Text("\(billingType == "RecurringBilling" ? "1-week trial - Then" : "") - Then \(selectePrice) / \(billingPeriod) - \(billingType) - Cancel Anytime")
+            Text("\(billingType == "Recurring Billing" ? "1-week trial - Then" : "-") \(selectePrice) / \(billingPeriod) - \(billingType) - Cancel Anytime")
             .multilineTextAlignment(.center)
                 .font(.caption)
                 .padding(.bottom, 0)
