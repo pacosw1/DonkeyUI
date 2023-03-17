@@ -23,7 +23,7 @@ public class UserViewModel: ObservableObject {
     /* Set from the didSet method of customerInfo above, based on the entitlement set in Constants.swift */
     @Published public var subscriptionActive: Bool = false
     
-    @Published var offerings: Offerings? = nil
+    @Published public var offerings: Offerings? = nil
     /*
      How to login and identify your users with the Purchases SDK.
      
