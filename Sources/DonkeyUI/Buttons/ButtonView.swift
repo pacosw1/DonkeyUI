@@ -125,13 +125,15 @@ public struct ButtonView: View {
 struct ButtonView_Previews: PreviewProvider {
     static var previews: some View {
         HStack {
-            ButtonView(label: "Start", color: .pink, buttonTyoe: .filled, action: {}, padding: 3, fullWidth: false, disabled: true)
-            ButtonView(label: "Start", color: .purple, buttonTyoe: .filled, action: {}, fullWidth: false, disabled: false)
-            ButtonView(label: "Start", color: .purple, buttonTyoe: .filled, action: {}, fullWidth: false, disabled: false, isLoading: true)
-            ButtonView(label: "Start", color: .purple, buttonTyoe: .filled, action: {}, fullWidth: false, disabled: true, isLoading: false)
+            
+//
+//            ButtonView(label: "Start", color: .pink, buttonTyoe: .filled, action: {}, padding: 3, fullWidth: false, disabled: true)
+            ButtonView(label: "Start", color: .blue, buttonTyoe: .filled, action: {}, fullWidth: false, disabled: false)
+            ButtonView(label: "Start", color: .blue, buttonTyoe: .filled, action: {}, fullWidth: false, disabled: false, isLoading: true)
+//            ButtonView(label: "Start", color: .purple, buttonTyoe: .filled, action: {}, fullWidth: false, disabled: true, isLoading: false)
 
 
         }
-        .preferredColorScheme(.dark)
+//        .preferredColorScheme(.dark)
     }
 }

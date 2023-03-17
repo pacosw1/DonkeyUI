@@ -73,12 +73,27 @@ class PurchaseHandler: ObservableObject {
                 // Handle error gracefully
                 
                 if error != nil {
+                    
                     errorAction(error, userCancelled)
                     self.handleError(error: error)
                 }
                 self.loadingPurchaseScreen = false
             }
             
+        }
+    }
+    
+    // Todo implement this and reflect it with an icon in error toast
+    private func handlePurchaseError(code: RevenueCat.ErrorCode) {
+        switch code {
+        case .networkError:
+            break
+        case .storeProblemError:
+            break
+        case .offlineConnectionError:
+            break
+        default:
+            break
         }
     }
     

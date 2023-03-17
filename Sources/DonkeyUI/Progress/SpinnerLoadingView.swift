@@ -29,7 +29,7 @@ struct SpinnerLoadingView: View {
                 .rotationEffect(Angle(degrees: isAnimating ? 360 : 0))
                 .animation(.linear(duration: 0.8).repeatForever(autoreverses: false), value: isAnimating)
         }
-        .frame(width: 25, height: 25)
+        .frame(width: 50, height: 50)
         .onAppear() {
             self.isAnimating = true
         }
@@ -38,9 +38,12 @@ struct SpinnerLoadingView: View {
 
 struct SpinnerLoadingView_Previews: PreviewProvider {
     static var previews: some View {
-        HStack {
+        HStack(spacing: 30) {
             SpinnerLoadingView()
-//            SpinnerLoadingView(color: .purple, disabled: false)
+            SpinnerLoadingView(color: .pink)
+            SpinnerLoadingView(color: .orange)
+            SpinnerLoadingView(color: .green)
+
         }
 
     }
