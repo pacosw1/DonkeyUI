@@ -11,6 +11,7 @@ class PurchaseHandler: ObservableObject {
 
     // Fetch products from RevenueCat API
     func fetchProducts() -> Bool {
+        
             self.convertOfferingsToUIOptions()
             return true
     }
@@ -83,31 +84,39 @@ class PurchaseHandler: ObservableObject {
         }
     }
     
-    private func convertOfferingsToUIOptions() {
+    private func convertOfferingsToUIOptions() async {
         var plans: [PaywallPlan] = []
         
-            let offerings = UserViewModel.shared.offerings
+        var offerings = UserViewModel.shared.offerings
         
-            if let packages = offerings?.current?.availablePackages {
-                
-                var index = 0
-                    // Map items to paywall UI
-                for package in packages {
-                    // Map cause we need this for api call later
-                    self.packageMap[package.id] = package
-                    let plan = PaywallPlan(
-                        id: package.id,
-                        title: package.storeProduct.localizedTitle,
-                        subText: package.storeProduct.localizedDescription,
-                        price: package.localizedPriceString,
-                        billingType: package.packageType == .lifetime ? "One Time Purchase" : "Recurring Billing",
-                        billingPeriod: getBillingPeriod(packageType: package.packageType),
-                        index: index
-                    )
-                    plans.append(plan)
-                    index += 1
-                }
+        if offerings == nil {
+            do {
+                offerings = try await Purchases.shared.offerings()
+            } catch {
+                print(error)
             }
+        }
+        
+        if let packages = offerings?.current?.availablePackages {
+            
+            var index = 0
+                // Map items to paywall UI
+            for package in packages {
+                // Map cause we need this for api call later
+                self.packageMap[package.id] = package
+                let plan = PaywallPlan(
+                    id: package.id,
+                    title: package.storeProduct.localizedTitle,
+                    subText: package.storeProduct.localizedDescription,
+                    price: package.localizedPriceString,
+                    billingType: package.packageType == .lifetime ? "One Time Purchase" : "Recurring Billing",
+                    billingPeriod: getBillingPeriod(packageType: package.packageType),
+                    index: index
+                )
+                plans.append(plan)
+                index += 1
+            }
+        }
         
         self.plans = plans
     }
