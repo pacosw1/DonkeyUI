@@ -12,7 +12,7 @@ import SwiftUI
 public class UserViewModel: ObservableObject {
     @AppStorage("firstAppOpen") var firstAppOpen = true
     public static let shared = UserViewModel()
-    var etitlementId: String = "premium"
+    var etitlementId: String = "Premium"
     
     /* The latest CustomerInfo from RevenueCat. Updated by PurchasesDelegate whenever the Purchases SDK updates the cache */
     @Published public var customerInfo: CustomerInfo? {
@@ -23,6 +23,11 @@ public class UserViewModel: ObservableObject {
             print(customerInfo?.entitlements.active ?? "null")
         }
     }
+    
+    public func setProEntitlementId(id: String) {
+        self.etitlementId = id
+    }
+    
     
     @Published public var paywallOn = false
     
