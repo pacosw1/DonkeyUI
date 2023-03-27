@@ -10,6 +10,7 @@ import SwiftUI
 
 /* Static shared model for UserView */
 public class UserViewModel: ObservableObject {
+    @AppStorage("firstAppOpen") var firstAppOpen = true
     public static let shared = UserViewModel()
     var etitlementId: String = "premium"
     
@@ -27,6 +28,14 @@ public class UserViewModel: ObservableObject {
             action()
         } else {
             paywallOn = true
+        }
+    }
+    
+    
+    public func firstAppOpenPaywall() {
+        if firstAppOpen {
+            self.paywallOn = true
+            firstAppOpen = false
         }
     }
     
