@@ -7,13 +7,22 @@
 import SwiftUI
 import RevenueCat
 
-struct PaywallModifier: ViewModifier {
+public struct PaywallModifier: ViewModifier {
+    
+    public init(user: UserViewModel = UserViewModel.shared, views: [IdentifiableView], successAction: @escaping () -> Void, errorAction: @escaping (PublicError?, Bool) -> Void) {
+        self.user = user
+        self.views = views
+        self.successAction = successAction
+        self.errorAction = errorAction
+    }
+    
     @ObservedObject var user = UserViewModel.shared
     var views: [IdentifiableView]
     var successAction: () -> Void
     var errorAction: (PublicError?, Bool) -> Void
     
-    func body(content: Content) -> some View {
+    
+    public func body(content: Content) -> some View {
         content
             .fullScreenCover(isPresented: $user.paywallOn) {
                 PaywallView(views: views, successAction: successAction, errorAction: errorAction, proEntitlementId: UserViewModel.shared.etitlementId)
@@ -21,7 +30,7 @@ struct PaywallModifier: ViewModifier {
       }
 }
 
-extension View {
+public extension View {
     func paywall(views: [IdentifiableView] = [], successAction: @escaping () -> Void, errorAction:  @escaping (PublicError?, Bool) -> Void) -> some View {
         modifier(PaywallModifier(views: views, successAction: successAction, errorAction: errorAction))
     }
