@@ -20,6 +20,7 @@ public class UserViewModel: ObservableObject {
             subscriptionActive = customerInfo?.entitlements[self.etitlementId]?.isActive == true
             print("Subscription active?")
             print(subscriptionActive)
+            print(customerInfo?.entitlements.active ?? "null")
         }
     }
     
