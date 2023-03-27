@@ -9,6 +9,7 @@ import SwiftUI
 
 struct PaywallHeaderView: View {
     var closeAction: () -> Void
+    var isSheet: Bool
     var body: some View {
         HStack(alignment: .center) {
             VStack(alignment: .center) {
@@ -30,15 +31,18 @@ struct PaywallHeaderView: View {
                 .padding(.top, 5)
             }
             Spacer()
-            Button {
-                closeAction()
-            } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(.gray.opacity(0.5))
-                    .font(.title2)
+            if !isSheet {
+                Button {
+                    closeAction()
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.gray.opacity(0.5))
+                        .font(.title2)
+                }
             }
         }
         .padding(.horizontal)
+        .padding(.top, isSheet ? 10 : 0)
         .padding(.bottom, 10)
     }
 }

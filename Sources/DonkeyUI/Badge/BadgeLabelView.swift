@@ -30,6 +30,6 @@ public struct BadgeLabelView: View {
 
 struct BadgeLabelView_Previews: PreviewProvider {
     static var previews: some View {
-        BadgeLabelView(count: 100)
+        BadgeLabelView(count: 20)
     }
 }

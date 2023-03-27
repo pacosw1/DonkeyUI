@@ -35,6 +35,7 @@ public struct PaywallView: View {
     var closeAction: () -> Void = {}
     var successAction: () -> Void = {}
     var errorAction: (PublicError?, Bool) -> Void = {_, _ in}
+    var isSheet: Bool
     
     @ObservedObject var purchaseHandler: PurchaseHandler
     
@@ -42,18 +43,19 @@ public struct PaywallView: View {
     @State var selectedPlan: PaywallPlan?
     @State var progress: CGFloat = 0
   
-    public init(plans: [PaywallPlan] = [], views: [IdentifiableView] = [], successAction: @escaping () -> Void, errorAction: (PublicError?, Bool) -> Void, closeAction: @escaping () -> Void = {}, proEntitlementId: String) {
+    public init(plans: [PaywallPlan] = [], views: [IdentifiableView] = [], successAction: @escaping () -> Void, errorAction: (PublicError?, Bool) -> Void, closeAction: @escaping () -> Void = {}, proEntitlementId: String, isSheet: Bool = false) {
         self.views = views
         self.closeAction = closeAction
         self.selectedPlan = nil
         self.purchaseHandler = PurchaseHandler()
+        self.isSheet = isSheet
     }
     
     public var body: some View {
             
             VStack {
                 
-                PaywallHeaderView(closeAction: closeAction)
+                PaywallHeaderView(closeAction: closeAction, isSheet: isSheet)
 
 
                 Divider()
@@ -74,12 +76,14 @@ public struct PaywallView: View {
                     Color(UIColor.systemBackground)
                         .ignoresSafeArea()
                     VStack {
-                        HStack {
-                            Spacer()
-                            CloseButton(action: {closeAction()})
+                        if !isSheet {
+                            HStack {
+                                Spacer()
+                                CloseButton(action: {closeAction()})
+                            }
+                            .padding(.trailing)
+                            .padding(.top)
                         }
-                        .padding(.trailing)
-                        .padding(.top)
                         Spacer()
                         HStack {
                             Spacer()
@@ -157,7 +161,7 @@ struct PaywallView_Previews: PreviewProvider {
             .init(view: AnyView(ListsPromotionView()), maxWidth: 300),
             .init(view: AnyView(TagsPromotionView())),
             .init(view: AnyView(IndieDevPromotion()), maxWidth: 400)
-        ], successAction: {}, errorAction: {_,_ in}, proEntitlementId: "Premium")
+        ], successAction: {}, errorAction: {_,_ in}, proEntitlementId: "Premium", isSheet: true)
         .preferredColorScheme(.dark)
     }
 }

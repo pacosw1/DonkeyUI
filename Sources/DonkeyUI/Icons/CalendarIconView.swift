@@ -49,6 +49,6 @@ public struct CalendarIconView: View {
 
 struct CalendarItemView_Previews: PreviewProvider {
     static var previews: some View {
-        CalendarIconView(date: Date.now)
+        CalendarIconView(date: Date.distantPast)
     }
 }
