@@ -20,6 +20,16 @@ public class UserViewModel: ObservableObject {
         }
     }
     
+    @Published public var paywallOn = false
+    
+    public func premiumCheck(action: @escaping () -> Void) {
+        if subscriptionActive {
+            action()
+        } else {
+            paywallOn = true
+        }
+    }
+    
     /* Set from the didSet method of customerInfo above, based on the entitlement set in Constants.swift */
     @Published public var subscriptionActive: Bool = false
     

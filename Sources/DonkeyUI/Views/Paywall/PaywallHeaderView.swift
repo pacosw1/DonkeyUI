@@ -34,6 +34,7 @@ struct PaywallHeaderView: View {
             if !isSheet {
                 Button {
                     closeAction()
+                    UserViewModel.shared.paywallOn = false
                 } label: {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundColor(.gray.opacity(0.5))
