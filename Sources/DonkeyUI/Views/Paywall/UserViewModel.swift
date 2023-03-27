@@ -18,6 +18,8 @@ public class UserViewModel: ObservableObject {
     @Published public var customerInfo: CustomerInfo? {
         didSet {
             subscriptionActive = customerInfo?.entitlements[self.etitlementId]?.isActive == true
+            print("Subscription active?")
+            print(subscriptionActive)
         }
     }
     
