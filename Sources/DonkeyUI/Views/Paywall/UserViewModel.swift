@@ -17,6 +17,7 @@ public enum PaywallDataState {
 /* Static shared model for UserView */
 public class UserViewModel: ObservableObject {
     @AppStorage("firstAppOpen") var firstAppOpen = true
+    
     public static let shared = UserViewModel()
     var etitlementId: String = "Premium"
     
@@ -94,12 +95,42 @@ public class UserViewModel: ObservableObject {
     }
     
     
-    public func firstAppOpenPaywall() {
+    public func initializeAppChecks() async {
+        // Initialize last known subscription state
+        let isSubscribed = UserDefaults.standard.bool(forKey: "isSubscribed")
+        self.subscriptionActive = isSubscribed
+        
+        // Check subscription end date to make sure this is correct.
+//        let isSubscribed = UserDefaults.standard.integer(forKey: "subscription")
+        if isSubscribed {
+            if let expirationTimestamp = UserDefaults.standard.object(forKey: "subscriptionExpirationDate") as? TimeInterval {
+                let expirationDate = Date(timeIntervalSince1970: expirationTimestamp)
+                // Use expirationDate as needed
+                if Date.now >= expirationDate {
+                    
+                    do {
+                        self.customerInfo = try await Purchases.shared.syncPurchases()
+                        let stillSubscribed = self.customerInfo?.entitlements[self.etitlementId]?.isActive == true
+                        if stillSubscribed {
+                            if let newExpiration = self.customerInfo?.expirationDate(forEntitlement: self.etitlementId) {
+                                UserDefaults.standard.set(newExpiration.timeIntervalSince1970, forKey: "subscriptionExpirationDate")
+                            }
+                        } else {
+                            self.subscriptionActive = false
+                        }
+                        
+                    } catch {
+                        // do nothing
+                    }
+                }
+            }
+        }
+        self.offerings = try? await Purchases.shared.offerings()
+        
         if firstAppOpen {
             if offerings != nil {
                 paywallOn = true
                 firstAppOpen = false
-
             }
         }
     }
