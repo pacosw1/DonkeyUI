@@ -38,10 +38,17 @@ class PurchaseHandler: ObservableObject {
                     self.handleError(error: genericError)
                 }
             }
-            //TODO check if restored, show success message.
-            //TODO check if not restored, show no purchases message
-            //TODO handle errors
-            //... check customerInfo to see if entitlement is now active
+            
+            if customerInfo?.entitlements[UserViewModel.shared.etitlementId]?.isActive == true {
+                // Unlock that great "pro" content
+                UserViewModel.shared.subscriptionActive = true
+                UserDefaults.standard.set(true, forKey: "isSubscribed")
+
+                guard let expirationDate = customerInfo?.expirationDate(forEntitlement: UserViewModel.shared.etitlementId) else {
+                    return
+                }
+                UserDefaults.standard.set(expirationDate.timeIntervalSince1970, forKey: "subscriptionExpirationDate")
+            }
             
             self.loadingPurchaseScreen = false
         }
@@ -57,25 +64,19 @@ class PurchaseHandler: ObservableObject {
         }
         
         Purchases.shared.purchase(package: concretePackage) { (transaction, customerInfo, error, userCancelled) in
+            self.loadingPurchaseScreen = false
+
             if customerInfo?.entitlements[UserViewModel.shared.etitlementId]?.isActive == true {
                 // Unlock that great "pro" content
-                self.loadingPurchaseScreen = false
-
-                UserViewModel.shared.subscriptionActive = true
-                
-                
-                if customerInfo?.entitlements[UserViewModel.shared.etitlementId]?.isActive == true {
                     // Unlock that great "pro" content
                     UserViewModel.shared.subscriptionActive = true
+                    UserDefaults.standard.set(true, forKey: "isSubscribed")
                     guard let expirationDate = customerInfo?.expirationDate(forEntitlement: UserViewModel.shared.etitlementId) else {
                         return
                     }
                     UserDefaults.standard.set(expirationDate.timeIntervalSince1970, forKey: "subscriptionExpirationDate")
                 }
-                
-            } else {
-                self.loadingPurchaseScreen = false
-                
+            else {
                 if error != nil && !userCancelled {
                     errorAction(error, userCancelled)
                     self.handlePurchaseError(code: error as? RevenueCat.ErrorCode ?? .networkError)

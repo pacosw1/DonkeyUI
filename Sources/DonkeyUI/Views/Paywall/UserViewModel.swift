@@ -33,6 +33,8 @@ public class UserViewModel: ObservableObject {
     @Published public var customerInfo: CustomerInfo? {
         didSet {
             subscriptionActive = customerInfo?.entitlements[self.etitlementId]?.isActive == true
+            UserDefaults.standard.set(subscriptionActive, forKey: "isSubscribed")
+
             print("Subscription active?")
             print(subscriptionActive)
             print(customerInfo?.entitlements.active ?? "null")
@@ -118,6 +120,8 @@ public class UserViewModel: ObservableObject {
                         } else {
                             DispatchQueue.main.async {
                                 self.subscriptionActive = false
+                                UserDefaults.standard.set(false, forKey: "isSubscribed")
+
                             }
                         }
                     } catch {
