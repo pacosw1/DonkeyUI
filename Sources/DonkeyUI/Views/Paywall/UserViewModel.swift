@@ -23,6 +23,7 @@ public class UserViewModel: ObservableObject {
     
     @Published public var isLoading: Bool = true
     @Published public var showNetworkError = false
+    @Published private var packageMap = [String: Package]()
     
     /* The latest CustomerInfo from RevenueCat. Updated by PurchasesDelegate whenever the Purchases SDK updates the cache */
     @Published public var customerInfo: CustomerInfo? {
@@ -80,6 +81,14 @@ public class UserViewModel: ObservableObject {
         } else {
             self.openPaywall()
         }
+    }
+    
+    public func getOfferings() async {
+        offerings = try? await Purchases.shared.offerings()
+    }
+    
+    public func getPackage(packageId: String) -> Package? {
+        return offerings?.current?.package(identifier: packageId)
     }
     
     

@@ -113,12 +113,10 @@ class PurchaseHandler: ObservableObject {
         }
         
         if let packages = offerings?.current?.availablePackages {
-            
             var index = 0
                 // Map items to paywall UI
             for package in packages {
                 // Map cause we need this for api call later
-                self.packageMap[package.id] = package
                 let plan = PaywallPlan(
                     id: package.id,
                     title: package.storeProduct.localizedTitle,
