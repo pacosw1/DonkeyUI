@@ -82,16 +82,28 @@ class PurchaseHandler: ObservableObject {
     
     // Todo implement this and reflect it with an icon in error toast
     private func handlePurchaseError(code: RevenueCat.ErrorCode) {
+        //Todo switch icons
         switch code {
         case .networkError:
+            self.errorMessage = "Connection Error"
             break
         case .storeProblemError:
+            self.errorMessage = "Error connecting to Appstore"
             break
         case .offlineConnectionError:
+            self.errorMessage = "You are offline"
             break
+        case .logOutAnonymousUserError:
+            self.errorMessage = "AppleID not setup"
+            break;
+        case .invalidAppUserIdError:
+            self.errorMessage = "Not logged in with AppleID"
         default:
+            self.errorMessage = "Unkown Error"
             break
         }
+        
+        self.showErrorMessage = true
     }
     
     public func fetchProducts() async -> [PaywallPlan] {
