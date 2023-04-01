@@ -47,9 +47,19 @@ class PurchaseHandler: ObservableObject {
         }
     }
     
-    func initiatePurchase(selectedPackageId: String, successAction: @escaping() -> Void, errorAction: @escaping (PublicError?, Bool) -> Void) {
+    func initiatePurchase(selectedPackageId: String?, successAction: @escaping() -> Void, errorAction: @escaping (PublicError?, Bool) -> Void) {
         self.loadingPurchaseScreen = true
-        Purchases.shared.purchase(package: self.packageMap[selectedPackageId]!) { (transaction, customerInfo, error, userCancelled) in
+        if selectedPackageId == nil {
+            showErrorMessage = true
+            return
+        }
+        
+        if selectedPackageId != nil && self.packageMap[selectedPackageId!] == nil {
+            showErrorMessage = true
+            return
+        }
+        
+        Purchases.shared.purchase(package: self.packageMap[selectedPackageId!]!) { (transaction, customerInfo, error, userCancelled) in
             if customerInfo?.entitlements[UserViewModel.shared.etitlementId]?.isActive == true {
                 // Unlock that great "pro" content
                 UserViewModel.shared.subscriptionActive = true
