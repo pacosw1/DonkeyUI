@@ -77,7 +77,7 @@ public class UserViewModel: ObservableObject {
     }
     
     public func premiumCheck(action: () -> Void) {
-        if subscriptionActive == true {
+        if self.subscriptionActive == true {
             print("Subscription is active")
             action()
         } else {
