@@ -57,8 +57,9 @@ public class UserViewModel: ObservableObject {
         if offerings == nil {
             // show error
             self.showNetworkError = true
+            return
         }
-        self.openPaywall()
+        self.paywallOn = true
     }
     
     
