@@ -4,7 +4,6 @@ import RevenueCat
 @MainActor
 class PurchaseHandler: ObservableObject {
 //    @Published var offerings: Offerings? = nil
-    @Published var packageMap = [String: Package]()
     @Published var loadingPurchaseScreen: Bool = false
     @Published var showErrorMessage: Bool = false
     @Published var errorMessage: String = "Connection Error"
@@ -47,26 +46,16 @@ class PurchaseHandler: ObservableObject {
         }
     }
     
-    func initiatePurchase(selectedPackageId: String?, successAction: @escaping() -> Void, errorAction: @escaping (PublicError?, Bool) -> Void) {
-        self.loadingPurchaseScreen = true
-        if selectedPackageId == nil {
-            errorMessage = "selected package id is null"
-            showErrorMessage = true
+    func initiatePurchase(package: Package?, successAction: @escaping() -> Void, errorAction: @escaping (PublicError?, Bool) -> Void) {
+        
+        guard let concretePackage = package else {
+            errorMessage = "Unknown Error"
             self.loadingPurchaseScreen = false
-
+            self.showErrorMessage = true
             return
         }
         
-        print("Selected Package id \(String(describing: selectedPackageId)) of available packages \(self.packageMap.keys)")
-        
-        if selectedPackageId != nil && self.packageMap[selectedPackageId!] == nil {
-            errorMessage = "can't find packagedID \(selectedPackageId ?? "null") in packageMap \(packageMap.keys)"
-            showErrorMessage = true
-            self.loadingPurchaseScreen = false
-            return
-        }
-        
-        Purchases.shared.purchase(package: self.packageMap[selectedPackageId!]!) { (transaction, customerInfo, error, userCancelled) in
+        Purchases.shared.purchase(package: concretePackage) { (transaction, customerInfo, error, userCancelled) in
             if customerInfo?.entitlements[UserViewModel.shared.etitlementId]?.isActive == true {
                 // Unlock that great "pro" content
                 UserViewModel.shared.subscriptionActive = true

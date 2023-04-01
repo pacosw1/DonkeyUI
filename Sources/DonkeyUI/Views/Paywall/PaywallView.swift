@@ -43,6 +43,8 @@ public struct PaywallView: View {
     @State var selectedPlan: PaywallPlan?
     @State var progress: CGFloat = 0
     @State var plans: [PaywallPlan] = []
+    @State var packageMap = [String: Package]()
+
 
     public init(views: [IdentifiableView] = [], successAction: @escaping () -> Void, errorAction: (PublicError?, Bool) -> Void, closeAction: @escaping () -> Void = {}, proEntitlementId: String, isSheet: Bool = false) {
         self.views = views
@@ -50,6 +52,11 @@ public struct PaywallView: View {
         self.selectedPlan = nil
         self.purchaseHandler = PurchaseHandler()
         self.isSheet = isSheet
+    }
+    
+    
+    func getPackage(packageId: String?) -> Package? {
+        return UserViewModel.shared.offerings!.current!.package(identifier: packageId)
     }
     
     public var body: some View {
@@ -63,7 +70,7 @@ public struct PaywallView: View {
                 PaywallFeatureSectionView(views: views)
                 PaywallPlanSectionView(plans: plans, selectedPlan: $selectedPlan)
                 PaywallActionView(selectePrice: selectedPlan?.price ?? "9", billingType: selectedPlan?.billingType ?? "", billingPeriod: selectedPlan?.billingPeriod ?? "", buyAction: {
-                    purchaseHandler.initiatePurchase(selectedPackageId: selectedPlan?.id, successAction: successAction, errorAction: errorAction)
+                    purchaseHandler.initiatePurchase(package: getPackage(packageId: selectedPlan.id), successAction: successAction, errorAction: errorAction)
                 }, isDisabled: loading || selectedPlan == nil || purchaseHandler.loadingPurchaseScreen, isLoading: purchaseHandler.loadingPurchaseScreen)
                 Spacer()
                 PaywallPolicyView(restorePurchasesAction: purchaseHandler.restorePurchases)
@@ -144,7 +151,7 @@ public struct PaywallView: View {
             }
             loading = false
         }
-            .errorToast(presented: $purchaseHandler.showErrorMessage)
+            .errorToast(errorMessage: purchaseHandler.errorMessage, presented: $purchaseHandler.showErrorMessage)
 
     }
 }
