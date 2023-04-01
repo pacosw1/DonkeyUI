@@ -57,6 +57,8 @@ class PurchaseHandler: ObservableObject {
             return
         }
         
+        print("Selected Package id \(String(describing: selectedPackageId)) of available packages \(self.packageMap.keys)")
+        
         if selectedPackageId != nil && self.packageMap[selectedPackageId!] == nil {
             errorMessage = "can't find packagedID \(selectedPackageId ?? "null") in packageMap \(packageMap.keys)"
             showErrorMessage = true
@@ -74,7 +76,7 @@ class PurchaseHandler: ObservableObject {
                 
                 if error != nil && !userCancelled {
                     errorAction(error, userCancelled)
-                    self.handleError(error: error)
+                    self.handlePurchaseError(code: error as? RevenueCat.ErrorCode ?? .networkError)
                 }
                 self.loadingPurchaseScreen = false
             }
