@@ -24,6 +24,7 @@ public struct PaywallModifier: ViewModifier {
     
     public func body(content: Content) -> some View {
         content
+            .errorToast(presented: $user.showNetworkError)
             .fullScreenCover(isPresented: $user.paywallOn) {
                 PaywallView(views: views, successAction: successAction, errorAction: errorAction, proEntitlementId: UserViewModel.shared.etitlementId)
             }
