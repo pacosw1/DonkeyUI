@@ -4,7 +4,6 @@ import RevenueCat
 @MainActor
 class PurchaseHandler: ObservableObject {
 //    @Published var offerings: Offerings? = nil
-    @Published var plans: [PaywallPlan] = []
     @Published var packageMap = [String: Package]()
     @Published var loadingPurchaseScreen: Bool = false
     @Published var showErrorMessage: Bool = false
@@ -82,7 +81,7 @@ class PurchaseHandler: ObservableObject {
         }
     }
     
-    public func fetchProducts() async -> Bool {
+    public func fetchProducts() async -> [PaywallPlan] {
         var plans: [PaywallPlan] = []
         var offerings = UserViewModel.shared.offerings
         
@@ -91,7 +90,7 @@ class PurchaseHandler: ObservableObject {
                 offerings = try await Purchases.shared.offerings()
             } catch {
                 print(error)
-                return false
+                return []
             }
         }
         
@@ -116,8 +115,7 @@ class PurchaseHandler: ObservableObject {
             }
         }
         
-        self.plans = plans
-        return true
+        return plans
     }
     
     // Login to make purchase

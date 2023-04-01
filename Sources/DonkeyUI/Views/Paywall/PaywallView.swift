@@ -42,8 +42,9 @@ public struct PaywallView: View {
     @State var loading: Bool = false
     @State var selectedPlan: PaywallPlan?
     @State var progress: CGFloat = 0
-  
-    public init(plans: [PaywallPlan] = [], views: [IdentifiableView] = [], successAction: @escaping () -> Void, errorAction: (PublicError?, Bool) -> Void, closeAction: @escaping () -> Void = {}, proEntitlementId: String, isSheet: Bool = false) {
+    @State var plans: [PaywallPlan] = []
+
+    public init(views: [IdentifiableView] = [], successAction: @escaping () -> Void, errorAction: (PublicError?, Bool) -> Void, closeAction: @escaping () -> Void = {}, proEntitlementId: String, isSheet: Bool = false) {
         self.views = views
         self.closeAction = closeAction
         self.selectedPlan = nil
@@ -60,7 +61,7 @@ public struct PaywallView: View {
 
                 Divider()
                 PaywallFeatureSectionView(views: views)
-                PaywallPlanSectionView(plans: purchaseHandler.plans, selectedPlan: $selectedPlan)
+                PaywallPlanSectionView(plans: plans, selectedPlan: $selectedPlan)
                 PaywallActionView(selectePrice: selectedPlan?.price ?? "9", billingType: selectedPlan?.billingType ?? "", billingPeriod: selectedPlan?.billingPeriod ?? "", buyAction: {
                     purchaseHandler.initiatePurchase(selectedPackageId: selectedPlan!.id, successAction: successAction, errorAction: errorAction)
                 }, isDisabled: loading || selectedPlan == nil || purchaseHandler.loadingPurchaseScreen, isLoading: purchaseHandler.loadingPurchaseScreen)
@@ -137,10 +138,9 @@ public struct PaywallView: View {
             }
                 
             
-            let worked = await self.purchaseHandler.fetchProducts()
-            if worked && !purchaseHandler.plans.isEmpty  {
-                selectedPlan = purchaseHandler.plans[0]
-                loading = true
+            plans = await self.purchaseHandler.fetchProducts()
+            if !plans.isEmpty  {
+                selectedPlan = plans[0]
             }
             loading = false
         }
@@ -152,11 +152,8 @@ public struct PaywallView: View {
 
 struct PaywallView_Previews: PreviewProvider {
     static var previews: some View {
-        PaywallView(plans: [
-            .init(id: "0", title: "Monthly", subText: "Our most affordable plan", price: "2.99", billingType: "Recurring Billing", billingPeriod: "Month", index: 0),
-            .init(id: "1", title: "Yearly", subText: "Save 30%", price: "24.99", billingType: "Recurring Billing", billingPeriod: "Year", index: 1),
-            .init(id: "2", title: "Lifetime Deal", subText: "One-time payment", price: "49.99", billingType: "One Time Payment", billingPeriod: "Once", index: 2)
-        ], views: [
+        PaywallView(
+            views: [
             .init(view: AnyView(RemindersPromotionView()), maxWidth: 300),
             .init(view: AnyView(ListsPromotionView()), maxWidth: 300),
             .init(view: AnyView(TagsPromotionView())),
