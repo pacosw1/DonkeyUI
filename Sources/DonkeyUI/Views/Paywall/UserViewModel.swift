@@ -14,6 +14,7 @@ public enum PaywallDataState {
     loaded
 }
 
+@MainActor
 /* Static shared model for UserView */
 public class UserViewModel: ObservableObject {
     @AppStorage("firstAppOpen") var firstAppOpen = true
