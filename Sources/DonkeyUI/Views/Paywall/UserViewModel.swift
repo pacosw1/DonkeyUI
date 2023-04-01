@@ -29,7 +29,7 @@ public class UserViewModel: ObservableObject {
     /* The latest CustomerInfo from RevenueCat. Updated by PurchasesDelegate whenever the Purchases SDK updates the cache */
     @Published public var customerInfo: CustomerInfo? {
         didSet {
-//            subscriptionActive = customerInfo?.entitlements[self.etitlementId]?.isActive == true
+            subscriptionActive = customerInfo?.entitlements[self.etitlementId]?.isActive == true
             print("Subscription active?")
             print(subscriptionActive)
             print(customerInfo?.entitlements.active ?? "null")
