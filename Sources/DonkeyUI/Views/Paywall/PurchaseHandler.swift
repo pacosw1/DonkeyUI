@@ -47,6 +47,7 @@ class PurchaseHandler: ObservableObject {
     }
     
     func initiatePurchase(packageId: String, successAction: @escaping() -> Void, errorAction: @escaping (PublicError?, Bool) -> Void) {
+        self.loadingPurchaseScreen = true
         guard let concretePackage = UserViewModel.shared.getPackage(packageId: packageId) else {
             errorMessage = "Unknown Error"
             self.loadingPurchaseScreen = false
