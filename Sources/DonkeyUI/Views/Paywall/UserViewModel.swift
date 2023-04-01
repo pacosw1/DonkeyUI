@@ -20,15 +20,16 @@ public class UserViewModel: ObservableObject {
     public static let shared = UserViewModel()
     var etitlementId: String = "Premium"
     
-    
     @Published public var isLoading: Bool = true
     @Published public var showNetworkError = false
     @Published private var packageMap = [String: Package]()
+    @Published public var subscriptionActive: Bool = false
+    @Published public var offerings: Offerings? = nil
     
     /* The latest CustomerInfo from RevenueCat. Updated by PurchasesDelegate whenever the Purchases SDK updates the cache */
     @Published public var customerInfo: CustomerInfo? {
         didSet {
-            subscriptionActive = customerInfo?.entitlements[self.etitlementId]?.isActive == true
+//            subscriptionActive = customerInfo?.entitlements[self.etitlementId]?.isActive == true
             print("Subscription active?")
             print(subscriptionActive)
             print(customerInfo?.entitlements.active ?? "null")
@@ -104,9 +105,6 @@ public class UserViewModel: ObservableObject {
     }
     
     /* Set from the didSet method of customerInfo above, based on the entitlement set in Constants.swift */
-    @Published public var subscriptionActive: Bool = false
-    
-    @Published public var offerings: Offerings? = nil
     /*
      How to login and identify your users with the Purchases SDK.
      
