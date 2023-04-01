@@ -75,8 +75,9 @@ public class UserViewModel: ObservableObject {
         }
     }
     
-    public func premiumCheck(action: @escaping () -> Void) {
-        if subscriptionActive {
+    public func premiumCheck(action: () -> Void) {
+        if subscriptionActive == true {
+            print("Subscription is active")
             action()
         } else {
             self.openPaywall()
