@@ -50,6 +50,7 @@ class PurchaseHandler: ObservableObject {
     func initiatePurchase(selectedPackageId: String?, successAction: @escaping() -> Void, errorAction: @escaping (PublicError?, Bool) -> Void) {
         self.loadingPurchaseScreen = true
         if selectedPackageId == nil {
+            errorMessage = "selected package id is null"
             showErrorMessage = true
             self.loadingPurchaseScreen = false
 
@@ -57,6 +58,7 @@ class PurchaseHandler: ObservableObject {
         }
         
         if selectedPackageId != nil && self.packageMap[selectedPackageId!] == nil {
+            errorMessage = "can't find packagedID \(selectedPackageId ?? "null") in packageMap \(packageMap.keys)"
             showErrorMessage = true
             self.loadingPurchaseScreen = false
             return
