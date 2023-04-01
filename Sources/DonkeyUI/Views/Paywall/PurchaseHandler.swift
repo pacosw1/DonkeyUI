@@ -51,11 +51,14 @@ class PurchaseHandler: ObservableObject {
         self.loadingPurchaseScreen = true
         if selectedPackageId == nil {
             showErrorMessage = true
+            self.loadingPurchaseScreen = false
+
             return
         }
         
         if selectedPackageId != nil && self.packageMap[selectedPackageId!] == nil {
             showErrorMessage = true
+            self.loadingPurchaseScreen = false
             return
         }
         
