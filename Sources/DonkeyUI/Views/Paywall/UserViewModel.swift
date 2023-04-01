@@ -8,11 +8,21 @@ import Foundation
 import RevenueCat
 import SwiftUI
 
+public enum PaywallDataState {
+    case loading,
+    offline,
+    loaded
+}
+
 /* Static shared model for UserView */
 public class UserViewModel: ObservableObject {
     @AppStorage("firstAppOpen") var firstAppOpen = true
     public static let shared = UserViewModel()
     var etitlementId: String = "Premium"
+    
+    
+    @Published public var isLoading: Bool = true
+    @Published public var showNetworkError = false
     
     /* The latest CustomerInfo from RevenueCat. Updated by PurchasesDelegate whenever the Purchases SDK updates the cache */
     @Published public var customerInfo: CustomerInfo? {
@@ -31,18 +41,50 @@ public class UserViewModel: ObservableObject {
     
     @Published public var paywallOn = false
     
+    
+    public func verifyPaywallData() -> PaywallDataState{
+        
+        if self.offerings == nil {
+            // check if loading, or offline
+            self.showNetworkError = true
+            
+        }
+        return .loaded
+    }
+    
+    
+    public func openPaywall() {
+        if offerings == nil {
+            // show error
+            self.showNetworkError = true
+        }
+        self.openPaywall()
+    }
+    
+    
+    public func premiumCheckWithSheetSwitch(closeAction: @escaping () -> Void, accessAction: @escaping () -> Void) {
+        if subscriptionActive {
+            accessAction()
+        } else {
+            closeAction()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.openPaywall()
+            }
+        }
+    }
+    
     public func premiumCheck(action: @escaping () -> Void) {
         if subscriptionActive {
             action()
         } else {
-            paywallOn = true
+            self.openPaywall()
         }
     }
     
     
     public func firstAppOpenPaywall() {
         if firstAppOpen {
-            self.paywallOn = true
+            self.openPaywall()
             firstAppOpen = false
         }
     }
