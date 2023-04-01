@@ -14,7 +14,6 @@ import RevenueCat
 public class PurchasesDelegateHandler: NSObject, ObservableObject {
 
     public static let shared = PurchasesDelegateHandler()
-
 }
 
 extension PurchasesDelegateHandler: PurchasesDelegate {

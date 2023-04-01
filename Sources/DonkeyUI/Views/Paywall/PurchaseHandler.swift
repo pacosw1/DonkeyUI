@@ -42,6 +42,10 @@ class PurchaseHandler: ObservableObject {
             //TODO check if not restored, show no purchases message
             //TODO handle errors
             //... check customerInfo to see if entitlement is now active
+            if customerInfo?.entitlements[UserViewModel.shared.etitlementId]?.isActive == true {
+                // Unlock that great "pro" content
+                UserViewModel.shared.subscriptionActive = true
+            }
             self.loadingPurchaseScreen = false
         }
     }
