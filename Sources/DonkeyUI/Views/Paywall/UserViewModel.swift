@@ -18,6 +18,7 @@ public enum PaywallDataState {
 public class UserViewModel: ObservableObject {
     @AppStorage("firstAppOpen") var firstAppOpen = true
     
+    
     public static let shared = UserViewModel()
     var etitlementId: String = "Premium"
     
@@ -26,6 +27,7 @@ public class UserViewModel: ObservableObject {
     @Published private var packageMap = [String: Package]()
     @Published public var subscriptionActive: Bool = false
     @Published public var offerings: Offerings? = nil
+    @Published public var paywallOn = false
     
     /* The latest CustomerInfo from RevenueCat. Updated by PurchasesDelegate whenever the Purchases SDK updates the cache */
     @Published public var customerInfo: CustomerInfo? {
@@ -41,10 +43,6 @@ public class UserViewModel: ObservableObject {
         self.etitlementId = id
     }
     
-    
-    @Published public var paywallOn = false
-    
-    
     public func verifyPaywallData() -> PaywallDataState{
         
         if self.offerings == nil {
@@ -55,7 +53,6 @@ public class UserViewModel: ObservableObject {
         return .loaded
     }
     
-    
     public func openPaywall() {
         if offerings == nil {
             // show error
@@ -64,7 +61,6 @@ public class UserViewModel: ObservableObject {
         }
         self.paywallOn = true
     }
-    
     
     public func premiumCheckWithSheetSwitch(closeAction: @escaping () -> Void, accessAction: @escaping () -> Void) {
         if subscriptionActive {
@@ -94,11 +90,12 @@ public class UserViewModel: ObservableObject {
         return offerings?.current?.package(identifier: packageId)
     }
     
-    
     public func initializeAppChecks() async {
         // Initialize last known subscription state
         let isSubscribed = UserDefaults.standard.bool(forKey: "isSubscribed")
-        self.subscriptionActive = isSubscribed
+        DispatchQueue.main.async {
+            self.subscriptionActive = isSubscribed
+        }
         
         // Check subscription end date to make sure this is correct.
 //        let isSubscribed = UserDefaults.standard.integer(forKey: "subscription")
@@ -109,28 +106,37 @@ public class UserViewModel: ObservableObject {
                 if Date.now >= expirationDate {
                     
                     do {
-                        self.customerInfo = try await Purchases.shared.syncPurchases()
+                        let customerInfo = try await Purchases.shared.syncPurchases()
+                        DispatchQueue.main.async {
+                            self.customerInfo = customerInfo
+                        }
                         let stillSubscribed = self.customerInfo?.entitlements[self.etitlementId]?.isActive == true
                         if stillSubscribed {
                             if let newExpiration = self.customerInfo?.expirationDate(forEntitlement: self.etitlementId) {
                                 UserDefaults.standard.set(newExpiration.timeIntervalSince1970, forKey: "subscriptionExpirationDate")
                             }
                         } else {
-                            self.subscriptionActive = false
+                            DispatchQueue.main.async {
+                                self.subscriptionActive = false
+                            }
                         }
-                        
                     } catch {
                         // do nothing
                     }
                 }
             }
         }
-        self.offerings = try? await Purchases.shared.offerings()
+        let offerings = try? await Purchases.shared.offerings()
+        DispatchQueue.main.async {
+            self.offerings = offerings
+        }
         
         if firstAppOpen {
             if offerings != nil {
-                paywallOn = true
-                firstAppOpen = false
+                DispatchQueue.main.async {
+                    self.paywallOn = true
+                    self.firstAppOpen = false
+                }
             }
         }
     }
