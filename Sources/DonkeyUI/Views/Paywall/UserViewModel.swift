@@ -85,8 +85,11 @@ public class UserViewModel: ObservableObject {
     
     public func firstAppOpenPaywall() {
         if firstAppOpen {
-            self.openPaywall()
-            firstAppOpen = false
+            if offerings != nil {
+                paywallOn = true
+                firstAppOpen = false
+
+            }
         }
     }
     
