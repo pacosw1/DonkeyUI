@@ -8,7 +8,7 @@
 import Foundation
 import CoreData
 
-extension NSManagedObject {
+public extension NSManagedObject {
     func addObject(value: NSManagedObject, forKey key: String) {
         let items = self.mutableSetValue(forKey: key)
         items.add(value)

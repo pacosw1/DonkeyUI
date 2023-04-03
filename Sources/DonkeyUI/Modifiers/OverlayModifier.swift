@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct OverlayModifier: ViewModifier {
+public struct OverlayModifier: ViewModifier {
     var backgroundColor: Color
     var radius: CGFloat
     var borderColor: Color
@@ -17,7 +17,7 @@ struct OverlayModifier: ViewModifier {
 //        return DarkColor(color: backgroundColor) ? .white: .black
 //    }
     
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
             content
             .background(
                 RoundedRectangle(cornerRadius: radius, style: .continuous).fill(backgroundColor)
@@ -33,7 +33,7 @@ struct OverlayModifier: ViewModifier {
 
 
 extension View {
-    func bgOverlay(bgColor: Color, radius: CGFloat = 5.0, borderColor: Color = .clear, borderWidth: CGFloat = 1.0) -> some View {
+    public func bgOverlay(bgColor: Color, radius: CGFloat = 5.0, borderColor: Color = .clear, borderWidth: CGFloat = 1.0) -> some View {
         modifier(OverlayModifier(backgroundColor: bgColor, radius: radius, borderColor: borderColor, borderWidth: borderWidth))
     }
 }

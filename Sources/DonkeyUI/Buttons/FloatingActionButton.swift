@@ -65,7 +65,7 @@ public struct FloatingActionButton: ViewModifier {
 }
 
 extension View {
-    func floatingActionButton(systemIcon: String, action: @escaping () -> Void, hidden: Bool) -> some View {
+    public func floatingActionButton(systemIcon: String, action: @escaping () -> Void, hidden: Bool) -> some View {
         modifier(FloatingActionButton(systemIcon: systemIcon, action: action, hidden: hidden))
     }
 }

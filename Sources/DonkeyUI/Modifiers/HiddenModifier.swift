@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct HiddenModifier: ViewModifier {
+public struct HiddenModifier: ViewModifier {
     var hidden: Bool
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
             if hidden {
                 EmptyView()
                     .transition(.offset(y: -200))
@@ -21,7 +21,7 @@ struct HiddenModifier: ViewModifier {
 }
 
 extension View {
-    func hidden(_ hidden: Bool = false) -> some View {
+    public func hidden(_ hidden: Bool = false) -> some View {
         modifier(HiddenModifier(hidden: hidden))
     }
 }

@@ -6,9 +6,13 @@
 //
 import SwiftUI
 
-struct BorderModifier: ViewModifier {
+public struct BorderModifier: ViewModifier {
+    public init(color: Color) {
+        self.color = color
+    }
+    
     let color: Color
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .background(
                 RoundedRectangle(cornerRadius: 12, style: .continuous).fill(
