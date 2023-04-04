@@ -17,7 +17,7 @@ public extension Double {
         if let formattedNumber = formatter.string(from: NSNumber(value: abs(self))) {
             let sign = (self >= 0) ? "+ " : "- "
             let formattedString = sign + formattedNumber
-            print(formattedString) // Output: "- $250.00" (if using US English locale)
+            return formattedString // Output: "- $250.00" (if using US English locale)
         }
         
         return "$0.00"
