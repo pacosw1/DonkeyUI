@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 
 public extension Double {
@@ -19,6 +20,10 @@ public extension Double {
             return formattedString
         }
         return "0.00"
+    }
+    
+    var balanceColor: Color {
+        return self > 0 ? .green.opacity(0.8) : .pink.opacity(0.8)
     }
     
     var balanceStringWithSign: String {
