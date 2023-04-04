@@ -33,4 +33,17 @@ public extension Double {
         }
         return "$0.00"
     }
+    
+    var balanceStringWithSignIfNegative: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.locale = Locale.current // Use the user's current locale for the currency symbol
+
+        if let formattedNumber = formatter.string(from: NSNumber(value: abs(self))) {
+            let sign = (self >= 0) ? "" : "-"
+            let formattedString = sign + formattedNumber
+            return formattedString // Output: "- $250.00" (if using US English locale)
+        }
+        return "$0.00"
+    }
 }
