@@ -8,12 +8,11 @@
 import SwiftUI
 import WrappingHStack
 
-
-struct ColorPickerItem: View {
+public struct ColorPickerItem: View {
 
     let color: Color
     let selected: Bool
-    var body: some View {
+    public var body: some View {
         ZStack {
             Circle()
                 .stroke(!selected ? .clear : Color(UIColor.tertiaryLabel).opacity(0.8), lineWidth: 4)
@@ -22,19 +21,13 @@ struct ColorPickerItem: View {
                 .fill(color)
                 .frame(height: 40)
                 .overlay {
-                    
                 }
-
         }
-
-
-
     }
 }
 
-struct ColorPickerView: View {
-
-    var colors: [Color] = [
+public struct ColorPickerView: View {
+    public init(colors: [Color] = [
         .pink,
         .orange,
         .blue,
@@ -47,10 +40,15 @@ struct ColorPickerView: View {
         .brown,
         .purple,
         .yellow,
-    ]
+    ], selected: Binding<Color>) {
+        self.colors = colors
+        _selected = selected
+    }
     
+    var colors: [Color]
     @Binding var selected: Color
-    var body: some View {
+    
+    public var body: some View {
        WrappingHStack(colors, id: \.self, spacing: .constant(15), lineSpacing: 15) { color in
                 ColorPickerItem(color: color, selected: color == selected)
                .onTapGesture {
