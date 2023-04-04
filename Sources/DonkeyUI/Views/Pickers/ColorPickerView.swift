@@ -42,7 +42,13 @@ struct ColorPickerView: View {
         .teal,
         .indigo,
         .green,
+        .cyan,
+        .mint,
+        .brown,
+        .purple,
+        .yellow,
     ]
+    
     @Binding var selected: Color
     var body: some View {
        WrappingHStack(colors, id: \.self, spacing: .constant(15), lineSpacing: 15) { color in
