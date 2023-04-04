@@ -14,10 +14,12 @@ public extension Double {
         formatter.numberStyle = .currency
         formatter.locale = Locale.current // Use the user's current locale for the currency symbol
 
-        if let formattedString = formatter.string(from: NSNumber(value: self)) {
-            return formattedString
+        if let formattedNumber = formatter.string(from: NSNumber(value: abs(self))) {
+            let sign = (self >= 0) ? "+ " : "- "
+            let formattedString = sign + formattedNumber
+            print(formattedString) // Output: "- $250.00" (if using US English locale)
         }
         
-        return "0.00"
+        return "$0.00"
     }
 }
