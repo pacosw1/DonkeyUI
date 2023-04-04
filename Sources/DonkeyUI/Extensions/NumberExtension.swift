@@ -1,0 +1,23 @@
+//
+//  File.swift
+//  
+//
+//  Created by Paco Sainz on 4/4/23.
+//
+
+import Foundation
+
+public extension Double {
+    
+    var balanceString: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.locale = Locale.current // Use the user's current locale for the currency symbol
+
+        if let formattedString = formatter.string(from: NSNumber(value: self)) {
+            return formattedString
+        }
+        
+        return "0.00"
+    }
+}
