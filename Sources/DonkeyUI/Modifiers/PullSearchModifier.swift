@@ -90,6 +90,10 @@ public struct PullSearchModifier: ViewModifier {
                         }.background(GeometryReader { proxy -> Color in
                             DispatchQueue.main.async {
                                 offsetY = -proxy.frame(in: .named("scroll")).origin.y
+                                
+                                if offsetY <= actionThreshold {
+                                    onPullThreshold()
+                                }
                             }
                             return Color.clear
                         })
@@ -137,9 +141,9 @@ public enum HapticFeedback {
 }
 
 
+
 struct SearchBar: View {
     @Binding var text: String
-
     var body: some View {
         TextField("Search", text: $text)
             .padding(7)
