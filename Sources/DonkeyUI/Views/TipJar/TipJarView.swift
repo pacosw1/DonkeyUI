@@ -72,6 +72,7 @@ public struct TipJarView: View {
         
         
         .padding(.horizontal)
+        .searchMod()
 
         .task {
             if !options.isEmpty {
