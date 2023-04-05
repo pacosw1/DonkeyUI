@@ -21,7 +21,7 @@ public struct PullSearchModifier: ViewModifier {
     @State private var showSearchBar = false
     @State private var searchText = ""
     private let actionThreshold: CGFloat = -30
-    private let maxThreshold: CGFloat = 130
+    private let maxThreshold: CGFloat = 100
     @State private var hasTriggeredHaptic = false
     
     private func performCustomAction(completion: @escaping () -> Void) {
@@ -39,13 +39,6 @@ public struct PullSearchModifier: ViewModifier {
 //        _ = max(0.0, handleProgress - 0.8) * 5
         let backgroundColor: Color = backgroundProgress >= 1 ? .blue : .gray
 
-        let thresholdReached = handleProgress >= 1
-        if thresholdReached && !hasTriggeredHaptic {
-            HapticFeedback.trigger()
-            hasTriggeredHaptic = true
-        } else if !thresholdReached {
-            hasTriggeredHaptic = false
-        }
 
         return ZStack {
             // Background circle
@@ -78,7 +71,7 @@ public struct PullSearchModifier: ViewModifier {
             // Arrow
             
         }
-        .position(x: UIScreen.main.bounds.width / 2, y: offsetY <= 0 ? max(offsetY / -1.2, 0) : 0)
+        .position(x: UIScreen.main.bounds.width / 2, y: offsetY <= 0 ? max(offsetY / -1.4, 0) : 0)
         .opacity(offsetY <= 0 ? 1 : 0) // Modified opacity based on offsetY
 
         // Adjusted the position calculation
@@ -118,8 +111,14 @@ extension View {
 struct SearchModifier_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
+            Text("Title")
+                .font(.largeTitle)
             ForEach(1..<20) { item in
-                Text("\(item)")
+                HStack {
+                    Text("\(item)")
+                    Spacer()
+                }
+                .containerShape(Rectangle())
             }
         }
             .searchMod()
