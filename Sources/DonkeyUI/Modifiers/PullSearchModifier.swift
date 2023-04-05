@@ -20,8 +20,8 @@ public struct PullSearchModifier: ViewModifier {
     @State private var offsetY: CGFloat = 0.0
     @State private var showSearchBar = false
     @State private var searchText = ""
-    private let actionThreshold: CGFloat = -25
-    private let maxThreshold: CGFloat = 100
+    private let actionThreshold: CGFloat = -20
+    private let maxThreshold: CGFloat = 55
     @State private var hasTriggeredHaptic = false
     
     private func performCustomAction(completion: @escaping () -> Void) {
@@ -32,9 +32,9 @@ public struct PullSearchModifier: ViewModifier {
     }
     
     public var searchIcon: some View {
-        let circleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) * 0.23))
-        let handleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 3.3))
-        let backgroundProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 3.3))
+        let circleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) * 0.39))
+        let handleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 1.5))
+        let backgroundProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 1.5))
 
 //        _ = max(0.0, handleProgress - 0.8) * 5
         let backgroundColor: Color = backgroundProgress >= 1 ? .blue : .gray
@@ -71,7 +71,7 @@ public struct PullSearchModifier: ViewModifier {
             // Arrow
             
         }
-        .position(x: UIScreen.main.bounds.width / 2, y: offsetY <= 0 ? max(offsetY / -1.4, 0) : 0)
+        .position(x: UIScreen.main.bounds.width / 2, y: offsetY <= 0 ? max(offsetY * -1.5, 0) : 0)
         .opacity(offsetY <= 0 ? 1 : 0) // Modified opacity based on offsetY
 
         // Adjusted the position calculation
@@ -79,7 +79,7 @@ public struct PullSearchModifier: ViewModifier {
     
     public func body(content: Content) -> some View {
         ZStack {
-//                                    Text("\(offsetY)")
+                                    Text("\(offsetY)")
                 searchIcon
                     .frame(maxWidth: .infinity, alignment: .top)
                     .opacity((offsetY) / actionThreshold)
