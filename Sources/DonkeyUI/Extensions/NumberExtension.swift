@@ -27,7 +27,7 @@ public extension Double {
     }
     
     var percentageLabel: String {
-        return String(format: "%.2f%", self)
+        return String(format: "%.2f", self) + "%"
     }
     
     var balanceStringWithSign: String {
