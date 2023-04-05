@@ -48,19 +48,25 @@ struct PaywallActionView: View {
 
 struct PaywallPolicyView: View {
     var restorePurchasesAction: () -> Void
+    var privacyURL: String
+    var termsOfServiceURL: String
     var body: some View {
         
-        HStack(alignment: .center, spacing: 10) {
+        HStack(alignment: .center, spacing: 20) {
             Spacer()
-            Text("Privacy")
-                .font(.caption)
-                .foregroundColor(.gray)
+            Link(destination: URL(string: privacyURL)!) {
+                Text("Privacy")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+            }
             
-            ButtonView(label: "Restore Purchases", color: .accentColor.opacity(0.9), buttonTyoe: .text, action: restorePurchasesAction, font: .caption, fontWeight: .regular)
+            Button ("Restore Purchases") { restorePurchasesAction() }
      
-            Text("Terms")
-                .font(.caption)
-                .foregroundColor(.gray)
+            Link(destination: URL(string: termsOfServiceURL)!) {
+                Text("Terms")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+            }
 
            
             Spacer()

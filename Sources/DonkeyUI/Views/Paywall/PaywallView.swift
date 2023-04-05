@@ -35,6 +35,8 @@ public struct PaywallView: View {
     var closeAction: () -> Void = {}
     var successAction: () -> Void = {}
     var errorAction: (PublicError?, Bool) -> Void = {_, _ in}
+    var privacyURL: String
+    var termsURL: String
     var isSheet: Bool
     
     @ObservedObject var purchaseHandler: PurchaseHandler
@@ -46,12 +48,14 @@ public struct PaywallView: View {
     @State var packageMap = [String: Package]()
 
 
-    public init(views: [IdentifiableView] = [], successAction: @escaping () -> Void, errorAction: (PublicError?, Bool) -> Void, closeAction: @escaping () -> Void = {}, proEntitlementId: String, isSheet: Bool = false) {
+    public init(views: [IdentifiableView] = [], successAction: @escaping () -> Void, errorAction: (PublicError?, Bool) -> Void, closeAction: @escaping () -> Void = {}, proEntitlementId: String, isSheet: Bool = false, privacyUrl: String, termsUrl: String = "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/") {
         self.views = views
         self.closeAction = closeAction
         self.selectedPlan = nil
         self.purchaseHandler = PurchaseHandler()
         self.isSheet = isSheet
+        self.privacyURL = privacyUrl
+        self.termsURL = termsUrl
     }
     
     
@@ -73,7 +77,7 @@ public struct PaywallView: View {
                     purchaseHandler.initiatePurchase(packageId: selectedPlan!.id, successAction: successAction, errorAction: errorAction)
                 }, isDisabled: loading || selectedPlan == nil || purchaseHandler.loadingPurchaseScreen, isLoading: purchaseHandler.loadingPurchaseScreen)
                 Spacer()
-                PaywallPolicyView(restorePurchasesAction: purchaseHandler.restorePurchases)
+                PaywallPolicyView( restorePurchasesAction: purchaseHandler.restorePurchases, privacyURL: privacyURL, termsOfServiceURL: termsURL)
             }
         
             .onTapGesture {
@@ -117,7 +121,7 @@ public struct PaywallView: View {
 
             }
             .task {
-//            Purchases.configure(withAPIKey: "")
+            Purchases.configure(withAPIKey: "")
             loading = true
                 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -165,7 +169,7 @@ struct PaywallView_Previews: PreviewProvider {
             .init(view: AnyView(ListsPromotionView()), maxWidth: 300),
             .init(view: AnyView(TagsPromotionView())),
             .init(view: AnyView(IndieDevPromotion()), maxWidth: 400)
-        ], successAction: {}, errorAction: {_,_ in}, proEntitlementId: "Premium", isSheet: true)
+        ], successAction: {}, errorAction: {_,_ in}, proEntitlementId: "Premium", isSheet: true, privacyUrl: "https://divergentapp.framer.website/privacy-policy")
         .preferredColorScheme(.dark)
     }
 }

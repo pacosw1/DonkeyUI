@@ -9,15 +9,17 @@ import RevenueCat
 
 public struct PaywallModifier: ViewModifier {
     
-    public init(user: UserViewModel = UserViewModel.shared, views: [IdentifiableView], successAction: @escaping () -> Void, errorAction: @escaping (PublicError?, Bool) -> Void) {
+    public init(user: UserViewModel = UserViewModel.shared, views: [IdentifiableView], successAction: @escaping () -> Void, errorAction: @escaping (PublicError?, Bool) -> Void, privacyUrl: String) {
         self.user = user
         self.views = views
         self.successAction = successAction
+        self.privacyUrl = privacyUrl
         self.errorAction = errorAction
     }
     
     @ObservedObject var user = UserViewModel.shared
     var views: [IdentifiableView]
+    let privacyUrl: String
     var successAction: () -> Void
     var errorAction: (PublicError?, Bool) -> Void
     
@@ -26,14 +28,14 @@ public struct PaywallModifier: ViewModifier {
         content
             .errorToast(presented: $user.showNetworkError)
             .fullScreenCover(isPresented: $user.paywallOn) {
-                PaywallView(views: views, successAction: successAction, errorAction: errorAction, proEntitlementId: UserViewModel.shared.etitlementId)
+                PaywallView(views: views, successAction: successAction, errorAction: errorAction, proEntitlementId: UserViewModel.shared.etitlementId, privacyUrl: privacyUrl)
             }
       }
 }
 
 public extension View {
-    func paywall(views: [IdentifiableView] = [], successAction: @escaping () -> Void, errorAction:  @escaping (PublicError?, Bool) -> Void) -> some View {
-        modifier(PaywallModifier(views: views, successAction: successAction, errorAction: errorAction))
+    func paywall(views: [IdentifiableView] = [], successAction: @escaping () -> Void, errorAction:  @escaping (PublicError?, Bool) -> Void, privacyUrl: String) -> some View {
+        modifier(PaywallModifier(views: views, successAction: successAction, errorAction: errorAction, privacyUrl: privacyUrl))
     }
 }
     
