@@ -124,10 +124,8 @@ public struct PullSearchModifier: ViewModifier {
                     .ignoresSafeArea()
                     .onTapGesture {
                         withAnimation {
-//                            showSearchBar = false
                         }
                     }
-                
                 SearchBar(text: $searchText)
                     .padding(.horizontal)
                     .transition(.move(edge: .top))
