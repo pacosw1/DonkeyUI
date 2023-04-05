@@ -61,6 +61,7 @@ public struct TipJarView: View {
                     }
             }
             Spacer()
+            
             VStack(alignment: .center) {
                 ButtonView(label: confirmPurchaseLabel, buttonTyoe: .filled, action: purchaseAction, padding: 3, font: .title3, fullWidth: true)
                 Text(optionalDisclaimer ?? "")
@@ -69,7 +70,9 @@ public struct TipJarView: View {
             }
         }
         
+        
         .padding(.horizontal)
+
         .task {
             if !options.isEmpty {
                 selected = options.first!.id
