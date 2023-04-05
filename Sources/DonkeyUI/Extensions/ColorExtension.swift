@@ -78,7 +78,7 @@ public extension Color {
 
 }
 
-extension UIColor {
+public extension UIColor {
     
   
     

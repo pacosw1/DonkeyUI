@@ -28,7 +28,7 @@ public struct BorderModifier: ViewModifier {
     }
 }
 
-extension View {
+public extension View {
     func bordered(color: Color = Color(uiColor: UIColor.secondarySystemBackground)) -> some View {
         modifier(BorderModifier(color: color))
     }
