@@ -20,7 +20,7 @@ public struct PullSearchModifier: ViewModifier {
     @State private var offsetY: CGFloat = 0.0
     @State private var showSearchBar = false
     @State private var searchText = ""
-    private let actionThreshold: CGFloat = -30
+    private let actionThreshold: CGFloat = -25
     private let maxThreshold: CGFloat = 100
     @State private var hasTriggeredHaptic = false
     
