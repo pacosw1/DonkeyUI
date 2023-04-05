@@ -56,7 +56,7 @@ public struct ColorPickerView: View {
     public var body: some View {
         WrappingHStack(alignment: .center, horizontalSpacing: horizontalSpacing, verticalSpacing: verticalSpacing) {
            ForEach(colors, id: \.self) { color in
-               ColorPickerItem(color: color, selected: color == selected)
+               ColorPickerItem(color: color, selected: color.toHex() == selected.toHex())
                    .onTapGesture {
                        selected = color
                    }
