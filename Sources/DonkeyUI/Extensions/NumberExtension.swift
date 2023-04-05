@@ -26,6 +26,10 @@ public extension Double {
         return self > 0 ? .green.opacity(0.8) : .pink.opacity(0.8)
     }
     
+    var percentageLabel: String {
+        return String(format: "%.2f", self)
+    }
+    
     var balanceStringWithSign: String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
