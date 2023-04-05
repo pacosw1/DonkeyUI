@@ -12,6 +12,7 @@ public struct ColorPickerItem: View {
 
     let color: Color
     let selected: Bool
+    
     public var body: some View {
         ZStack {
             Circle()
@@ -40,21 +41,27 @@ public struct ColorPickerView: View {
         .brown,
         .purple,
         .yellow,
-    ], selected: Binding<Color>) {
+    ], selected: Binding<Color>, verticalSpacing: CGFloat = 10, horizontalSpacing: CGFloat = 40) {
         self.colors = colors
+        self.horizontalSpacing = horizontalSpacing
+        self.verticalSpacing = verticalSpacing
         _selected = selected
     }
     
     var colors: [Color]
+    let verticalSpacing: CGFloat
+    let horizontalSpacing: CGFloat
     @Binding var selected: Color
     
     public var body: some View {
-       WrappingHStack(colors, id: \.self, spacing: .constant(15), lineSpacing: 15) { color in
-                ColorPickerItem(color: color, selected: color == selected)
-               .onTapGesture {
-                   selected = color
-               }
-               .animation(.none, value: selected)
+        WrappingHStack(alignment: .center, horizontalSpacing: horizontalSpacing, verticalSpacing: verticalSpacing) {
+           ForEach(colors, id: \.self) { color in
+               ColorPickerItem(color: color, selected: color == selected)
+                   .onTapGesture {
+                       selected = color
+                   }
+                   .animation(.none, value: selected)
+           }
        }
         .padding()
         .bordered()
