@@ -86,53 +86,23 @@ public struct PullSearchModifier: ViewModifier {
     
     public func body(content: Content) -> some View {
         ZStack {
-                                    Text("\(offsetY)")
+//                                    Text("\(offsetY)")
                 searchIcon
                     .frame(maxWidth: .infinity, alignment: .top)
                     .opacity((offsetY) / actionThreshold)
                     .ignoresSafeArea()
-            GeometryReader { proxy in
-                ScrollView {
-                    VStack(spacing: 0) {
-//                        Text("\(offsetY)")
+            ScrollView {
+                        VStack {
                             content
-                        .background(GeometryReader {
-                            Color.clear.preference(key: ViewOffsetKey.self, value: -$0.frame(in: .named("scrollView")).minY)
-                        })
-                        
-                        
-                    }
-                }
-                .coordinateSpace(name: "scrollView")
-                .onPreferenceChange(ViewOffsetKey.self) { offset in
-                    offsetY = offset
-                    if offsetY < actionThreshold {
-                        performCustomAction {
-                            // Handle completion
-                            withAnimation {
-//                                isPerformingAction = false
-                                onPullThreshold()
+                        }.background(GeometryReader { proxy -> Color in
+                            DispatchQueue.main.async {
+                                offsetY = -proxy.frame(in: .named("scroll")).origin.y
                             }
-                        }
-                    }
-                }
-                .animation(.easeInOut, value: offsetY)
-            }
-            
-            if showSearchBar {
-                Color.black.opacity(0.5)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        withAnimation {
-                        }
-                    }
-                SearchBar(text: $searchText)
-                    .padding(.horizontal)
-                    .transition(.move(edge: .top))
+                            return Color.clear
+                        })
+                    }.coordinateSpace(name: "scroll")
             }
         }
-        
-    }
 }
 
 
@@ -148,8 +118,9 @@ extension View {
 struct SearchModifier_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            Text("hi")
-                .padding()
+            ForEach(1..<20) { item in
+                Text("\(item)")
+            }
         }
             .searchMod()
 //        .searchMod()
