@@ -10,7 +10,7 @@ import CoreHaptics
 
 import SwiftUI
 
-public struct PullSearchModifier: ViewModifier {
+public struct PullListModifier: ViewModifier {
     
     var onPullThreshold: () -> Void = {}
     
@@ -77,108 +77,95 @@ public struct PullSearchModifier: ViewModifier {
     }
     
     public func body(content: Content) -> some View {
-        ZStack {
-          Text("\(offsetY)")
-            ScrollView {
-                        VStack {
-                            content
-                        }.background(GeometryReader { proxy -> Color in
-                            DispatchQueue.main.async {
-                                offsetY = -proxy.frame(in: .named("scroll")).origin.y
-                                
-                                if offsetY <= actionThreshold {
-                                    onPullThreshold()
-                                }
+        GeometryReader { root in
+            ZStack(alignment: .top) {
+                List {
+                    VStack(spacing: 0) {
+                        
+                        content
+                    }.background(GeometryReader { proxy -> Color in
+                        DispatchQueue.main.async {
+                            offsetY = -proxy.frame(in: .named("scroll")).origin.y + root.safeAreaInsets.top
+                            
+                            if offsetY <= actionThreshold {
+                                onPullThreshold()
                             }
-                            return Color.clear
-                        })
-                    }.coordinateSpace(name: "scroll")
-            
-            searchIcon
-                .frame(maxWidth: .infinity, alignment: .top)
-                .opacity((offsetY) / actionThreshold)
-                .ignoresSafeArea()
+                        }
+                        return Color.clear
+                        
+                    })
+                    .padding(0)
+                }
+                .coordinateSpace(name: "scroll")
+                .listStyle(.plain)
+                .padding(0)
+                
+                searchIcon
+                    .frame(maxWidth: .infinity, alignment: .top)
+                    .opacity((offsetY) / actionThreshold)
+//                    .offset(y: -proxy.safeAreaInsets.top)
+                    .padding(0)
+                    .ignoresSafeArea()
+//                Text("offset: \(offsetY)" )
+//                    .padding(0)
+
             }
+            .padding(0)
+        }
+        .padding(0)
+            
         }
 }
 
 
 extension View {
-    public func searchMod(onPull: @escaping () -> Void = {}) -> some View {
-        modifier(PullSearchModifier(onPullThreshold: onPull))
+    public func pullList(onPull: @escaping () -> Void = {}) -> some View {
+        modifier(PullListModifier(onPullThreshold: onPull))
         
     }
 }
 
 
 
-struct SearchModifier_Previews: PreviewProvider {
+struct PullListModifier_Previews: PreviewProvider {
     static var previews: some View {
-        VStack {
-            Text("Title")
-                .font(.largeTitle)
-            ForEach(1..<20) { item in
+        NavigationStack {
+            ForEach(1..<100) { item in
                 HStack {
-                    Text("\(item)")
-                    Spacer()
+                    RowView {
+                        Text("Hello")
+                    } action: {
+                        
+                    }
                 }
-                .containerShape(Rectangle())
             }
+            .pullList()
         }
-            .searchMod()
+        
 //        .searchMod()
 //        .preferredColorScheme(.dark)
     }
 }
 
 
-public enum HapticFeedback {
-    static private var generator = UINotificationFeedbackGenerator()
-    
-    static func trigger() {
-        generator.notificationOccurred(.success)
-    }
-}
+//public enum HapticFeedback {
+//    static private var generator = UINotificationFeedbackGenerator()
+//
+//    static func trigger() {
+//        generator.notificationOccurred(.success)
+//    }
+//}
 
 
 
-struct SearchBar: View {
-    @Binding var text: String
-    var body: some View {
-        TextField("Search", text: $text)
-            .padding(7)
-            .padding(.horizontal, 25)
-            .background(Color(.systemGray6))
-            .cornerRadius(8)
-            .overlay(
-                HStack {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(.gray)
-                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                        .padding(.leading, 8)
 
-                    if !text.isEmpty {
-                        Button(action: {
-                            text = ""
-                        }) {
-                            Image(systemName: "multiply.circle.fill")
-                                .foregroundColor(.gray)
-                                .padding(.trailing, 8)
-                        }
-                    }
-                }
-            )
-            .padding(.horizontal, 10)
-    }
-}
-
-struct ViewOffsetKey: PreferenceKey {
-    typealias Value = CGFloat
-
-    static var defaultValue: CGFloat = 0.0
-
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
-    }
-}
-
+//struct ViewOffsetKey: PreferenceKey {
+//    typealias Value = CGFloat
+//
+//    static var defaultValue: CGFloat = 0.0
+//
+//    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+//        value = nextValue()
+//    }
+//}
+//
