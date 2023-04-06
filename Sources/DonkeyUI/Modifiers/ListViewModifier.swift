@@ -12,13 +12,22 @@ import SwiftUI
 
 public struct PullList<Content: View>: View {
     
-    var onPullThreshold: () -> Void = {}
+    
     let content: Content
+    let title: String
+    let icon: String
+    var onPullThreshold: () -> Void = {}
+    let iconAction: () -> Void
+
     
     
-    public init(@ViewBuilder content: () -> Content, onPull: @escaping () -> Void = {}) {
-          self.content = content()
+    public init(@ViewBuilder content: () -> Content, title: String, icon: String, onPull: @escaping () -> Void = {}, iconAction: @escaping () -> Void = {}) {
+        
+        self.content = content()
         self.onPullThreshold = onPull
+        self.title = title
+        self.icon = icon
+        self.iconAction  = iconAction
       }
     
     @State private var storedOffsetY: CGFloat = 0.0 // New state variable
@@ -29,13 +38,6 @@ public struct PullList<Content: View>: View {
     @State private var searchText = ""
     private let actionThreshold: CGFloat = -80
     @State private var hasTriggeredHaptic = false
-    
-    private func performCustomAction(completion: @escaping () -> Void) {
-        // Replace with your custom action
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-            completion()
-        }
-    }
     
     public var searchIcon: some View {
         let circleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) * 1))
@@ -87,21 +89,33 @@ public struct PullList<Content: View>: View {
         GeometryReader { root in
             ZStack(alignment: .top) {
                 List {
+                    
+                    HStack {
+                        Text(title)
+                            .font(.largeTitle)
+                            .fontWeight(.semibold)
+                        Spacer()
+                        IconView(image: icon, color: .blue, size: .small)
+                            .onTapGesture {
+                                iconAction()
+                            }
+                    }
+                    .background(GeometryReader { proxy -> Color in
+                         DispatchQueue.main.async {
+                             offsetY = -proxy.frame(in: .named("scroll")).origin.y + root.safeAreaInsets.top
+                             
+                             if offsetY <= actionThreshold {
+                                 onPullThreshold()
+                             }
+                         }
+                         return Color.clear
+                         
+                         
+                     })
+                     .listRowSeparator(.hidden)
                     content
                     
-                   .background(GeometryReader { proxy -> Color in
-                        DispatchQueue.main.async {
-                            offsetY = -proxy.frame(in: .named("scroll")).origin.y + root.safeAreaInsets.top
-                            
-                            if offsetY <= actionThreshold {
-                                onPullThreshold()
-                            }
-                        }
-                        return Color.clear
-                        
-                        
-                    })
-                    .listRowSeparator(.hidden)
+                  
                 }
                 .coordinateSpace(name: "scroll")
                 .listStyle(.plain)
@@ -136,20 +150,14 @@ public struct PullList<Content: View>: View {
 struct PullList_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            PullList {
-                Text("Hllo")
-                    .font(.title)
+            PullList(content: {
                 ForEach(1..<4) { item in
                     NavigationLink(destination: Text("hii")) {
                         Text("Hello")
                     }
-                    
                 }
-            }
+            }, title: "Hello", icon: "gear")
         }
-        
-//        .searchMod()
-//        .preferredColorScheme(.dark)
     }
 }
 
