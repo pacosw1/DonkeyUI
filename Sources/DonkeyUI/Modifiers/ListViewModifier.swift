@@ -128,8 +128,8 @@ public struct PullList<Content: View>: View {
 //                    .offset(y: -proxy.safeAreaInsets.top)
                     .padding(0)
                     .ignoresSafeArea()
-                Text("offset: \(offsetY)" )
-                    .padding(0)
+//                Text("offset: \(offsetY)" )
+//                    .padding(0)
 
             }
             .padding(0)
