@@ -80,10 +80,8 @@ public struct PullListModifier: ViewModifier {
         GeometryReader { root in
             ZStack(alignment: .top) {
                 List {
-                    VStack(spacing: 0) {
-                        
-                        content
-                    }.background(GeometryReader { proxy -> Color in
+                    content
+                   .background(GeometryReader { proxy -> Color in
                         DispatchQueue.main.async {
                             offsetY = -proxy.frame(in: .named("scroll")).origin.y + root.safeAreaInsets.top
                             
@@ -108,7 +106,7 @@ public struct PullListModifier: ViewModifier {
 //                    .offset(y: -proxy.safeAreaInsets.top)
                     .padding(0)
                     .ignoresSafeArea()
-//                Text("offset: \(offsetY)" )
+                Text("offset: \(offsetY)" )
 //                    .padding(0)
 
             }
@@ -132,14 +130,9 @@ extension View {
 struct PullListModifier_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            ForEach(1..<100) { item in
-                HStack {
-                    RowView {
-                        Text("Hello")
-                    } action: {
-                        
-                    }
-                }
+            ForEach(1..<4) { item in
+                Text("Hello")
+
             }
             .pullList()
         }
