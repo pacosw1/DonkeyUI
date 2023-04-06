@@ -15,6 +15,7 @@ public struct PullList<Content: View>: View {
     var onPullThreshold: () -> Void = {}
     let content: Content
     
+    
     public init(@ViewBuilder content: () -> Content, onPull: @escaping () -> Void = {}) {
           self.content = content()
         self.onPullThreshold = onPull
