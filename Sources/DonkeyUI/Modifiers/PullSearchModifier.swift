@@ -133,10 +133,10 @@ struct SearchModifier_Previews: PreviewProvider {
 
 
 public enum HapticFeedback {
-    static private var generator = UINotificationFeedbackGenerator()
+    static private var generator = UIImpactFeedbackGenerator(style: .medium)
     
     static func trigger() {
-        generator.notificationOccurred(.success)
+        generator.impactOccurred()
     }
 }
 

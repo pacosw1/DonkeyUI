@@ -11,17 +11,13 @@ import CoreHaptics
 import SwiftUI
 
 public struct PullList<Content: View>: View {
-    
-    
     let content: Content
     let title: String
     let icon: String
     var onPullThreshold: () -> Void = {}
     let iconAction: () -> Void
     
-    
-
-    
+    @State var thresholdCrossed = false
     
     public init(@ViewBuilder content: () -> Content, title: String, icon: String, onPull: @escaping () -> Void = {}, iconAction: @escaping () -> Void = {}) {
         
@@ -44,9 +40,7 @@ public struct PullList<Content: View>: View {
     public var searchIcon: some View {
         let circleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) * 1))
         let handleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 0.05))
-//        let backgroundProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 0.4))
 
-//        _ = max(0.0, handleProgress - 0.8) * 5
         let backgroundColor: Color = offsetY <= actionThreshold ? .blue : .gray
 
 
@@ -105,10 +99,19 @@ public struct PullList<Content: View>: View {
                     .background(GeometryReader { proxy -> Color in
                          DispatchQueue.main.async {
                              offsetY = -proxy.frame(in: .named("scroll")).origin.y + root.safeAreaInsets.top + 11
-                             
-                             if offsetY <= actionThreshold {
-                                 onPullThreshold()
+                             print(offsetY)
+
+                             if offsetY <= actionThreshold && thresholdCrossed == false {
+                                 thresholdCrossed = true
+                                 HapticFeedback.trigger()
+                             } else {
+                                 if thresholdCrossed && offsetY >= 0.0 {
+                                     onPullThreshold()
+                                     thresholdCrossed = false
+                                 }
                              }
+                             
+                             
                          }
                          return Color.clear
                          
@@ -128,8 +131,8 @@ public struct PullList<Content: View>: View {
 //                    .offset(y: -proxy.safeAreaInsets.top)
                     .padding(0)
                     .ignoresSafeArea()
-//                Text("offset: \(offsetY)" )
-//                    .padding(0)
+//                Text("offset: \(offsetY) pulled \(thresholdCrossed ? "true": "false")" )
+////                    .padding(0)
 
             }
             .padding(0)
@@ -158,7 +161,8 @@ struct PullList_Previews: PreviewProvider {
                         Text("Hello")
                     }
                 }
-            }, title: "Hello", icon: "")
+            }, title: "Hello", icon: "", onPull: {
+            })
         }
     }
 }
