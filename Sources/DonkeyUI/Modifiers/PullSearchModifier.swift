@@ -20,8 +20,7 @@ public struct PullSearchModifier: ViewModifier {
     @State private var offsetY: CGFloat = 0.0
     @State private var showSearchBar = false
     @State private var searchText = ""
-    private let actionThreshold: CGFloat = -20
-    private let maxThreshold: CGFloat = -70
+    private let actionThreshold: CGFloat = -80
     @State private var hasTriggeredHaptic = false
     
     private func performCustomAction(completion: @escaping () -> Void) {
@@ -32,12 +31,12 @@ public struct PullSearchModifier: ViewModifier {
     }
     
     public var searchIcon: some View {
-        let circleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) * 0.29))
-        let handleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 2.2))
-        let backgroundProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 2.3))
+        let circleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) * 0.9))
+        let handleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 0.4))
+//        let backgroundProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 0.4))
 
 //        _ = max(0.0, handleProgress - 0.8) * 5
-        let backgroundColor: Color = backgroundProgress >= 1 ? .blue : .gray
+        let backgroundColor: Color = offsetY <= actionThreshold ? .blue : .gray
 
 
         return ZStack {
@@ -71,7 +70,7 @@ public struct PullSearchModifier: ViewModifier {
             // Arrow
             
         }
-        .position(x: UIScreen.main.bounds.width / 2, y: offsetY <= 0 ? max(offsetY * -1.5, 0) : 0)
+        .position(x: UIScreen.main.bounds.width / 2, y: offsetY <= 0 ? max(offsetY * -1, 0) : 0)
         .opacity(offsetY <= 0 ? 1 : 0) // Modified opacity based on offsetY
 
         // Adjusted the position calculation
