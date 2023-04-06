@@ -21,7 +21,7 @@ public struct PullSearchModifier: ViewModifier {
     @State private var showSearchBar = false
     @State private var searchText = ""
     private let actionThreshold: CGFloat = -20
-    private let maxThreshold: CGFloat = 55
+    private let maxThreshold: CGFloat = 70
     @State private var hasTriggeredHaptic = false
     
     private func performCustomAction(completion: @escaping () -> Void) {
@@ -32,9 +32,9 @@ public struct PullSearchModifier: ViewModifier {
     }
     
     public var searchIcon: some View {
-        let circleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) * 0.39))
-        let handleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 1.5))
-        let backgroundProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 1.5))
+        let circleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) * 0.29))
+        let handleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 2.2))
+        let backgroundProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 2.3))
 
 //        _ = max(0.0, handleProgress - 0.8) * 5
         let backgroundColor: Color = backgroundProgress >= 1 ? .blue : .gray
