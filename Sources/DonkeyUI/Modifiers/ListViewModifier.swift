@@ -10,9 +10,15 @@ import CoreHaptics
 
 import SwiftUI
 
-public struct PullListModifier: ViewModifier {
+public struct PullList<Content: View>: View {
     
     var onPullThreshold: () -> Void = {}
+    let content: Content
+    
+    init(@ViewBuilder content: () -> Content, onPull: @escaping () -> Void = {}) {
+          self.content = content()
+        self.onPullThreshold = onPull
+      }
     
     @State private var storedOffsetY: CGFloat = 0.0 // New state variable
 
@@ -76,11 +82,12 @@ public struct PullListModifier: ViewModifier {
         // Adjusted the position calculation
     }
     
-    public func body(content: Content) -> some View {
+    public var body: some View {
         GeometryReader { root in
             ZStack(alignment: .top) {
                 List {
                     content
+                    
                    .background(GeometryReader { proxy -> Color in
                         DispatchQueue.main.async {
                             offsetY = -proxy.frame(in: .named("scroll")).origin.y + root.safeAreaInsets.top
@@ -93,12 +100,10 @@ public struct PullListModifier: ViewModifier {
                         
                         
                     })
-                    .padding(0)
                     .listRowSeparator(.hidden)
                 }
                 .coordinateSpace(name: "scroll")
                 .listStyle(.plain)
-                .padding(0)
                 
                 searchIcon
                     .frame(maxWidth: .infinity, alignment: .top)
@@ -106,7 +111,7 @@ public struct PullListModifier: ViewModifier {
 //                    .offset(y: -proxy.safeAreaInsets.top)
                     .padding(0)
                     .ignoresSafeArea()
-                Text("offset: \(offsetY)" )
+//                Text("offset: \(offsetY)" )
 //                    .padding(0)
 
             }
@@ -118,23 +123,28 @@ public struct PullListModifier: ViewModifier {
 }
 
 
-extension View {
-    public func pullList(onPull: @escaping () -> Void = {}) -> some View {
-        modifier(PullListModifier(onPullThreshold: onPull))
-        
-    }
-}
+//extension View {
+//    public func pullList(onPull: @escaping () -> Void = {}) -> some View {
+//        modifier(PullListModifier(onPullThreshold: onPull))
+//
+//    }
+//}
 
 
 
-struct PullListModifier_Previews: PreviewProvider {
+struct PullList_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            ForEach(1..<4) { item in
-                Text("Hello")
-
+            PullList {
+                Text("Hllo")
+                    .font(.title)
+                ForEach(1..<4) { item in
+                    NavigationLink(destination: Text("hii")) {
+                        Text("Hello")
+                    }
+                    
+                }
             }
-            .pullList()
         }
         
 //        .searchMod()
