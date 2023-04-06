@@ -105,7 +105,7 @@ public struct PullList<Content: View>: View {
                                  thresholdCrossed = true
                                  HapticFeedback.trigger()
                              } else {
-                                 if thresholdCrossed && offsetY >= 0.0 {
+                                 if thresholdCrossed && offsetY >= 0.4 * actionThreshold {
                                      onPullThreshold()
                                      thresholdCrossed = false
                                  }
