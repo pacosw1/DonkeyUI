@@ -97,10 +97,12 @@ public struct PullList<Content: View>: View {
                             .font(.largeTitle)
                             .fontWeight(.semibold)
                         Spacer()
-                        IconView(image: icon, color: .blue, size: .small)
-                            .onTapGesture {
-                                iconAction()
-                            }
+                        if icon != "" {
+                            IconView(image: icon, color: .blue, size: .small)
+                                .onTapGesture {
+                                    iconAction()
+                                }
+                        }
                     }
                     .background(GeometryReader { proxy -> Color in
                          DispatchQueue.main.async {
@@ -158,7 +160,7 @@ struct PullList_Previews: PreviewProvider {
                         Text("Hello")
                     }
                 }
-            }, title: "Hello", icon: "gear")
+            }, title: "Hello", icon: "")
         }
     }
 }
