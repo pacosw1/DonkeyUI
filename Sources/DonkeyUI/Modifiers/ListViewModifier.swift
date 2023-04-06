@@ -43,7 +43,7 @@ public struct PullList<Content: View>: View {
     
     public var searchIcon: some View {
         let circleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) * 1))
-        let handleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 0.2))
+        let handleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 0.05))
 //        let backgroundProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 0.4))
 
 //        _ = max(0.0, handleProgress - 0.8) * 5
@@ -64,7 +64,7 @@ public struct PullList<Content: View>: View {
             // Circle
             Circle()
                 .trim(from: 0, to: circleProgress)
-                .stroke(Color.white, lineWidth: 4)
+                .stroke(Color.white, style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
                 .frame(width: 20, height: 20)
                 .rotationEffect(.degrees(-90))
             
@@ -72,20 +72,18 @@ public struct PullList<Content: View>: View {
             // Handle
             RoundedRectangle(cornerRadius: 2)
                 .fill(Color.white)
-                .frame(width: 4, height: 3 + 6 * handleProgress)
+                .frame(width: 4, height: 4 + 6 * handleProgress)
                 .offset(x: -1, y: -11.5 + -3.5 * handleProgress)
-                .rotationEffect(.degrees(120.0 + 15.0 * handleProgress))
+                .rotationEffect(.degrees(60.0 + 70 * handleProgress))
                 .opacity(handleProgress)
-
-//                                .opacity(offsetY < -60 ? Double((offsetY + 60) / -40) : 0)
-            // Arrow
-            
         }
-        .position(x: UIScreen.main.bounds.width / 2, y: offsetY <= 0 ? max(offsetY * -1, 0) : 0)
+        .position(x: UIScreen.main.bounds.width / 2, y: offsetY <= 0 ? max(offsetY * -1.25, 0) : 0)
         .opacity(offsetY <= 0 ? 1 : 0) // Modified opacity based on offsetY
 
         // Adjusted the position calculation
     }
+    
+    
     
     public var body: some View {
         GeometryReader { root in
@@ -106,7 +104,7 @@ public struct PullList<Content: View>: View {
                     }
                     .background(GeometryReader { proxy -> Color in
                          DispatchQueue.main.async {
-                             offsetY = -proxy.frame(in: .named("scroll")).origin.y + root.safeAreaInsets.top
+                             offsetY = -proxy.frame(in: .named("scroll")).origin.y + root.safeAreaInsets.top + 11
                              
                              if offsetY <= actionThreshold {
                                  onPullThreshold()
@@ -130,8 +128,8 @@ public struct PullList<Content: View>: View {
 //                    .offset(y: -proxy.safeAreaInsets.top)
                     .padding(0)
                     .ignoresSafeArea()
-//                Text("offset: \(offsetY)" )
-//                    .padding(0)
+                Text("offset: \(offsetY)" )
+                    .padding(0)
 
             }
             .padding(0)
