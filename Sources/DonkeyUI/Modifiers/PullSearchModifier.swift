@@ -31,8 +31,8 @@ public struct PullSearchModifier: ViewModifier {
     }
     
     public var searchIcon: some View {
-        let circleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) * 0.9))
-        let handleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 0.4))
+        let circleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) * 1))
+        let handleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 0.2))
 //        let backgroundProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 0.4))
 
 //        _ = max(0.0, handleProgress - 0.8) * 5
@@ -79,10 +79,7 @@ public struct PullSearchModifier: ViewModifier {
     public func body(content: Content) -> some View {
         ZStack {
                                     Text("\(offsetY)")
-                searchIcon
-                    .frame(maxWidth: .infinity, alignment: .top)
-                    .opacity((offsetY) / actionThreshold)
-                    .ignoresSafeArea()
+                
             ScrollView {
                         VStack {
                             content
@@ -97,6 +94,11 @@ public struct PullSearchModifier: ViewModifier {
                             return Color.clear
                         })
                     }.coordinateSpace(name: "scroll")
+            
+            searchIcon
+                .frame(maxWidth: .infinity, alignment: .top)
+                .opacity((offsetY) / actionThreshold)
+                .ignoresSafeArea()
             }
         }
 }
