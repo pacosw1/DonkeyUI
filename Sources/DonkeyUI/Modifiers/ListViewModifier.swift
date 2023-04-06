@@ -93,8 +93,10 @@ public struct PullListModifier: ViewModifier {
                         }
                         return Color.clear
                         
+                        
                     })
                     .padding(0)
+                    .listRowSeparator(.hidden)
                 }
                 .coordinateSpace(name: "scroll")
                 .listStyle(.plain)

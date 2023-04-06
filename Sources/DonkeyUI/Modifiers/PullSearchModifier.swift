@@ -92,6 +92,7 @@ public struct PullSearchModifier: ViewModifier {
                             }
                             return Color.clear
                         })
+                
                     }.coordinateSpace(name: "scroll")
             
             searchIcon
