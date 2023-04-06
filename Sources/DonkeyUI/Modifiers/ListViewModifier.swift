@@ -18,6 +18,8 @@ public struct PullList<Content: View>: View {
     let icon: String
     var onPullThreshold: () -> Void = {}
     let iconAction: () -> Void
+    
+    
 
     
     
@@ -160,6 +162,7 @@ struct PullList_Previews: PreviewProvider {
         }
     }
 }
+
 
 
 //public enum HapticFeedback {

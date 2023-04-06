@@ -78,7 +78,6 @@ public struct PullSearchModifier: ViewModifier {
     
     public func body(content: Content) -> some View {
         ZStack {
-          Text("\(offsetY)")
             ScrollView {
                         VStack {
                             content
