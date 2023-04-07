@@ -77,7 +77,7 @@ public struct CloudkitStatusView: View {
     @State var lowPowerEnabled = false
     
     public var body: some View {
-        Form {
+        VStack {
             Text("Connected to Network \(hasWifi ? "true": "false")")
             Text("LowPowerMode Disabled \(!lowPowerEnabled ? "true": "false")")
             Text("Has Space \(hasSpace ? "true": "false")")
