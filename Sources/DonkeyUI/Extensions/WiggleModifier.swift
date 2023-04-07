@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-extension View {
+public extension View {
     func wiggling() -> some View {
         modifier(WiggleModifier())
     }
 }
 
-struct WiggleModifier: ViewModifier {
+public struct WiggleModifier: ViewModifier {
     @State private var isWiggling = false
     @State private var positive: Bool = true
     
@@ -40,7 +40,7 @@ struct WiggleModifier: ViewModifier {
         )
         .repeatForever(autoreverses: true)
     
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .rotationEffect(.degrees(isWiggling ? 2 : 0))
 

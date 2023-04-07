@@ -55,8 +55,10 @@ public struct ProgressBarView: View {
 struct ProgressBarView_Previews: PreviewProvider {
     static var previews: some View {
         HStack {
-            ProgressBarView(width: 100,  progress: 0.3)
+            Spacer()
+            ProgressBarView(width: 50,  progress: 0.2)
                 .padding()
+            Spacer()
             
         }
         .padding()

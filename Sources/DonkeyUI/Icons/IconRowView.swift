@@ -41,7 +41,7 @@ public struct IconRowView: View {
 struct IconRowView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            IconRowView(icon: "book.fill", label: "Logbook", color: .green, badgeCount: 0)
+            IconRowView(icon: "heart.fill", label: "Nice", color: .green, badgeCount: 0)
             IconRowView(icon: "star.fill", label: "Logbook", color: .green, badgeCount: 0)
             IconRowView(icon: "calendar", label: "Logbook", color: .green, badgeCount: 0)
 

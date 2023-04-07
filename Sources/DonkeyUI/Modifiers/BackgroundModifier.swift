@@ -7,11 +7,16 @@
 
 import SwiftUI
 
-struct BackgroundModifier: ViewModifier {
+public struct BackgroundModifier: ViewModifier {
+    public init(backgroundColor: Color, dim: Bool) {
+        self.backgroundColor = backgroundColor
+        self.dim = dim
+    }
+    
     var backgroundColor: Color
     var dim: Bool
     
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         ZStack {
             backgroundColor
                 .ignoresSafeArea()
@@ -25,7 +30,7 @@ struct BackgroundModifier: ViewModifier {
 
 
 extension View {
-    func fullscreen(bgColor: Color = Color(uiColor: UIColor.secondarySystemBackground), dim: Bool = false) -> some View {
+    public func fullscreen(bgColor: Color = Color(uiColor: UIColor.secondarySystemBackground), dim: Bool = false) -> some View {
         modifier(BackgroundModifier(backgroundColor: bgColor, dim: dim))
         
     }

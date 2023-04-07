@@ -10,7 +10,7 @@ import UIKit
 import SwiftUI
 
 
-extension Color {
+public extension Color {
 
     init?(hex: String) {
             var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -78,7 +78,7 @@ extension Color {
 
 }
 
-extension UIColor {
+public extension UIColor {
     
   
     

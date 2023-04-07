@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-extension Bundle {
+public extension Bundle {
     var iconFileName: String? {
         guard let icons = infoDictionary?["CFBundleIcons"] as? [String: Any],
               let primaryIcon = icons["CFBundlePrimaryIcon"] as? [String: Any],
@@ -19,8 +19,8 @@ extension Bundle {
     }
 }
 
-struct AppIcon: View {
-    var body: some View {
+public struct AppIcon: View {
+    public var body: some View {
         Bundle.main.iconFileName
             .flatMap { UIImage(named: $0) }
             .map { Image(uiImage: $0) }

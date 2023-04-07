@@ -8,12 +8,21 @@
 import SwiftUI
 
 struct SelectedModifier: ViewModifier {
+    public init(selected: Bool, radius: CGFloat, border: Bool, fill: Bool, color: Color) {
+        self.selected = selected
+        self.radius = radius
+        self.border = border
+        self.fill = fill
+        self.color = color
+    }
+    
+    
     let selected: Bool
     let radius: CGFloat
     let border: Bool
     let fill: Bool
     let color: Color
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .bgOverlay(
                 bgColor: selected && fill ? color.opacity(0.2) : .clear,
@@ -26,7 +35,7 @@ struct SelectedModifier: ViewModifier {
 }
 
 extension View {
-    func selected(_ selected: Bool, radius: CGFloat = 5, border: Bool = true, fill: Bool = true, color: Color = .accentColor) -> some View {
+    public func selected(_ selected: Bool, radius: CGFloat = 5, border: Bool = true, fill: Bool = true, color: Color = .accentColor) -> some View {
         modifier(SelectedModifier(selected: selected, radius: radius, border: border, fill: fill, color: color))
     }
 }

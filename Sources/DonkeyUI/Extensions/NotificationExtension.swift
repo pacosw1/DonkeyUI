@@ -8,7 +8,7 @@
 import Foundation
 import NotificationCenter
 
-extension UNUserNotificationCenter {
+public extension UNUserNotificationCenter {
     
     
 //    func updateNotification(coreDataNotification: [TaskNotification], rollover: Bool = false) {

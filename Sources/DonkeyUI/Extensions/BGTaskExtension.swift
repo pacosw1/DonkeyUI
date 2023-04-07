@@ -9,7 +9,7 @@ import Foundation
 import BackgroundTasks
 
 
-extension BGTaskScheduler {
+public extension BGTaskScheduler {
     
     
     func replacePendingBackgroundTask() {

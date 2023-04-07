@@ -35,35 +35,49 @@ public struct PaywallView: View {
     var closeAction: () -> Void = {}
     var successAction: () -> Void = {}
     var errorAction: (PublicError?, Bool) -> Void = {_, _ in}
+    var privacyURL: String
+    var termsURL: String
+    var isSheet: Bool
     
     @ObservedObject var purchaseHandler: PurchaseHandler
     
     @State var loading: Bool = false
     @State var selectedPlan: PaywallPlan?
     @State var progress: CGFloat = 0
-  
-    public init(plans: [PaywallPlan] = [], views: [IdentifiableView] = [], successAction: @escaping () -> Void, errorAction: (PublicError?, Bool) -> Void, closeAction: @escaping () -> Void = {}, proEntitlementId: String) {
+    @State var plans: [PaywallPlan] = []
+    @State var packageMap = [String: Package]()
+
+
+    public init(views: [IdentifiableView] = [], successAction: @escaping () -> Void, errorAction: (PublicError?, Bool) -> Void, closeAction: @escaping () -> Void = {}, proEntitlementId: String, isSheet: Bool = false, privacyUrl: String, termsUrl: String = "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/") {
         self.views = views
         self.closeAction = closeAction
         self.selectedPlan = nil
         self.purchaseHandler = PurchaseHandler()
+        self.isSheet = isSheet
+        self.privacyURL = privacyUrl
+        self.termsURL = termsUrl
+    }
+    
+    
+    func getPackage(packageId: String?) -> Package? {
+        return UserViewModel.shared.offerings!.current!.package(identifier: packageId)
     }
     
     public var body: some View {
             
             VStack {
                 
-                PaywallHeaderView(closeAction: closeAction)
+                PaywallHeaderView(closeAction: closeAction, isSheet: isSheet)
 
 
                 Divider()
                 PaywallFeatureSectionView(views: views)
-                PaywallPlanSectionView(plans: purchaseHandler.plans, selectedPlan: $selectedPlan)
+                PaywallPlanSectionView(plans: plans, selectedPlan: $selectedPlan)
                 PaywallActionView(selectePrice: selectedPlan?.price ?? "9", billingType: selectedPlan?.billingType ?? "", billingPeriod: selectedPlan?.billingPeriod ?? "", buyAction: {
-                    purchaseHandler.initiatePurchase(selectedPackageId: selectedPlan!.id, successAction: successAction, errorAction: errorAction)
+                    purchaseHandler.initiatePurchase(packageId: selectedPlan!.id, successAction: successAction, errorAction: errorAction)
                 }, isDisabled: loading || selectedPlan == nil || purchaseHandler.loadingPurchaseScreen, isLoading: purchaseHandler.loadingPurchaseScreen)
                 Spacer()
-                PaywallPolicyView(restorePurchasesAction: purchaseHandler.restorePurchases)
+                PaywallPolicyView( restorePurchasesAction: purchaseHandler.restorePurchases, privacyURL: privacyURL, termsOfServiceURL: termsURL)
             }
         
             .onTapGesture {
@@ -74,12 +88,14 @@ public struct PaywallView: View {
                     Color(UIColor.systemBackground)
                         .ignoresSafeArea()
                     VStack {
-                        HStack {
-                            Spacer()
-                            CloseButton(action: {closeAction()})
+                        if !isSheet {
+                            HStack {
+                                Spacer()
+                                CloseButton(action: {closeAction()})
+                            }
+                            .padding(.trailing)
+                            .padding(.top)
                         }
-                        .padding(.trailing)
-                        .padding(.top)
                         Spacer()
                         HStack {
                             Spacer()
@@ -133,14 +149,13 @@ public struct PaywallView: View {
             }
                 
             
-            let worked = await self.purchaseHandler.fetchProducts()
-            if worked && !purchaseHandler.plans.isEmpty  {
-                selectedPlan = purchaseHandler.plans[0]
-                loading = true
+            plans = await self.purchaseHandler.fetchProducts()
+            if !plans.isEmpty  {
+                selectedPlan = plans[0]
             }
             loading = false
         }
-            .errorToast(presented: $purchaseHandler.showErrorMessage)
+            .errorToast(errorMessage: purchaseHandler.errorMessage, presented: $purchaseHandler.showErrorMessage)
 
     }
 }
@@ -148,16 +163,13 @@ public struct PaywallView: View {
 
 struct PaywallView_Previews: PreviewProvider {
     static var previews: some View {
-        PaywallView(plans: [
-            .init(id: "0", title: "Monthly", subText: "Our most affordable plan", price: "2.99", billingType: "Recurring Billing", billingPeriod: "Month", index: 0),
-            .init(id: "1", title: "Yearly", subText: "Save 30%", price: "24.99", billingType: "Recurring Billing", billingPeriod: "Year", index: 1),
-            .init(id: "2", title: "Lifetime Deal", subText: "One-time payment", price: "49.99", billingType: "One Time Payment", billingPeriod: "Once", index: 2)
-        ], views: [
+        PaywallView(
+            views: [
             .init(view: AnyView(RemindersPromotionView()), maxWidth: 300),
             .init(view: AnyView(ListsPromotionView()), maxWidth: 300),
             .init(view: AnyView(TagsPromotionView())),
             .init(view: AnyView(IndieDevPromotion()), maxWidth: 400)
-        ], successAction: {}, errorAction: {_,_ in}, proEntitlementId: "Premium")
+        ], successAction: {}, errorAction: {_,_ in}, proEntitlementId: "Premium", isSheet: true, privacyUrl: "https://divergentapp.framer.website/privacy-policy")
         .preferredColorScheme(.dark)
     }
 }

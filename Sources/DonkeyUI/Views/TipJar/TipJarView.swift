@@ -61,15 +61,19 @@ public struct TipJarView: View {
                     }
             }
             Spacer()
+            
             VStack(alignment: .center) {
-                ButtonView(label: confirmPurchaseLabel, buttonTyoe: .filled, action: purchaseAction, padding: 3, font: .title3, fullWidth: true)
+                ButtonView(label: confirmPurchaseLabel, buttonTyoe: .filled, padding: 3, font: .title3, fullWidth: true, action: purchaseAction)
                 Text(optionalDisclaimer ?? "")
                     .foregroundColor(.gray)
                     .font(.caption)
             }
         }
         
+        
         .padding(.horizontal)
+        .searchMod()
+
         .task {
             if !options.isEmpty {
                 selected = options.first!.id

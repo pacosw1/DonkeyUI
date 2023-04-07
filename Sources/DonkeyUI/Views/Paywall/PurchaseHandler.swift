@@ -4,8 +4,6 @@ import RevenueCat
 @MainActor
 class PurchaseHandler: ObservableObject {
 //    @Published var offerings: Offerings? = nil
-    @Published var plans: [PaywallPlan] = []
-    @Published var packageMap = [String: Package]()
     @Published var loadingPurchaseScreen: Bool = false
     @Published var showErrorMessage: Bool = false
     @Published var errorMessage: String = "Connection Error"
@@ -40,49 +38,80 @@ class PurchaseHandler: ObservableObject {
                     self.handleError(error: genericError)
                 }
             }
-            //TODO check if restored, show success message.
-            //TODO check if not restored, show no purchases message
-            //TODO handle errors
-            //... check customerInfo to see if entitlement is now active
+            
+            if customerInfo?.entitlements[UserViewModel.shared.etitlementId]?.isActive == true {
+                // Unlock that great "pro" content
+                UserViewModel.shared.subscriptionActive = true
+                UserDefaults.standard.set(true, forKey: "isSubscribed")
+
+                guard let expirationDate = customerInfo?.expirationDate(forEntitlement: UserViewModel.shared.etitlementId) else {
+                    return
+                }
+                UserDefaults.standard.set(expirationDate.timeIntervalSince1970, forKey: "subscriptionExpirationDate")
+            }
+            
             self.loadingPurchaseScreen = false
         }
     }
     
-    func initiatePurchase(selectedPackageId: String, successAction: @escaping() -> Void, errorAction: @escaping (PublicError?, Bool) -> Void) {
+    func initiatePurchase(packageId: String, successAction: @escaping() -> Void, errorAction: @escaping (PublicError?, Bool) -> Void) {
         self.loadingPurchaseScreen = true
-        Purchases.shared.purchase(package: self.packageMap[selectedPackageId]!) { (transaction, customerInfo, error, userCancelled) in
+        guard let concretePackage = UserViewModel.shared.getPackage(packageId: packageId) else {
+            errorMessage = "Unknown Error"
+            self.loadingPurchaseScreen = false
+            self.showErrorMessage = true
+            return
+        }
+        
+        Purchases.shared.purchase(package: concretePackage) { (transaction, customerInfo, error, userCancelled) in
+            self.loadingPurchaseScreen = false
+
             if customerInfo?.entitlements[UserViewModel.shared.etitlementId]?.isActive == true {
                 // Unlock that great "pro" content
-                UserViewModel.shared.subscriptionActive = true
-                self.loadingPurchaseScreen = false
-            } else {
-                // Handle error gracefully
-                
+                    // Unlock that great "pro" content
+                    UserViewModel.shared.subscriptionActive = true
+                    UserDefaults.standard.set(true, forKey: "isSubscribed")
+                    guard let expirationDate = customerInfo?.expirationDate(forEntitlement: UserViewModel.shared.etitlementId) else {
+                        return
+                    }
+                    UserDefaults.standard.set(expirationDate.timeIntervalSince1970, forKey: "subscriptionExpirationDate")
+                }
+            else {
                 if error != nil && !userCancelled {
                     errorAction(error, userCancelled)
-                    self.handleError(error: error)
+                    self.handlePurchaseError(code: error as? RevenueCat.ErrorCode ?? .networkError)
                 }
-                self.loadingPurchaseScreen = false
             }
-            
         }
     }
     
     // Todo implement this and reflect it with an icon in error toast
     private func handlePurchaseError(code: RevenueCat.ErrorCode) {
+        //Todo switch icons
         switch code {
         case .networkError:
+            self.errorMessage = "Connection Error"
             break
         case .storeProblemError:
+            self.errorMessage = "Error connecting to Appstore"
             break
         case .offlineConnectionError:
+            self.errorMessage = "You are offline"
             break
+        case .logOutAnonymousUserError:
+            self.errorMessage = "AppleID not setup"
+            break;
+        case .invalidAppUserIdError:
+            self.errorMessage = "Not logged in with AppleID"
         default:
+            self.errorMessage = "Unkown Error"
             break
         }
+        
+        self.showErrorMessage = true
     }
     
-    public func fetchProducts() async -> Bool {
+    public func fetchProducts() async -> [PaywallPlan] {
         var plans: [PaywallPlan] = []
         var offerings = UserViewModel.shared.offerings
         
@@ -91,17 +120,15 @@ class PurchaseHandler: ObservableObject {
                 offerings = try await Purchases.shared.offerings()
             } catch {
                 print(error)
-                return false
+                return []
             }
         }
         
         if let packages = offerings?.current?.availablePackages {
-            
             var index = 0
                 // Map items to paywall UI
             for package in packages {
                 // Map cause we need this for api call later
-                self.packageMap[package.id] = package
                 let plan = PaywallPlan(
                     id: package.id,
                     title: package.storeProduct.localizedTitle,
@@ -116,8 +143,7 @@ class PurchaseHandler: ObservableObject {
             }
         }
         
-        self.plans = plans
-        return true
+        return plans
     }
     
     // Login to make purchase

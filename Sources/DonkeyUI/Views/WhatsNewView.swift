@@ -68,7 +68,7 @@ public struct WhatsNewView: View {
 
             Divider()
             Spacer()
-            ButtonView(label: buttonLabel, action: action, padding: 3.5, fullWidth: true)
+            ButtonView(label: buttonLabel, padding: 3.5, fullWidth: true, action: action)
                 .padding(.vertical)
                 .padding(.horizontal, 40)
 

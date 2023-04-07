@@ -11,7 +11,7 @@ public struct CloudSyncView: View {
     @Binding var cloudSync: Bool
     @State var alertShown = false
     
-    init(cloudSync: Binding<Bool>, alertShown: Bool = false) {
+    public init(cloudSync: Binding<Bool>, alertShown: Bool = false) {
         _cloudSync = cloudSync
         self.alertShown = alertShown
     }

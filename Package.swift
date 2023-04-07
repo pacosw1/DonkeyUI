@@ -19,7 +19,7 @@ let package = Package(
         // .package(url: /* package url */, from: "1.0.0"),
 //        .package(url: "https://github.com/maustinstar/liquid.git", from: "0.0.1"),
         .package(url: "https://github.com/exyte/PopupView.git", .upToNextMajor(from: "2.1.1")),
-        .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0")),
+        .package(url: "https://github.com/ksemianov/WrappingHStack", .upToNextMajor(from: "0.1.0")),
         .package(url: "https://github.com/RevenueCat/purchases-ios.git", .upToNextMajor(from: "4.0.0"))
         
 
