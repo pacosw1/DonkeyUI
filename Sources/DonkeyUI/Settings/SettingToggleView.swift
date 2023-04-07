@@ -36,9 +36,6 @@ public struct SettingToggleView: View {
                 }
 
             })
-            .padding(.vertical, 10)
-            .padding(.horizontal, 20)
-            .bordered()
             if caption != "" {
                 Text(caption)
                     .font(.caption)
