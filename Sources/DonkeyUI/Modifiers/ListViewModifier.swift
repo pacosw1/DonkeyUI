@@ -86,7 +86,7 @@ public struct PullList<Content: View>: View {
                     
                     HStack {
                         Text(title)
-                            .font(.largeTitle)
+                            .font(.title)
                             .fontWeight(.semibold)
                         Spacer()
                         if icon != "" {
@@ -99,7 +99,6 @@ public struct PullList<Content: View>: View {
                     .background(GeometryReader { proxy -> Color in
                          DispatchQueue.main.async {
                              offsetY = -proxy.frame(in: .named("scroll")).origin.y + root.safeAreaInsets.top + 11
-                             print(offsetY)
 
                              if offsetY <= actionThreshold && thresholdCrossed == false {
                                  thresholdCrossed = true
