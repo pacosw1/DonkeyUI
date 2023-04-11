@@ -77,12 +77,14 @@ public struct CloudkitStatusView: View {
     @State var lowPowerEnabled = false
     
     public var body: some View {
-        VStack {
-            Text("Connected to Network \(hasWifi ? "true": "false")")
-            Text("LowPowerMode Disabled \(!lowPowerEnabled ? "true": "false")")
-            Text("Has Space \(hasSpace ? "true": "false")")
-            Text("Logged in \(loggedIn ? "true": "false")")
+        List {
+            CloudKitStatusRow(label: "Network Connection", okay: loggedIn, secondaryLabel: hasWifi ? "Connected" : "Not Connected")
+            CloudKitStatusRow(label: "iCloud Account", okay: loggedIn, secondaryLabel: loggedIn ? "Logged in" : "Not logged in")
+            CloudKitStatusRow(label: "Low Power Mode", okay: !lowPowerEnabled, secondaryLabel: lowPowerEnabled ? "Enabled" : "Disabled")
+            CloudKitStatusRow(label: "Enough iCloud Space", okay: !hasSpace, secondaryLabel: hasSpace ? "You have enough" : "Not enough storage")
+
         }
+        .navigationTitle("iCloud Status")
         .onAppear {
             lowPowerEnabled = isLowPowerModeEnabled()
             
