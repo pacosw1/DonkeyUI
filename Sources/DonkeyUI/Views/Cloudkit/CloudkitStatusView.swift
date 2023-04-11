@@ -81,7 +81,7 @@ public struct CloudkitStatusView: View {
             CloudKitStatusRow(label: "Network Connection", okay: loggedIn, secondaryLabel: hasWifi ? "Connected" : "Not Connected")
             CloudKitStatusRow(label: "iCloud Account", okay: loggedIn, secondaryLabel: loggedIn ? "Logged in" : "Not logged in")
             CloudKitStatusRow(label: "Low Power Mode", okay: !lowPowerEnabled, secondaryLabel: lowPowerEnabled ? "Enabled" : "Disabled")
-            CloudKitStatusRow(label: "Enough iCloud Space", okay: hasSpace, secondaryLabel: hasSpace ? "You have enough" : "Not enough storage")
+            CloudKitStatusRow(label: "Enough iCloud Space", okay: hasSpace, secondaryLabel: hasSpace ? "You have enough space" : "Not enough storage")
 
         }
         .navigationTitle("iCloud Status")
