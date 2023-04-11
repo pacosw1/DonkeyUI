@@ -23,6 +23,7 @@ struct CloudKitStatusRow: View {
             VStack(alignment: .leading) {
                 Text(label)
                     .fontWeight(.semibold)
+                    .font(.body)
                
                 Text(secondaryLabel)
                     .font(.callout)
