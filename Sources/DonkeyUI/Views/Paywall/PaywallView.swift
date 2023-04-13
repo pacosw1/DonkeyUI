@@ -169,7 +169,7 @@ struct PaywallView_Previews: PreviewProvider {
             .init(view: AnyView(ListsPromotionView()), maxWidth: 300),
             .init(view: AnyView(TagsPromotionView())),
             .init(view: AnyView(IndieDevPromotion()), maxWidth: 400)
-        ], successAction: {}, errorAction: {_,_ in}, proEntitlementId: "Premium", isSheet: true, privacyUrl: "https://divergentapp.framer.website/privacy-policy")
+        ], successAction: {}, onOpen: {}, errorAction: {_,_ in}, proEntitlementId: "Premium", isSheet: true, privacyUrl: "https://divergentapp.framer.website/privacy-policy")
         .preferredColorScheme(.dark)
     }
 }
