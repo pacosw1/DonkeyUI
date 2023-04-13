@@ -34,6 +34,7 @@ public struct PaywallView: View {
     var views: [IdentifiableView] = []
     var closeAction: () -> Void = {}
     var successAction: () -> Void = {}
+    var onOpen: () -> Void = {}
     var errorAction: (PublicError?, Bool) -> Void = {_, _ in}
     var privacyURL: String
     var termsURL: String
@@ -48,7 +49,7 @@ public struct PaywallView: View {
     @State var packageMap = [String: Package]()
 
 
-    public init(views: [IdentifiableView] = [], successAction: @escaping () -> Void, errorAction: (PublicError?, Bool) -> Void, closeAction: @escaping () -> Void = {}, proEntitlementId: String, isSheet: Bool = false, privacyUrl: String, termsUrl: String = "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/") {
+    public init(views: [IdentifiableView] = [], successAction: @escaping () -> Void, onOpen: @escaping () -> Void, errorAction: (PublicError?, Bool) -> Void, closeAction: @escaping () -> Void = {}, proEntitlementId: String, isSheet: Bool = false, privacyUrl: String, termsUrl: String = "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/") {
         self.views = views
         self.closeAction = closeAction
         self.selectedPlan = nil
@@ -56,6 +57,7 @@ public struct PaywallView: View {
         self.isSheet = isSheet
         self.privacyURL = privacyUrl
         self.termsURL = termsUrl
+        self.onOpen = onOpen
     }
     
     
@@ -66,9 +68,7 @@ public struct PaywallView: View {
     public var body: some View {
             
             VStack {
-                
                 PaywallHeaderView(closeAction: closeAction, isSheet: isSheet)
-
 
                 Divider()
                 PaywallFeatureSectionView(views: views)
