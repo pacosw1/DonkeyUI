@@ -78,10 +78,10 @@ public struct CloudkitStatusView: View {
     
     public var body: some View {
         List {
-            CloudKitStatusRow(label: "Network Connection", okay: loggedIn, secondaryLabel: hasWifi ? "Connected" : "Not Connected")
+            CloudKitStatusRow(label: "Network Connection", okay: hasWifi, secondaryLabel: hasWifi ? "Connected" : "Not Connected")
             CloudKitStatusRow(label: "iCloud Account", okay: loggedIn, secondaryLabel: loggedIn ? "Logged in" : "Not logged in")
             CloudKitStatusRow(label: "Low Power Mode", okay: !lowPowerEnabled, secondaryLabel: lowPowerEnabled ? "Enabled" : "Disabled")
-            CloudKitStatusRow(label: "Enough iCloud Space", okay: hasSpace, secondaryLabel: hasSpace ? "You have enough space" : "Not enough storage")
+            CloudKitStatusRow(label: "Enough iCloud Space", okay: hasSpace, secondaryLabel: hasSpace ? "You have enough space" : loggedIn ? "Not enough space" : "Not logged in")
 
         }
         .navigationTitle("iCloud Status")
@@ -113,6 +113,7 @@ public struct CloudkitStatusView: View {
                     case .noAccount:
                         print("User is not logged in to iCloud.")
                         loggedIn = false
+                        hasSpace = false
                         // Update view with not logged-in status
                         
                     case .couldNotDetermine:
