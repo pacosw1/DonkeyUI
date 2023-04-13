@@ -97,6 +97,7 @@ public struct CloudkitStatusView: View {
                            } else {
                                print("Error checking iCloud account status: \(error.localizedDescription)")
                            }
+                    
                        
                     // Handle error
                 } else {

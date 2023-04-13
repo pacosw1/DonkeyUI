@@ -92,6 +92,14 @@ public class UserViewModel: ObservableObject {
         return offerings?.current?.package(identifier: packageId)
     }
     
+    
+    private func isCurrentDateDivisibleBy3() -> Bool {
+        let currentDate = Date.now
+        let calendar = Calendar.current
+        let day = calendar.component(.day, from: currentDate)
+        return day % 3 == 0
+    }
+    
     public func initializeAppChecks() async {
         // Initialize last known subscription state
         let isSubscribed = UserDefaults.standard.bool(forKey: "isSubscribed")
@@ -129,6 +137,7 @@ public class UserViewModel: ObservableObject {
                     }
                 }
             }
+            
         }
         let offerings = try? await Purchases.shared.offerings()
         DispatchQueue.main.async {
@@ -142,6 +151,10 @@ public class UserViewModel: ObservableObject {
                     self.firstAppOpen = false
                 }
             }
+        }
+        
+        if (isCurrentDateDivisibleBy3()) {
+            try? await Purchases.shared.syncPurchases()
         }
     }
     
