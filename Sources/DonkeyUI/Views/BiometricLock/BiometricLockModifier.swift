@@ -7,15 +7,32 @@
 import SwiftUI
 
 public struct BiometricLockModifier: ViewModifier {
+    @Environment(\.scenePhase) var scenePhase
     @StateObject var model = BiomericLockModel()
     let enabled: Bool
     
     public func body(content: Content) -> some View {
-        if enabled && !model.isUnlocked {
-            BiometricLockView(model: model)
-        } else {
-            content
+        VStack {
+            if enabled && !model.isUnlocked {
+                BiometricLockView(model: model)
+            } else {
+                content
+            }
         }
+        .onChange(of: scenePhase) { (phase) in
+                    switch phase {
+                    case .active: print("ScenePhase: active")
+                        model.isUnlocked = false
+
+                    case .background:
+                        model.isUnlocked = false
+                    case .inactive:
+                        model.isUnlocked = false
+
+                    @unknown default:
+                        print("default")
+                    }
+                }
         
       }
 }
