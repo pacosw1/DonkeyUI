@@ -25,12 +25,17 @@ public struct BiometricLockModifier: ViewModifier {
                         model.isUnlocked = false
 
                     case .background:
+                        print("background: active")
+
                         model.isUnlocked = false
                     case .inactive:
+                        print("inactive: active")
+
                         model.isUnlocked = false
 
                     @unknown default:
                         print("default")
+                        model.isUnlocked = false
                     }
                 }
         
