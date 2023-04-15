@@ -11,7 +11,7 @@ public struct BiometricLockModifier: ViewModifier {
     let enabled: Bool
     
     public func body(content: Content) -> some View {
-        if !model.isUnlocked {
+        if enabled && !model.isUnlocked {
             BiometricLockView(model: model)
         } else {
             content
