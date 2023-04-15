@@ -8,15 +8,14 @@
 import SwiftUI
 
 public struct BiometricLockView: View {
-    
-    public init() {}
-    
+        
     @StateObject var model = BiomericLockModel()
     public var body: some View {
         ZStack {
             Color(UIColor.systemBackground)
                 .ignoresSafeArea()
             VStack {
+                Text(model.isUnlocked ? "Unlocked": "Locked")
                 IconView(image: "lock.shield.fill", color: .primary, size: .veryLarge)
                 Text("App Locked")
                     .fontWeight(.heavy)
