@@ -24,9 +24,7 @@ public class BiomericLockModel: ObservableObject {
             context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { success, authenticationError in
 
                 if success {
-                    Task { @MainActor in
-                        self.isUnlocked = true
-                    }
+                    self.isUnlocked = true
                 } else {
                     print(authenticationError ?? "some error")
                     // error
