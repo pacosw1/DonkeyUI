@@ -22,7 +22,6 @@ public struct BiometricLockModifier: ViewModifier {
         .onChange(of: scenePhase) { (phase) in
                     switch phase {
                     case .active: print("ScenePhase: active")
-                        model.isUnlocked = false
 
                     case .background:
                         print("background: active")
