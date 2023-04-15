@@ -40,7 +40,7 @@ public struct ColorPickerView: View {
         .mint,
         .brown,
         .purple,
-        .yellow,
+
     ], selected: Binding<Color>, verticalSpacing: CGFloat = 10, horizontalSpacing: CGFloat = 40) {
         self.colors = colors
         self.horizontalSpacing = horizontalSpacing
@@ -54,7 +54,7 @@ public struct ColorPickerView: View {
     @Binding var selected: Color
     
     public var body: some View {
-        WrappingHStack(alignment: .center, horizontalSpacing: horizontalSpacing, verticalSpacing: verticalSpacing) {
+        WrappingHStack(alignment: .leading, horizontalSpacing: horizontalSpacing, verticalSpacing: verticalSpacing) {
            ForEach(colors, id: \.self) { color in
                ColorPickerItem(color: color, selected: color.toHex() == selected.toHex())
                    .onTapGesture {

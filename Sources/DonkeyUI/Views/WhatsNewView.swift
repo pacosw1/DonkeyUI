@@ -86,5 +86,6 @@ struct WhatsNewView_Previews: PreviewProvider {
             .init(icon: "bell.fill", iconColor: .red, title: "Reminders are back", description: "Better than ever before"),
             .init(icon: "book.fill", iconColor: .red, title: "All New Rewards", description: "Now easier to read"),
         ], action: {})
+        .biometricLock()
     }
 }
