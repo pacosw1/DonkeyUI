@@ -7,10 +7,10 @@
 
 import Foundation
 import LocalAuthentication
-
+import SwiftUI
 
 public class BiomericLockModel: ObservableObject {
-    @Published public var isUnlocked: Bool = false
+    @Published var isUnlocked: Bool = false
     
     public func authenticate() {
         let context = LAContext()
@@ -26,11 +26,13 @@ public class BiomericLockModel: ObservableObject {
                         self.isUnlocked = true
                     }
                 } else {
+                    print(authenticationError ?? "some error")
                     // error
                 }
             }
         } else {
             // no biometrics
+            print("no biometrics")
         }
     }
 }
