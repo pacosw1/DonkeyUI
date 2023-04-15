@@ -15,7 +15,6 @@ public struct BiometricLockView: View {
             Color(UIColor.systemBackground)
                 .ignoresSafeArea()
             VStack {
-                Text(model.isUnlocked ? "Unlocked": "Locked")
                 IconView(image: "lock.shield.fill", color: .primary, size: .veryLarge)
                 Text("App Locked")
                     .fontWeight(.heavy)
