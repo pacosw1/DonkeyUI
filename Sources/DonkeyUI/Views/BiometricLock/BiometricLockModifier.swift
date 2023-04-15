@@ -12,29 +12,16 @@ public struct BiometricLockModifier: ViewModifier {
     let enabled: Bool
     
     public func body(content: Content) -> some View {
-        VStack {
-            if enabled && !model.isUnlocked {
+        content
+            .overlay {
                 BiometricLockView(model: model)
-            } else {
-                content
+                    .opacity(enabled && !model.isUnlocked ? 1 : 0)
             }
-        }
-        .onChange(of: scenePhase) { (phase) in
-                    switch phase {
-                    case .active: print("ScenePhase: active")
-
-                    case .background:
-                        print("background: active")
-
-                        model.isUnlocked = false
-                    case .inactive:
-                        print("inactive: active")
-
-                    @unknown default:
-                        print("default")
-                        model.isUnlocked = false
-                    }
+            .onChange(of: scenePhase) { (phase) in
+                if phase == .background {
+                    model.isUnlocked = false
                 }
+            }
         
       }
 }
