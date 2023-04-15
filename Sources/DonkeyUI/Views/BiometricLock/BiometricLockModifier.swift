@@ -12,7 +12,7 @@ public struct BiometricLockModifier: ViewModifier {
     
     public func body(content: Content) -> some View {
         if !model.isUnlocked {
-            BiometricLockView()
+            BiometricLockView(model: model)
         } else {
             content
         }

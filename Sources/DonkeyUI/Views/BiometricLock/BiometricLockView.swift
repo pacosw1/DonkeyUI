@@ -10,7 +10,7 @@ import SwiftUI
 public struct BiometricLockView: View {
         
     @Environment(\.scenePhase) var scenePhase
-    @StateObject var model = BiomericLockModel()
+    @ObservedObject var model: BiomericLockModel
     public var body: some View {
         ZStack {
             Color(UIColor.systemBackground)
@@ -48,6 +48,6 @@ public struct BiometricLockView: View {
 
 struct BiometricLockView_Previews: PreviewProvider {
     static var previews: some View {
-        BiometricLockView()
+        BiometricLockView(model: BiomericLockModel())
     }
 }
