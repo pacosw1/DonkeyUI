@@ -30,8 +30,6 @@ public struct BiometricLockModifier: ViewModifier {
                     case .inactive:
                         print("inactive: active")
 
-                        model.isUnlocked = false
-
                     @unknown default:
                         print("default")
                         model.isUnlocked = false
