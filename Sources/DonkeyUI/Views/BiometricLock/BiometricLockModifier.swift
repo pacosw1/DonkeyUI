@@ -11,12 +11,11 @@ public struct BiometricLockModifier: ViewModifier {
     let enabled: Bool
     
     public func body(content: Content) -> some View {
-        content
-            .overlay {
-                BiometricLockView()
-                    .opacity(model.isUnlocked || !enabled ? 0 : 1)
-            }
-            
+        if enabled && !model.isUnlocked {
+            BiometricLockView()
+        } else {
+            content
+        }
       }
 }
 
