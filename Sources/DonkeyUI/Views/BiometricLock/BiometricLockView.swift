@@ -9,6 +9,7 @@ import SwiftUI
 
 public struct BiometricLockView: View {
         
+    @Environment(\.scenePhase) var scenePhase
     @StateObject var model = BiomericLockModel()
     public var body: some View {
         ZStack {
@@ -30,6 +31,18 @@ public struct BiometricLockView: View {
                 .padding(.top)
             }
         }
+        .onChange(of: scenePhase) { (phase) in
+                    switch phase {
+                    case .active: print("ScenePhase: active")
+                    case .background:
+                        model.isUnlocked = false
+                    case .inactive:
+                        model.isUnlocked = false
+
+                    @unknown default:
+                        print("default")
+                    }
+                }
     }
 }
 
