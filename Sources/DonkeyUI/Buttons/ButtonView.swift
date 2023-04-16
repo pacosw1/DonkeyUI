@@ -31,10 +31,10 @@ public struct ButtonView: View {
     
     @Environment(\.colorScheme) var colorScheme
     
-    public init(label: String, icon: String? = nil, color: Color = .accentColor, buttonTyoe: ButtonType = .filled, padding: CGFloat = 1.5, font: Font = .body, fontWeight: Font.Weight = .heavy, fullWidth: Bool = false, disabled: Bool = false, radius: CGFloat = 12, isLoading: Bool = false, action: @escaping () -> Void = {}) {
+    public init(label: String, icon: String? = nil, color: Color = .accentColor, buttonType: ButtonType = .filled, padding: CGFloat = 1.5, font: Font = .body, fontWeight: Font.Weight = .heavy, fullWidth: Bool = false, disabled: Bool = false, radius: CGFloat = 12, isLoading: Bool = false, action: @escaping () -> Void = {}) {
         self.label = label
         self.color = color
-        self.buttonType = buttonTyoe
+        self.buttonType = buttonType
         self.action = action
         self.icon = icon
         self.padding = padding
@@ -136,8 +136,8 @@ struct ButtonView_Previews: PreviewProvider {
             
 //
 //            ButtonView(label: "Start", color: .pink, buttonTyoe: .filled, action: {}, padding: 3, fullWidth: false, disabled: true)
-            ButtonView(label: "Start", icon: "faceid", color: .blue, buttonTyoe: .filled, fullWidth: false, disabled: false, action: {})
-            ButtonView(label: "Start", color: .blue, buttonTyoe: .filled, fullWidth: false, disabled: false, isLoading: true, action: {})
+            ButtonView(label: "Start", icon: "faceid", color: .blue, buttonType: .filled, fullWidth: false, disabled: false, action: {})
+            ButtonView(label: "Start", color: .blue, buttonType: .filled, fullWidth: false, disabled: false, isLoading: true, action: {})
 //            ButtonView(label: "Start", color: .purple, buttonTyoe: .filled, action: {}, fullWidth: false, disabled: true, isLoading: false)
 
 

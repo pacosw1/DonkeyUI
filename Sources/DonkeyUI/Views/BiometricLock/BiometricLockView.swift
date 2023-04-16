@@ -23,7 +23,7 @@ public struct BiometricLockView: View {
                 
                 
                 
-                ButtonView(label: "Unlock", icon: "faceid", buttonTyoe: .bordered) {
+                ButtonView(label: "Unlock", icon: "faceid", buttonType: .bordered) {
                     model.authenticate()
                 }
                 .padding(.top)

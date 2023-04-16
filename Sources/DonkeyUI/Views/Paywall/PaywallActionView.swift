@@ -21,7 +21,7 @@ struct PaywallActionView: View {
             ButtonView(
                 label: billingType == "Recurring Billing" ? "Start Free Trial" : "Continue",
                 color: .blue,
-                buttonTyoe: .filled, padding: 4, font: .subheadline, fontWeight: .heavy, fullWidth: true, disabled: isDisabled, isLoading: false, action: {
+                buttonType: .filled, padding: 4, font: .subheadline, fontWeight: .heavy, fullWidth: true, disabled: isDisabled, isLoading: false, action: {
                     buyAction()
                 }
             )
