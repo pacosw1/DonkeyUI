@@ -54,6 +54,8 @@ public struct ScrollTagSelector: View {
                                 }
                             }
                     }
+                    Text("")
+                        .opacity(0)
                 }
                 .padding(.vertical, 5)
                 .padding(.horizontal, 2)
