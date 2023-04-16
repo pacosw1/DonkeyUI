@@ -7,9 +7,11 @@
 
 import SwiftUI
 
-struct UseBiometricsToggle: View {
+public struct UseBiometricsToggle: View {
+    public init() {}
+    
     @AppStorage("useBiometrics") var useBiometrics: Bool = false
-    var body: some View {
+    public var body: some View {
         SettingToggleView(isOn: $useBiometrics, label: "Authentication", systemIcon: "faceid", iconColor: .teal)
 
     }
