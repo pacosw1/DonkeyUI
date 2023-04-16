@@ -76,14 +76,14 @@ struct TagsPromotionView: View {
             FeatureView(title: "Unlimited Tags", image: "tag.fill", text: "Tags help you organize your tasks all the way", color: .orange)
             VStack(alignment: .leading) {
                 HStack {
-                    TagView(title: "Work", color: .blue, deleteAction: {_ in})
-                    TagView(title: "Gym", color: .pink, deleteAction: {_ in})
-                    TagView(title: "Health", color: .green, deleteAction: {_ in})
+                    TagView(id: UUID(),title: "Work", color: .blue, deleteAction: {_ in})
+                    TagView(id: UUID(),title: "Gym", color: .pink, deleteAction: {_ in})
+                    TagView(id: UUID(),title: "Health", color: .green, deleteAction: {_ in})
                 }
                 HStack {
-                    TagView(title: "School", color: .purple, deleteAction: {_ in})
-                    TagView(title: "Vactations", color: .indigo, deleteAction: {_ in})
-                    TagView(title: "Hobby", color: .teal, deleteAction: {_ in})
+                    TagView(id: UUID(),title: "School", color: .purple, deleteAction: {_ in})
+                    TagView(id: UUID(),title: "Vactations", color: .indigo, deleteAction: {_ in})
+                    TagView(id: UUID(),title: "Hobby", color: .teal, deleteAction: {_ in})
                 }
             }
         }

@@ -39,7 +39,7 @@ public struct ScrollTagSelector: View {
             ScrollView(.horizontal) {
                 HStack(spacing: 10) {
                     ForEach(tags, id: \.internalId) { tag in
-                        TagView(title: tag.getLabel(), color: tag.getColor())
+                        TagView(id: tag.getId(), title: tag.getLabel(), color: tag.getColor())
                             .onTapGesture {
                                 withAnimation(.interactiveSpring()) {
                                     if isSelected(tag: tag) {
