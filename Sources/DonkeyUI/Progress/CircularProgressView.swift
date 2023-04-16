@@ -15,7 +15,7 @@ public struct CircularProgressView: View {
     
     @Environment(\.colorScheme) var colorScheme
     
-    init(color: Color = .blue, delay: Double = 0.0, progress: CGFloat, size: CGFloat) {
+    public init(color: Color = .blue, delay: Double = 0.0, progress: CGFloat, size: CGFloat) {
         self.color = color
         self.delay = delay
         self.progress = progress

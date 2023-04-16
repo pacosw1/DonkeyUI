@@ -10,12 +10,19 @@ import SwiftUI
 
 
 
-struct SpinnerLoadingView: View {
+public struct SpinnerLoadingView: View {
+    public init(color: Color = .accentColor, disabled: Bool = false) {
+        self.color = color
+        self.disabled = disabled
+    }
+    
     var color: Color = .accentColor
     var disabled: Bool = false
     @State private var isAnimating = false
     
-    var body: some View {
+    
+    
+    public var body: some View {
         ZStack {
             Circle()
                 .stroke(lineWidth: 5)
