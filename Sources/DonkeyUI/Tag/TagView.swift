@@ -10,6 +10,7 @@ import SwiftUI
 public struct TagView: View {
     let title: String
     let color: Color
+    let id: UUID
     
     var dull: Bool = false
     var delete: Bool = false
@@ -19,8 +20,9 @@ public struct TagView: View {
     var verySmall: Bool = false
     @Environment(\.colorScheme) var colorScheme
     
-    public init(title: String, color: Color, dull: Bool = false, delete: Bool = false, deleteAction: @escaping (UUID) -> Void = {_ in}, holdAction: @escaping () -> Void = {}, selected: Bool = false, verySmall: Bool = false) {
+    public init(id: UUID, title: String, color: Color, dull: Bool = false, delete: Bool = false, deleteAction: @escaping (UUID) -> Void = {_ in}, holdAction: @escaping () -> Void = {}, selected: Bool = false, verySmall: Bool = false) {
         self.title = title
+        self.id = id
         self.color = color
         self.dull = dull
         self.delete = delete
@@ -81,7 +83,7 @@ public struct TagView: View {
             
             if delete {
                 Button {
-                    deleteAction(UUID())
+                    deleteAction(id)
                 } label: {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundColor(textColor)
@@ -105,9 +107,9 @@ struct TagView_Previews: PreviewProvider {
         
                 HStack {
                     Spacer()
-                    TagView(title: "No way", color: .blue, delete: false, deleteAction: {_ in},verySmall: true)
-                    TagView(title: "No way", color: .pink, delete: false, deleteAction: {_ in},verySmall: false)
-                    TagView(title: "No way", color: .pink, delete: true, deleteAction: {_ in},verySmall: false)
+                    TagView(id: UUID(),title: "No way", color: .blue, delete: false, deleteAction: {_ in},verySmall: true)
+                    TagView(id: UUID(), title: "No way", color: .pink, delete: false, deleteAction: {_ in},verySmall: false)
+                    TagView(id: UUID(), title: "No way", color: .pink, delete: true, deleteAction: {_ in},verySmall: false)
                     Spacer()
             }
                 
