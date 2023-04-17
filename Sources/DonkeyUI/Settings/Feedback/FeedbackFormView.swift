@@ -57,23 +57,28 @@ struct FeedbackFormView: View {
             Spacer()
             
             
-            ButtonView(label: "Send",  padding: 3, fullWidth: true) {
-                onSubmit(text, email)
-                
-                focused = false
-                
-                withAnimation {
-                    state = .sent
-                }
-                
-            }
-            .disabled(disabled)
+            
             
         }
         .padding()
         .navigationTitle("Feedback")
         .task {
 //            focused = true
+        }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                ButtonView(label: "Send",  padding: 1, fullWidth: true) {
+                    onSubmit(text, email)
+                    
+                    focused = false
+                    
+                    withAnimation {
+                        state = .sent
+                    }
+                    
+                }
+                .disabled(disabled)
+            }
         }
     }
 }
