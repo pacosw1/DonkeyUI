@@ -124,6 +124,8 @@ class PurchaseHandler: ObservableObject {
             }
         }
         
+        
+        
         if let packages = offerings?.current?.availablePackages {
             var index = 0
                 // Map items to paywall UI
@@ -131,8 +133,8 @@ class PurchaseHandler: ObservableObject {
                 // Map cause we need this for api call later
                 let plan = PaywallPlan(
                     id: package.id,
-                    title: package.storeProduct.localizedTitle,
-                    subText: package.storeProduct.localizedDescription,
+                    title: package.packageType == .lifetime ? "Lifetime Deal" : package.storeProduct.localizedTitle,
+                    subText: package.packageType == .lifetime ? "Pay once, get it for life" : package.storeProduct.localizedDescription,
                     price: package.localizedPriceString,
                     billingType: package.packageType == .lifetime ? "One Time Purchase" : "Recurring Billing",
                     billingPeriod: getBillingPeriod(packageType: package.packageType),

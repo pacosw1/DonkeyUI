@@ -10,7 +10,8 @@ import SwiftUI
 public enum ButtonType {
 case filled,
     bordered,
-    text
+    text,
+    card
 }
 
 public struct ButtonView: View {
@@ -51,6 +52,11 @@ public struct ButtonView: View {
         if buttonType == .filled && !disabled {
             return color.buttonText(darkMode: false)
         }
+        
+        if buttonType == .card && !disabled {
+            return .accentColor
+        }
+        
         if disabled {
             return color.opacity(0.3)
         }
@@ -76,6 +82,9 @@ public struct ButtonView: View {
         } else {
             if buttonType == .filled {
                 return color
+            } else if buttonType == .card {
+                return Color(UIColor.secondarySystemBackground)
+                
             } else {
                 return .clear
             }
@@ -89,6 +98,8 @@ public struct ButtonView: View {
                 return color
             }
             return color.opacity(0.3)
+        } else if buttonType == .card {
+            return Color(UIColor(color).darker(componentDelta: 0.3))
         }
         
         return .clear
