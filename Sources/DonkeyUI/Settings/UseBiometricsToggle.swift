@@ -6,13 +6,28 @@
 //
 
 import SwiftUI
+import LocalAuthentication
 
 public struct UseBiometricsToggle: View {
     public init() {}
     
+    var hasBiometric: Bool {
+        var error: NSError?
+        let context = LAContext()
+
+        guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) else {
+            return false
+        }
+
+        return context.biometryType != .none
+    }
+    
     @AppStorage("useBiometrics") var useBiometrics: Bool = false
     public var body: some View {
-        SettingToggleView(isOn: $useBiometrics, label: "Authentication", systemIcon: "faceid", iconColor: .teal)
+        if hasBiometric {
+            SettingToggleView(isOn: $useBiometrics, label: "Authentication", systemIcon: "faceid", iconColor: .teal)
+        }
+          
 
     }
 }
