@@ -27,8 +27,6 @@ public struct UseBiometricsToggle: View {
         if hasBiometric {
             SettingToggleView(isOn: $useBiometrics, label: "Authentication", systemIcon: "faceid", iconColor: .teal)
         }
-          
-
     }
 }
 

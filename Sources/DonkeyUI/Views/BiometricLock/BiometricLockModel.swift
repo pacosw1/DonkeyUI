@@ -36,6 +36,10 @@ public class BiomericLockModel: ObservableObject {
         } else {
             // no biometrics
             print("no biometrics")
+            Task { @MainActor in
+                self.isUnlocked = true
+            }
+            
         }
     }
 }
