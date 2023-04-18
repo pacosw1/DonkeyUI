@@ -11,21 +11,21 @@ import LocalAuthentication
 public struct UseBiometricsToggle: View {
     public init() {}
     
-    var hasBiometric: Bool {
+    var biometryType: LABiometryType {
         var error: NSError?
         let context = LAContext()
 
         guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) else {
-            return false
+            return .none
         }
 
-        return context.biometryType != .none
+        return self.biometryType
     }
-    
+
     @AppStorage("useBiometrics") var useBiometrics: Bool = false
     public var body: some View {
-        if hasBiometric {
-            SettingToggleView(isOn: $useBiometrics, label: "Authentication", systemIcon: "faceid", iconColor: .teal)
+        if biometryType == .faceID || biometryType == .touchID {
+            SettingToggleView(isOn: $useBiometrics, label: "Authentication", systemIcon: biometryType == .touchID ? "touchid" : "faceid", iconColor: .teal)
         }
     }
 }
