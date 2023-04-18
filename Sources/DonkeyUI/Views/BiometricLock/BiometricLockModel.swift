@@ -11,6 +11,7 @@ import SwiftUI
 
 public class BiomericLockModel: ObservableObject {
     @Published var isUnlocked: Bool = false
+    @AppStorage("useBiometrics") var useBiometrics = false
     
     public func authenticate() {
         let context = LAContext()
@@ -38,6 +39,7 @@ public class BiomericLockModel: ObservableObject {
             print("no biometrics")
             Task { @MainActor in
                 self.isUnlocked = true
+                self.useBiometrics = false
             }
             
         }
