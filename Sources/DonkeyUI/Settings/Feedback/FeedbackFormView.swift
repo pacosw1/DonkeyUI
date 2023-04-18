@@ -55,10 +55,6 @@ struct FeedbackFormView: View {
            
            
             Spacer()
-            
-            
-            
-            
         }
         .padding()
         .navigationTitle("Feedback")
