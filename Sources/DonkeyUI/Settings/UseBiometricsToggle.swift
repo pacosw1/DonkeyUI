@@ -9,9 +9,19 @@ import SwiftUI
 import LocalAuthentication
 
 public struct UseBiometricsToggle: View {
-    public init() {}
+    public init() {
+        var error: NSError?
+        let context = LAContext()
+
+        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
+            biometricType = context.biometryType
+        } else {
+            biometricType = .none
+        }
+        
+    }
     
-    @State var biometricType: LABiometryType = .none
+    @State var biometricType: LABiometryType
 
     @AppStorage("useBiometrics") var useBiometrics: Bool = false
     public var body: some View {
@@ -19,18 +29,6 @@ public struct UseBiometricsToggle: View {
                 SettingToggleView(isOn: $useBiometrics, label: "Authentication", systemIcon: biometricType == .touchID ? "touchid" : "faceid", iconColor: .teal)
             } else {
                 EmptyView()
-                    .task {
-                        var error: NSError?
-                        let context = LAContext()
-
-                        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
-                            biometricType = context.biometryType
-                        } else {
-                            biometricType = .none
-
-                        }
-
-                    }
             }
         
     }
