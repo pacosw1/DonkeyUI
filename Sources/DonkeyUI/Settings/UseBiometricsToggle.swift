@@ -11,21 +11,26 @@ import LocalAuthentication
 public struct UseBiometricsToggle: View {
     public init() {}
     
-    var biometryType: LABiometryType {
-        var error: NSError?
-        let context = LAContext()
-
-        guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) else {
-            return .none
-        }
-
-        return self.biometryType
-    }
+    @State var biometricType: LABiometryType = .none
 
     @AppStorage("useBiometrics") var useBiometrics: Bool = false
     public var body: some View {
-        if biometryType == .faceID || biometryType == .touchID {
-            SettingToggleView(isOn: $useBiometrics, label: "Authentication", systemIcon: biometryType == .touchID ? "touchid" : "faceid", iconColor: .teal)
+        VStack {
+            if biometricType == .faceID || biometricType == .touchID {
+                SettingToggleView(isOn: $useBiometrics, label: "Authentication", systemIcon: biometricType == .touchID ? "touchid" : "faceid", iconColor: .teal)
+            }
+        }
+        .task {
+            var error: NSError?
+            let context = LAContext()
+
+            if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
+                biometricType = context.biometryType
+            } else {
+                biometricType = .none
+
+            }
+
         }
     }
 }
