@@ -15,9 +15,11 @@ public struct UseBiometricsToggle: View {
 
     @AppStorage("useBiometrics") var useBiometrics: Bool = false
     public var body: some View {
-        VStack {
+        ZStack {
             if biometricType == .faceID || biometricType == .touchID {
                 SettingToggleView(isOn: $useBiometrics, label: "Authentication", systemIcon: biometricType == .touchID ? "touchid" : "faceid", iconColor: .teal)
+            } else {
+                EmptyView()
             }
         }
         .task {
