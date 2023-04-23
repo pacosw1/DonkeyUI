@@ -13,18 +13,20 @@ public struct IconRowView: View {
     let color: Color
     let badgeCount: Int
     var badgeColor: Color
+    var inverted: Bool
     
-    public init(icon: String, label: String, color: Color, badgeCount: Int, badgeColor: SwiftUI.Color = Color.pink) {
+    public init(icon: String, label: String, color: Color, badgeCount: Int, badgeColor: SwiftUI.Color = Color.pink, inverted: Bool = true) {
         self.icon = icon
         self.label = label
         self.color = color
         self.badgeCount = badgeCount
         self.badgeColor = badgeColor
+        self.inverted = inverted
     }
     
     public var body: some View {
         HStack(spacing: 10) {
-            IconView(image: icon, color: color, size: .verySmall)
+            IconView(image: icon, color: color, size: .verySmall, inverted: inverted)
 //                                        .padding(5)
 //                                        .bgOverlay(bgColor: view.color)
             Text(label)
