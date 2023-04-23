@@ -15,7 +15,7 @@ public struct IconRowView: View {
     var badgeColor: Color
     var inverted: Bool
     
-    public init(icon: String, label: String, color: Color, badgeCount: Int, badgeColor: SwiftUI.Color = Color.pink, inverted: Bool = true) {
+    public init(icon: String, label: String, color: Color, badgeCount: Int, badgeColor: SwiftUI.Color = Color.pink, inverted: Bool = false) {
         self.icon = icon
         self.label = label
         self.color = color
