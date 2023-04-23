@@ -88,6 +88,7 @@ public struct PullList<Content: View>: View {
                             if title != "" {
                                 Text(title)
                                     .font(.largeTitle)
+                                    .fontWeight(.semibold)
                             }
                             Spacer()
                             if icon != "" {
