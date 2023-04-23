@@ -22,12 +22,14 @@ public struct IconView: View {
     let image: String
     let color: Color
     var size: IconSize = .large
+    var inverted: Bool
     
     
-    public init(image: String, color: Color, size: IconSize = .large) {
+    public init(image: String, color: Color, size: IconSize = .large, inverted: Bool = false) {
         self.image = image
         self.color = color
         self.size = size
+        self.inverted = inverted
         
     }
     var fontSize: CGFloat {
@@ -53,10 +55,10 @@ public struct IconView: View {
     
     public var body: some View {
         Image(systemName: image)
-            .foregroundColor(.white)
+            .foregroundColor(inverted ? color.opacity(0.9) : .white)
             .font(.system(size: fontSize))
             .frame(width: size.rawValue, height: size.rawValue)
-            .bgOverlay(bgColor: color.opacity(0.8), radius: 12)
+            .bgOverlay(bgColor: inverted ? .clear : color.opacity(0.8), radius: 12)
     }
 }
 
@@ -68,7 +70,7 @@ struct IconView_Previews: PreviewProvider {
             IconView(image: "xmark", color: .pink, size: .small)
             IconView(image: "xmark", color: .pink, size: .medium)
             IconView(image: "xmark", color: .pink, size: .large)
-            IconView(image: "xmark", color: .pink, size: .veryLarge)
+            IconView(image: "xmark", color: .pink, size: .veryLarge, inverted: true)
 
 
 
