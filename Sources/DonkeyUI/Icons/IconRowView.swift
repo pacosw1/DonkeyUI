@@ -26,7 +26,7 @@ public struct IconRowView: View {
     
     public var body: some View {
         HStack(spacing: 10) {
-            IconView(image: icon, color: color, size: inverted ? .small : .veryLarge, inverted: inverted)
+            IconView(image: icon, color: color, size: inverted ? .small : .tiny, inverted: inverted)
 //                                        .padding(5)
 //                                        .bgOverlay(bgColor: view.color)
             Text(label)
