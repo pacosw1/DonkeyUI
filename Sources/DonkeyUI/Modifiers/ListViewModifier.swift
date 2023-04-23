@@ -83,40 +83,43 @@ public struct PullList<Content: View>: View {
         GeometryReader { root in
             ZStack(alignment: .top) {
                 List {
-                    
-                    HStack {
-                        Text(title)
-                            .font(.title)
-                            .fontWeight(.semibold)
-                        Spacer()
-                        if icon != "" {
-                            IconView(image: icon, color: .blue, size: .small)
-                                .onTapGesture {
-                                    iconAction()
-                                }
+                    if title != "" || icon != "" {
+                        HStack {
+                            if title != "" {
+                                Text(title)
+                                    .font(.largeTitle)
+                            }
+                            Spacer()
+                            if icon != "" {
+                                IconView(image: icon, color: .blue, size: .small)
+                                    .onTapGesture {
+                                        iconAction()
+                                    }
+                            }
                         }
+                        .background(GeometryReader { proxy -> Color in
+                            DispatchQueue.main.async {
+                                offsetY = -proxy.frame(in: .named("scroll")).origin.y + root.safeAreaInsets.top + 11
+                                
+                                if offsetY <= actionThreshold && thresholdCrossed == false {
+                                    thresholdCrossed = true
+                                    HapticFeedback.trigger()
+                                } else {
+                                    if thresholdCrossed && offsetY >= 0.4 * actionThreshold {
+                                        onPullThreshold()
+                                        thresholdCrossed = false
+                                    }
+                                }
+                                
+                                
+                            }
+                            return Color.clear
+                            
+                            
+                        })
+                        .listRowSeparator(.hidden)
                     }
-                    .background(GeometryReader { proxy -> Color in
-                         DispatchQueue.main.async {
-                             offsetY = -proxy.frame(in: .named("scroll")).origin.y + root.safeAreaInsets.top + 11
-
-                             if offsetY <= actionThreshold && thresholdCrossed == false {
-                                 thresholdCrossed = true
-                                 HapticFeedback.trigger()
-                             } else {
-                                 if thresholdCrossed && offsetY >= 0.4 * actionThreshold {
-                                     onPullThreshold()
-                                     thresholdCrossed = false
-                                 }
-                             }
-                             
-                             
-                         }
-                         return Color.clear
-                         
-                         
-                     })
-                     .listRowSeparator(.hidden)
+                        
                     content
                     
                   

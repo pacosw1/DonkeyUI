@@ -64,7 +64,7 @@ struct CircularProgressView_Previews: PreviewProvider {
     static var previews: some View {
         
         VStack {
-            CircularProgressView(progress: 1, size: 50)
+            CircularProgressView(progress: 0.3, size: 50)
                 .preferredColorScheme(.dark)
             
         }
