@@ -28,7 +28,7 @@ public struct SettingToggleView: View {
                 
             
                 HStack {
-                    IconView(image: systemIcon, color: iconColor, size: .small)
+                    IconView(image: systemIcon, color: iconColor, size: .tiny)
                     Text(label)
                         .font(.body)
                         .fontWeight(.semibold)
