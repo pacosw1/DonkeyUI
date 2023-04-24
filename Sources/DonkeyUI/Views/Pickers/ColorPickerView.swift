@@ -32,13 +32,9 @@ public struct ColorPickerView: View {
         .pink,
         .orange,
         .blue,
-        .red,
-        .teal,
         .indigo,
         .green,
-        .cyan,
         .mint,
-        .brown,
         .purple,
 
     ], selected: Binding<Color>, verticalSpacing: CGFloat = 10, horizontalSpacing: CGFloat = 40) {
