@@ -17,14 +17,12 @@ public struct DailyReminderView: View {
     public var body: some View {
         DailyReminderPickerView()
             .editToggle(isOn: $dailyReminderOn, systemImage: "calendar.badge.clock", label: "Daily Reminder", iconColor: .purple)
-            .card()
     }
 }
 
 struct DailyReminderView_Previews: PreviewProvider {
     static var previews: some View {
         DailyReminderView()
-            .padding()
     }
 }
 
