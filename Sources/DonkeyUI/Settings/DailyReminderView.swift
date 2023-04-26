@@ -90,22 +90,7 @@ public struct DailyReminderPickerView: View {
         let notificationCenter =  UNUserNotificationCenter.current()
         notificationCenter.removePendingNotificationRequests(withIdentifiers: ["dailyNotification"])
 
-        let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = body
-        content.sound = .default
-        
-        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
-        
-        let request = UNNotificationRequest(identifier: "dailyNotification", content: content, trigger: trigger)
-        
-        notificationCenter.add(request) { error in
-            if let error = error {
-                print("Error scheduling daily notification: \(error.localizedDescription)")
-            } else {
-                print("Daily notification scheduled successfully!")
-            }
-        }
+        notificationCenter.createDailyNotification(id: "dailyNotification", title: title, content: "", hour: dateComponents.hour!, minute: dateComponents.minute!)
     }
 }
 

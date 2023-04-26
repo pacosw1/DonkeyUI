@@ -47,6 +47,32 @@ public extension UNUserNotificationCenter {
 //        }
 //    }
     
+    
+    func createDailyNotification(id: String, title: String, content: String, hour: Int, minute: Int) {
+        let notification = UNMutableNotificationContent()
+        notification.title = title
+        notification.sound = .default
+        notification.body = content
+        notification.badge = 1
+        notification.interruptionLevel = .timeSensitive
+        
+        var component = DateComponents()
+        component.hour = hour
+        component.minute = minute
+        component.timeZone = TimeZone.current
+        
+                        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: component, repeats: true)
+        let request = UNNotificationRequest(identifier: id, content: notification, trigger: trigger)
+        
+        self.add(request) { error in
+            if let error = error {
+                print("could not create notification")
+                print(error)
+            }
+        }
+    }
+    
     func createNotification(id: String, title: String, content: String, date: Date, badge: Int = 1) {
         
         let notification = UNMutableNotificationContent()
