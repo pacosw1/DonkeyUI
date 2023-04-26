@@ -60,6 +60,9 @@ public struct DailyReminderPickerView: View {
             component.hour = dailyReminderHour
             component.minute = dailyReminderMinute
             
+            print(dailyReminderHour)
+            print(dailyReminderMinute)
+            
             scheduleDailyNotification(title: text, body: "", dateComponents: component)
         }
         .onChange(of: text) { _ in
