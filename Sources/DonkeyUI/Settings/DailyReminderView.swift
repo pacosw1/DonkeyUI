@@ -92,10 +92,6 @@ public struct DailyReminderPickerView: View {
         content.body = body
         content.sound = .default
         
-        var dateComponents = DateComponents()
-        dateComponents.hour = 10
-        dateComponents.minute = 0
-        
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
         
         let request = UNNotificationRequest(identifier: "dailyNotification", content: content, trigger: trigger)

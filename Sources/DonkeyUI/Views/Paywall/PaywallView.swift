@@ -79,10 +79,6 @@ public struct PaywallView: View {
                 Spacer()
                 PaywallPolicyView( restorePurchasesAction: purchaseHandler.restorePurchases, privacyURL: privacyURL, termsOfServiceURL: termsURL)
             }
-        
-            .onTapGesture {
-                purchaseHandler.showErrorMessage = true
-            }
             .overlay {
                 ZStack {
                     Color(UIColor.systemBackground)
@@ -121,7 +117,7 @@ public struct PaywallView: View {
 
             }
             .task {
-//            Purchases.configure(withAPIKey: "")
+            Purchases.configure(withAPIKey: "")
             loading = true
                 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {

@@ -11,7 +11,7 @@ struct PaywallActionView: View {
     var selectePrice: String
     var billingType: String
     var billingPeriod: String
-    var buyAction: () -> Void
+    var buyAction: @MainActor () -> Void
     var isDisabled: Bool
     var isLoading: Bool
     var body: some View {
