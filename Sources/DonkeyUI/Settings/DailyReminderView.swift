@@ -1,0 +1,115 @@
+//
+//  SwiftUIView.swift
+//
+//
+//  Created by Paco Sainz on 4/16/23.
+//
+
+import SwiftUI
+
+public struct DailyReminderView: View {
+    @AppStorage("dailyReminder") var dailyReminderOn = true
+
+    
+    public init() {
+    }
+    
+    public var body: some View {
+        DailyReminderPickerView()
+            .editToggle(isOn: $dailyReminderOn, systemImage: "calendar.badge.clock", label: "Daily Reminder", iconColor: .purple)
+            .card()
+    }
+}
+
+struct DailyReminderView_Previews: PreviewProvider {
+    static var previews: some View {
+        DailyReminderView()
+            .padding()
+    }
+}
+
+public struct DailyReminderPickerView: View {
+    @State var date: Date = Date.now.startOfDay
+    @State var text: String = ""
+    
+    @AppStorage("dailyReminderHour") var dailyReminderHour  = 9
+    @AppStorage("dailyReminderMinute") var dailyReminderMinute = 0
+    @AppStorage("dailyReminderLabel") var dailyReminderLabel = "Time to schedule your day"
+
+
+    let calendar = Calendar.current
+    
+    public var body: some View {
+        HStack(alignment: .center) {
+
+                TextField("Time to schedule your day", text: $text)
+                    .font(.headline)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: false)
+            Spacer()
+                DatePicker("", selection: $date, displayedComponents: [.hourAndMinute])
+                    .labelsHidden()
+            
+
+        }
+        .padding(.vertical)
+        .onChange(of: date) { _ in
+            dailyReminderHour =  calendar.component(.hour, from: date)
+            dailyReminderMinute =  calendar.component(.minute, from: date)
+            
+            var component = DateComponents()
+            component.hour = dailyReminderHour
+            component.minute = dailyReminderMinute
+            
+            scheduleDailyNotification(title: text, body: "", dateComponents: component)
+        }
+        .onChange(of: text) { _ in
+            dailyReminderLabel = text
+        }
+        .task {
+            let calendar = Calendar.current
+            let now = Date()
+
+            // Set the time to 3:30 PM
+            var dateComponents = DateComponents()
+            dateComponents.hour = dailyReminderHour
+            dateComponents.minute = dailyReminderMinute
+
+            var newDate = calendar.date(bySetting: .hour, value: dateComponents.hour ?? 0, of: now)!
+            newDate = calendar.date(bySetting: .minute, value: dateComponents.minute ?? 0, of: newDate)!
+            
+            date = newDate
+        }
+    }
+    
+    func scheduleDailyNotification(title: String, body: String, dateComponents: DateComponents) {
+        
+        // Delete the previously schedule notification and create an updated one
+        let notificationCenter =  UNUserNotificationCenter.current()
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: ["dailyNotification"])
+
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = body
+        content.sound = .default
+        
+        var dateComponents = DateComponents()
+        dateComponents.hour = 10
+        dateComponents.minute = 0
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+        
+        let request = UNNotificationRequest(identifier: "dailyNotification", content: content, trigger: trigger)
+        
+        notificationCenter.add(request) { error in
+            if let error = error {
+                print("Error scheduling daily notification: \(error.localizedDescription)")
+            } else {
+                print("Daily notification scheduled successfully!")
+            }
+        }
+    }
+}
+
+//https://apps.apple.com/app/id6443977467?action=write-review
