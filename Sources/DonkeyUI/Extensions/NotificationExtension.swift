@@ -56,10 +56,12 @@ public extension UNUserNotificationCenter {
         notification.badge = 1
         notification.interruptionLevel = .timeSensitive
         
+                
         var component = DateComponents()
         component.hour = hour
         component.minute = minute
         component.timeZone = TimeZone.current
+        component.calendar = Calendar.current
         
                         
         let trigger = UNCalendarNotificationTrigger(dateMatching: component, repeats: true)

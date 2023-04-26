@@ -70,7 +70,7 @@ public struct DailyReminderPickerView: View {
         }
         .task {
             let calendar = Calendar.current
-            let now = Date()
+            let now = Date.now
 
             // Set the time to 3:30 PM
             var dateComponents = DateComponents()
