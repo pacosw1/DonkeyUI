@@ -33,7 +33,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
             if position.height < 0 {
                 multiplier = 1
             } else {
-                multiplier = 1 - (self.position.height / (contentHeight - 20))
+                multiplier = 1 - (self.position.height / (contentHeight))
             }
         }
         return multiplier * maxOpacity
@@ -43,25 +43,15 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
     @ViewBuilder
     public func body(content: Content) -> some View {
         ZStack {
-//
-//            Text("curr height \(self.position.height)  height \(contentHeight)")
-//                .padding()
-//                .offset(y: 100)
-            Color.black
-                .opacity(fadeProgress(current: self.position.height, total:  proxyHeight - contentHeight + 20))
-                .ignoresSafeArea(.all)
-                .onTapGesture {
-                        isShown = false
-                }
-                .animation(.linear, value: fadeProgress(current: self.position.height, total:  proxyHeight - contentHeight + 20))
-            
-            // Mark
-           
                 ZStack {
-                    
-                   
-  
                     content
+                    Color.black
+                        .opacity(fadeProgress(current: self.position.height, total:  proxyHeight - contentHeight))
+                        .ignoresSafeArea(.all)
+                        .onTapGesture {
+                                isShown = false
+                        }
+                        .animation(.linear, value: fadeProgress(current: self.position.height, total:  proxyHeight - contentHeight))
                     GeometryReader { itemProxy in
                         sheetContent()
                             .card(radius: .bottomMenu)
@@ -122,6 +112,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
 //                            position = CGSize()
                         }
                     }
+                    .padding()
                     
                 }
                 .ignoresSafeArea(.all)
@@ -129,7 +120,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                 
             
             // MArk
-            .padding()
+//            .padding()
         }
     }
 }

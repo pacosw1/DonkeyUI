@@ -29,20 +29,23 @@ struct LocationPicker: View {
 
     var body: some View {
             
+        VStack {
             Button("Hello", action: {
                 shown.toggle()
             })
-         
-            .floatingMenuSheet(isPresented: $shown) {
-                HStack {
-                    IconView(image: "drop.fill", color: .blue)
-                    Text("Hello world")
-                    Spacer()
-                   
-                    
-                }
-                .padding()
+            
+           
+        }
+        .floatingMenuSheet(isPresented: $shown) {
+            HStack {
+                IconView(image: "drop.fill", color: .blue)
+                Text("Hello world")
+                Spacer()
+                
+                
             }
+            .padding()
+        }
         
         }
     
