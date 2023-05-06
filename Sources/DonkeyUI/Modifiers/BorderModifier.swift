@@ -7,15 +7,18 @@
 import SwiftUI
 
 public struct BorderModifier: ViewModifier {
-    public init(color: Color) {
+    public init(color: Color, radius: BorderRadius) {
         self.color = color
+        self.radius = radius
     }
     
+    let radius: BorderRadius
     let color: Color
+    
     public func body(content: Content) -> some View {
         content
             .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous).fill(
+                RoundedRectangle(cornerRadius: radius.rawValue, style: .continuous).fill(
                     color)
                 
             )
@@ -29,8 +32,8 @@ public struct BorderModifier: ViewModifier {
 }
 
 public extension View {
-    func bordered(color: Color = Color(uiColor: UIColor.secondarySystemBackground)) -> some View {
-        modifier(BorderModifier(color: color))
+    func bordered(color: Color = Color(uiColor: UIColor.secondarySystemBackground), radius: BorderRadius = .card) -> some View {
+        modifier(BorderModifier(color: color, radius: radius))
     }
 }
     
