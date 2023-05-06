@@ -14,7 +14,6 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
     
     
     @State var contentHeight: CGFloat = 0.0
-    @State var position: CGSize = CGSize()
     @State var proxyHeight: CGFloat = 0.0
     @GestureState private var translation: CGSize = CGSize()
 
@@ -27,13 +26,13 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
         if !isShown {
             return 0
         }
-        if self.position.height == 0 {
+        if self.translation.height == 0 {
             multiplier = 1
         } else {
-            if position.height < 0 {
+            if translation.height < 0 {
                 multiplier = 1
             } else {
-                multiplier = 1 - (self.position.height / (contentHeight))
+                multiplier = 1 - (self.translation.height / (contentHeight))
             }
         }
         return multiplier * maxOpacity
@@ -46,12 +45,12 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                 ZStack {
                     content
                     Color.black
-                        .opacity(fadeProgress(current: self.position.height, total:  proxyHeight - contentHeight))
+                        .opacity(fadeProgress(current: self.translation.height, total:  proxyHeight - contentHeight))
                         .ignoresSafeArea(.all)
                         .onTapGesture {
                                 isShown = false
                         }
-                        .animation(.linear, value: fadeProgress(current: self.position.height, total:  proxyHeight - contentHeight))
+                        .animation(.linear, value: fadeProgress(current: self.translation.height, total:  proxyHeight - contentHeight))
                     GeometryReader { itemProxy in
                         sheetContent()
                             .card(radius: .bottomMenu)
@@ -78,12 +77,12 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
              
                                     let dir = vOffset < 0 ? 1 : 0
                                     
-                                    if value.translation.height < -30 {
-                                        withAnimation(.interactiveSpring()) {
-                                            position = CGSize()
-                                        }
-                                        return
-                                    }
+//                                    if value.translation.height < -30 {
+//                                        withAnimation(.interactiveSpring()) {
+//                                            translation = CGSize()
+//                                        }
+//                                        return
+//                                    }
                                     
                                     if abs(vOffset) < 0.05 {
                                         return
@@ -92,7 +91,6 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                                     if dir == 0 {
                                         withAnimation(.spring()) {
                                             isShown = false
-                                            position = CGSize()
                                         }
                                     } else {
                                         isShown = true
