@@ -56,17 +56,17 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                         sheetContent()
                             .card(radius: .bottomMenu)
                             .height(height: $contentHeight)
-                            .offset(y: self.position.height)
+                            .offset(y: self.translation.height)
                             .offset(y: isShown ? proxyHeight - contentHeight + 20 : proxyHeight + contentHeight)
                             .animation(.spring(), value: isShown)
+                            .animation(.interactiveSpring(), value: self.translation.height)
+
                             .highPriorityGesture(
                                 DragGesture(minimumDistance: 0).updating(self.$translation) { value, state, nigger in
-                                    state = self.translation
                                     
-                                    if value.translation.height < -30 {
-                                        
-                                    } else {
-                                        position = value.translation
+                                    if value.translation.height >= -30 {
+                                        state = value.translation
+
                                     }
                                     
 
