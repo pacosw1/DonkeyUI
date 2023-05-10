@@ -44,7 +44,7 @@ struct LocationPicker: View {
                 
                 
             }
-            .padding()
+//            .padding()
         }
         
         }
