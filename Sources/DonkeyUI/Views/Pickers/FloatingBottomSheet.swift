@@ -42,6 +42,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
     @ViewBuilder
     public func body(content: Content) -> some View {
                 ZStack {
+                    content
                     Color.black
                         .opacity(fadeProgress(current: self.translation.height, total:  proxyHeight - contentHeight))
                         .ignoresSafeArea(.all)
@@ -49,7 +50,6 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                                 isShown = false
                         }
                         .animation(.linear, value: fadeProgress(current: self.translation.height, total:  proxyHeight - contentHeight))
-                    content
 
                     GeometryReader { itemProxy in
                         sheetContent()
