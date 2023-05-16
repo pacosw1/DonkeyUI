@@ -43,6 +43,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
     public func body(content: Content) -> some View {
                 ZStack {
                     content
+
                     Color.black
                         .opacity(fadeProgress(current: self.translation.height, total:  proxyHeight - contentHeight))
                         .ignoresSafeArea(.all)
@@ -56,7 +57,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                             .card(color: .white, radius: .bottomMenu)
                             .height(height: $contentHeight)
                             .offset(y: self.translation.height)
-                            .offset(y: isShown ? proxyHeight - contentHeight + 20 : proxyHeight + contentHeight * 2)
+                            .offset(y: isShown ? proxyHeight - contentHeight - 20 : proxyHeight + contentHeight * 2)
                             .animation(.spring(), value: isShown)
                             .animation(.interactiveSpring(), value: self.translation.height)
 
@@ -113,8 +114,8 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                     .padding()
                     
                 }
-                .ignoresSafeArea(.all)
                 .height(height: $proxyHeight)
+        
                 
             
             // MArk
