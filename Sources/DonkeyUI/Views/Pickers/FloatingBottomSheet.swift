@@ -57,7 +57,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                             .card(color: .white, radius: .bottomMenu)
                             .height(height: $contentHeight)
                             .offset(y: self.translation.height)
-                            .offset(y: isShown ? proxyHeight - contentHeight - 20 : proxyHeight + contentHeight * 2)
+                            .offset(y: isShown ? proxyHeight - contentHeight - 15 : proxyHeight + contentHeight * 2)
                             .animation(.spring(), value: isShown)
                             .animation(.interactiveSpring(), value: self.translation.height)
 
