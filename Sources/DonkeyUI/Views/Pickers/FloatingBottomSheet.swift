@@ -41,9 +41,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
     
     @ViewBuilder
     public func body(content: Content) -> some View {
-        ZStack {
                 ZStack {
-                    content
                     Color.black
                         .opacity(fadeProgress(current: self.translation.height, total:  proxyHeight - contentHeight))
                         .ignoresSafeArea(.all)
@@ -51,16 +49,18 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                                 isShown = false
                         }
                         .animation(.linear, value: fadeProgress(current: self.translation.height, total:  proxyHeight - contentHeight))
+                    content
+
                     GeometryReader { itemProxy in
                         sheetContent()
-                            .card(radius: .bottomMenu)
+                            .card(color: .white, radius: .bottomMenu)
                             .height(height: $contentHeight)
                             .offset(y: self.translation.height)
-                            .offset(y: isShown ? proxyHeight - contentHeight + 20 : proxyHeight + contentHeight)
+                            .offset(y: isShown ? proxyHeight - contentHeight + 20 : proxyHeight + contentHeight * 2)
                             .animation(.spring(), value: isShown)
                             .animation(.interactiveSpring(), value: self.translation.height)
 
-                            .highPriorityGesture(
+                            .simultaneousGesture(
                                 DragGesture(minimumDistance: 0).updating(self.$translation) { value, state, nigger in
                                     
                                     if value.translation.height >= -30 {
@@ -119,7 +119,6 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
             
             // MArk
 //            .padding()
-        }
     }
 }
 
