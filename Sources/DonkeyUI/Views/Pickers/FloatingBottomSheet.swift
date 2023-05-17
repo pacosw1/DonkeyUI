@@ -81,7 +81,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                                     }
               
                                     if dir == 0 {
-                                        withAnimation(.easeOut(duration: 1)) {
+                                        withAnimation(.spring()) {
                                             isShown = false
                                         }
                                     } else {
