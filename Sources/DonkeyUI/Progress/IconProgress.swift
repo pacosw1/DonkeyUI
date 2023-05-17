@@ -8,6 +8,13 @@
 import SwiftUI
 
 public struct ProgressIcon: View {
+    public init(progress: CGFloat, animationStart: CGFloat = 0, icon: String = "trophy.fill", iconSize: CGFloat = 40) {
+        self.progress = progress
+        self.animationStart = animationStart
+        self.icon = icon
+        self.iconSize = iconSize
+    }
+    
     var progress: CGFloat
     @State var animationStart: CGFloat = 0
     var icon: String = "trophy.fill"
@@ -15,7 +22,6 @@ public struct ProgressIcon: View {
     public var body: some View {
         VStack {
             GeometryReader { proxy in
-                let size = proxy.size
                 
                 ZStack {
                     Image(systemName: icon)
