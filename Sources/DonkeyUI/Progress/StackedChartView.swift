@@ -8,14 +8,16 @@
 import SwiftUI
 
 public struct BarItem: Identifiable {
-    public init(color: Color, amount: Double) {
+    public init(color: Color, amount: Double, name: String) {
         self.color = color
         self.amount = amount
+        self.name = name
     }
     
     public let id = UUID()
     public let color: Color
     public let amount: Double
+    public let name: String
 }
 
 public struct StackedChartView: View {
