@@ -53,7 +53,7 @@ public struct StackedChartView: View {
 struct StackedChartView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            StackedChartView(barItems: [.init(color: .blue, amount: 10), .init(color: .pink, amount: 10), .init(color: .orange, amount: 10)])
+//            StackedChartView(barItems: [.init(color: .blue, amount: 10), .init(color: .pink, amount: 10), .init(color: .orange, amount: 10)])
             Spacer()
             Button("hi") {
                 
