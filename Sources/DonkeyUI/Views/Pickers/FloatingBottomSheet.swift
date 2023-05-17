@@ -62,7 +62,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                             .animation(.interactiveSpring(), value: self.translation.height)
 
                             .simultaneousGesture(
-                                DragGesture(minimumDistance: 0).updating(self.$translation) { value, state, nigger in
+                                DragGesture(minimumDistance: 10).updating(self.$translation) { value, state, nigger in
                                     
                                     if value.translation.height >= -30 {
                                         state = value.translation
@@ -146,13 +146,14 @@ struct ButtomSheetCard_Previews: PreviewProvider {
                 Spacer()
                 Text("mot ice")
             }
+            
         }
         
         .padding()
         .padding(.bottom)
-        .floatingMenuSheet(isPresented: .constant(false)) {
-            Text("Hello")
-        }
+//        .floatingMenuSheet(isPresented: ) {
+//            Text("Hello")
+//        }
     }
 }
 
