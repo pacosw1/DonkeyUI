@@ -22,7 +22,7 @@ public struct ProgressIcon: View {
     public var body: some View {
         VStack {
             GeometryReader { proxy in
-                
+                let size = proxy.size
                 ZStack {
                     Image(systemName: icon)
                         .resizable()
@@ -50,11 +50,11 @@ public struct ProgressIcon: View {
                 }
                 .frame(width: iconSize, height: iconSize, alignment: .center)
 
-//                .onAppear {
-//                    withAnimation(.linear(duration: 2).repeatForever(autoreverses: true)) {
-//                        animationStart = size.width
-//                    }
-//                }
+                .onAppear {
+                    withAnimation(.linear(duration: 2).repeatForever(autoreverses: true)) {
+                        animationStart = size.width
+                    }
+                }
                 
                 
             }
@@ -84,7 +84,7 @@ struct ProgressIcon_Previews: PreviewProvider {
     static var previews: some View {
         HStack {
             Spacer()
-            ProgressIcon(progress: 0.9, iconSize: 100)
+            ProgressIcon(progress: 0.8, iconSize: 100)
             Spacer()
         }
         .padding(.horizontal)
@@ -100,7 +100,7 @@ struct ProgressIcon_Previews: PreviewProvider {
 struct WaterWave: Shape {
     var progress: CGFloat
     var waveHeight: CGFloat {
-        return 0.1
+        return 0.08
     }
     
     var offset: CGFloat
@@ -120,9 +120,9 @@ struct WaterWave: Shape {
             for value in stride(from: 0, through: rect.width, by: 2) {
                 let x: CGFloat = value
                 let sine: CGFloat = sin(Angle(degrees: value + offset).radians)
-//                let y: CGFloat = progressHeight + (height * sine)
+                let y: CGFloat = progressHeight + (height * sine)
                 
-                path.addLine(to: CGPoint(x: x, y: progressHeight))
+                path.addLine(to: CGPoint(x: x, y: y))
             }
             
             path.addLine(to: CGPoint(x: rect.width, y: rect.height))
