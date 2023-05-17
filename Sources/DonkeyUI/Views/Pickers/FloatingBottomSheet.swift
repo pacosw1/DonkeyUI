@@ -58,7 +58,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                             .height(height: $contentHeight)
                             .offset(y: self.translation.height)
                             .offset(y: isShown ? proxyHeight - contentHeight - 15 : proxyHeight + contentHeight * 2)
-                            .animation(.spring(), value: isShown)
+                            .animation(.interactiveSpring(), value: isShown)
                             .animation(.interactiveSpring(), value: self.translation.height)
 
                             .simultaneousGesture(
@@ -90,7 +90,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                                     }
               
                                     if dir == 0 {
-                                        withAnimation(.spring()) {
+                                        withAnimation(.interactiveSpring()) {
                                             isShown = false
                                         }
                                     } else {
