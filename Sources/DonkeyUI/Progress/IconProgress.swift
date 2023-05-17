@@ -15,8 +15,10 @@ public struct ProgressIcon: View {
         self.iconSize = iconSize
     }
     
-    var progress: CGFloat
+    
+    @State var progress: CGFloat = 0.0
     @State var animationStart: CGFloat = 0
+    
     var icon: String = "trophy.fill"
     var iconSize: CGFloat = 40
     public var body: some View {
@@ -29,9 +31,10 @@ public struct ProgressIcon: View {
                         .renderingMode(.template)
                         .aspectRatio(contentMode: .fit)
                         .foregroundColor(.gray.opacity(0.15))
+                        .animation(.spring(), value: progress)
+
 
                     WaterWave(progress: progress, offset: animationStart)
-
                         .fill(gradientColor(color: .yellow))
                         .frame(width: iconSize, height: iconSize, alignment: .center)
 
@@ -39,21 +42,26 @@ public struct ProgressIcon: View {
                             Image(systemName: icon)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-//                                .padding(20)
-                            //                            .foregroundColor(.accentColor)
-                            
+
                         }
-                    
-                    //                    .frame(width: iconSize, height: iconSize)
-                    
+
                     
                 }
+                .animation(.spring(), value: progress)
+
                 .frame(width: iconSize, height: iconSize, alignment: .center)
 
                 .onAppear {
-                    withAnimation(.linear(duration: 2).repeatForever(autoreverses: true)) {
+                    withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
                         animationStart = size.width
                     }
+                }
+                
+                Button {
+                    progress += 0.2
+
+                } label: {
+                    Text("nice")
                 }
                 
                 
@@ -84,7 +92,7 @@ struct ProgressIcon_Previews: PreviewProvider {
     static var previews: some View {
         HStack {
             Spacer()
-            ProgressIcon(progress: 0.8, iconSize: 100)
+            ProgressIcon(progress: 0.3, iconSize: 100)
             Spacer()
         }
         .padding(.horizontal)
@@ -100,14 +108,22 @@ struct ProgressIcon_Previews: PreviewProvider {
 struct WaterWave: Shape {
     var progress: CGFloat
     var waveHeight: CGFloat {
-        return 0.08
+        return 0.3
     }
     
     var offset: CGFloat
-    var animatableData: CGFloat {
-        get { offset }
-        set { offset = newValue}
+
+    var animatableData: AnimatablePair<CGFloat, CGFloat> {
+        get {
+           AnimatablePair(offset, progress)
+        }
+
+        set {
+//            offset = (newValue.first)
+            progress = (newValue.second)
+        }
     }
+    
     
     
     func path(in rect: CGRect) -> Path {
