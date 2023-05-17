@@ -8,6 +8,11 @@
 import SwiftUI
 
 public struct BarItem: Identifiable {
+    public init(color: Color, amount: Double) {
+        self.color = color
+        self.amount = amount
+    }
+    
     public let id = UUID()
     let color: Color
     let amount: Double
