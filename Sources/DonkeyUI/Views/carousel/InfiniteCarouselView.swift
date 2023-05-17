@@ -42,13 +42,18 @@ struct InfiniteCarouselView: View {
             
         }
         .floatingMenuSheet(isPresented: $x) {
-            HStack {
-                Button {
-                    x = false
-                } label: {
-                    Text("Done")
+            VStack {
+                Text("Hello Man")
+                HStack {
+                    
+                    Text("Shees")
+                    Button {
+                        x = false
+                    } label: {
+                        Text("Done")
+                    }
+                    Spacer()
                 }
-                Spacer()
             }
         }
 

@@ -58,7 +58,9 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                             .height(height: $contentHeight)
                             .offset(y: self.translation.height)
                             .offset(y: isShown ? proxyHeight - contentHeight - 15 : proxyHeight + contentHeight * 2)
-                            .animation(.easeInOut(duration: 0.4), value: isShown)
+                            .animation(.interpolatingSpring(stiffness: 200, damping: 200), value: isShown)
+                            .animation(.easeOut(duration: 1), value: self.translation.height)
+
                             .simultaneousGesture(
                                 DragGesture(minimumDistance: 10).updating(self.$translation) { value, state, nigger in
                                     
@@ -66,6 +68,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                                         state = value.translation
 
                                     }
+                                    
 
                                 }.onChanged { value in
                                 
@@ -75,13 +78,19 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
              
                                     let dir = vOffset < 0 ? 1 : 0
                                     
+//                                    if value.translation.height < -30 {
+//                                        withAnimation(.interactiveSpring()) {
+//                                            translation = CGSize()
+//                                        }
+//                                        return
+//                                    }
                                     
                                     if abs(vOffset) < 0.05 {
                                         return
                                     }
               
                                     if dir == 0 {
-                                        withAnimation(.spring()) {
+                                        withAnimation(.easeOut(duration: 3)) {
                                             isShown = false
                                         }
                                     } else {
@@ -90,12 +99,27 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                                     
                                     withAnimation(.interactiveSpring().delay(0.2)) {
                                     }
+                                    
+                                
                                 }
+                                
                             )
+                            
+                    }
+                    .onChange(of: isShown) { _ in
+                        if !isShown {
+//                            position = CGSize()
+                        }
                     }
                     .padding()
+                    
                 }
                 .height(height: $proxyHeight)
+        
+                
+            
+            // MArk
+//            .padding()
     }
 }
 
