@@ -53,13 +53,15 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                         .animation(.linear, value: fadeProgress(current: self.translation.height, total:  proxyHeight - contentHeight))
 
                     GeometryReader { itemProxy in
-                        sheetContent()
+                        VStack {
+                            sheetContent()
+                        }
                             .card(color: .white, radius: .bottomMenu)
                             .height(height: $contentHeight)
                             .offset(y: self.translation.height)
                             .offset(y: isShown ? proxyHeight - contentHeight - 15 : proxyHeight + contentHeight * 2)
-                            .animation(.interpolatingSpring(stiffness: 200, damping: 200), value: isShown)
-                            .animation(.easeOut(duration: 1), value: self.translation.height)
+                            .animation(.spring(), value: isShown)
+                            .animation(.interactiveSpring(), value: self.translation.height)
 
                             .simultaneousGesture(
                                 DragGesture(minimumDistance: 10).updating(self.$translation) { value, state, nigger in
@@ -90,15 +92,14 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                                     }
               
                                     if dir == 0 {
-                                        withAnimation(.easeOut(duration: 3)) {
+                                        withAnimation(.spring()) {
                                             isShown = false
                                         }
                                     } else {
                                         isShown = true
                                     }
                                     
-                                    withAnimation(.interactiveSpring().delay(0.2)) {
-                                    }
+                        
                                     
                                 
                                 }
