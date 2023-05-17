@@ -14,8 +14,8 @@ public struct BarItem: Identifiable {
     }
     
     public let id = UUID()
-    let color: Color
-    let amount: Double
+    public let color: Color
+    public let amount: Double
 }
 
 public struct StackedChartView: View {
