@@ -16,7 +16,7 @@ public struct ProgressIcon: View {
     }
     
     
-    @State var progress: CGFloat = 0.0
+    var progress: CGFloat
     @State var animationStart: CGFloat = 0
     
     var icon: String = "trophy.fill"
@@ -51,19 +51,7 @@ public struct ProgressIcon: View {
 
                 .frame(width: iconSize, height: iconSize, alignment: .center)
 
-                .onAppear {
-                    withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
-                        animationStart = size.width
-                    }
-                }
-                
-                Button {
-                    progress += 0.2
-
-                } label: {
-                    Text("nice")
-                }
-                
+               
                 
             }
             
@@ -108,7 +96,7 @@ struct ProgressIcon_Previews: PreviewProvider {
 struct WaterWave: Shape {
     var progress: CGFloat
     var waveHeight: CGFloat {
-        return 0.3
+        return 0.1
     }
     
     var offset: CGFloat
