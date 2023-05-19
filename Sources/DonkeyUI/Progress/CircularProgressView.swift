@@ -50,7 +50,7 @@ public struct CircularProgressView: View {
                     .overlay {
                         Image(systemName: "checkmark")
                             .opacity(progress == 1 ? 1: 0.0001)
-                            .foregroundColor(Color(UIColor(color).lighter(componentDelta: 0.5)))
+                            .foregroundColor(Color(UIColor(color).lighter(componentDelta: 10)))
                             .fontWeight(.heavy)
                             .font(.system(size: size / 1.4))
                             .animation(.easeInOut.delay(0.2), value: progress)
@@ -63,10 +63,10 @@ public struct CircularProgressView: View {
 struct CircularProgressView_Previews: PreviewProvider {
     static var previews: some View {
         
-        VStack {
+        HStack(spacing: 40) {
             CircularProgressView(progress: 0.3, size: 50)
-                .preferredColorScheme(.dark)
-            
+            CircularProgressView(color: .pink, progress: 0.8, size: 40)
+            CircularProgressView(color: .orange, progress: 1, size: 30)
         }
     }
 }

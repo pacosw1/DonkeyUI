@@ -36,6 +36,11 @@ public struct ColorPickerView: View {
         .green,
         .mint,
         .purple,
+        .cyan,
+        .brown,
+        .black,
+        .gray,
+        
 
     ], selected: Binding<Color>, verticalSpacing: CGFloat = 10, horizontalSpacing: CGFloat = 40) {
         self.colors = colors
@@ -66,7 +71,12 @@ public struct ColorPickerView: View {
 
 struct ColorPickerView_Previews: PreviewProvider {
     static var previews: some View {
-        ColorPickerView(selected: .constant(.blue))
+        ColorPickerView(colors: [
+            .blue,
+            .green,
+            .cyan,
+            .purple
+        ], selected: .constant(.blue))
         .padding()
     }
 }

@@ -15,7 +15,6 @@ public struct ProgressIcon: View {
         self.iconSize = iconSize
     }
     
-    
     var progress: CGFloat
     @State var animationStart: CGFloat = 0
     
@@ -24,7 +23,6 @@ public struct ProgressIcon: View {
     public var body: some View {
         VStack {
             GeometryReader { proxy in
-                let size = proxy.size
                 ZStack {
                     Image(systemName: icon)
                         .resizable()
@@ -32,7 +30,6 @@ public struct ProgressIcon: View {
                         .aspectRatio(contentMode: .fit)
                         .foregroundColor(.gray.opacity(0.15))
                         .animation(.spring(), value: progress)
-
 
                     WaterWave(progress: progress, offset: animationStart)
                         .fill(gradientColor(color: .yellow))
@@ -44,51 +41,31 @@ public struct ProgressIcon: View {
                                 .aspectRatio(contentMode: .fit)
 
                         }
-
-                    
                 }
                 .animation(.spring(), value: progress)
-
                 .frame(width: iconSize, height: iconSize, alignment: .center)
-
-               
-                
             }
-            
-            
-
         }
-//        .padding()
-//        .frame()
-
-//        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-
         .frame(width: iconSize, height: iconSize)
-
-
-//        .background(Color.gray)
     }
 }
 
 private func gradientColor(color: Color) -> LinearGradient {
     let colors: [Color] = [color.opacity(0.5), color.opacity(0.7), color.opacity(0.89), color.opacity(0.95), color.opacity(1)]
-//       let stops = stride(from: 0.0, to: 1.0, by: 1.0 / Double(colors.count)).map { $0 }
+
        return LinearGradient(gradient: Gradient(colors: colors), startPoint: .bottom, endPoint: .top)
    }
 
 struct ProgressIcon_Previews: PreviewProvider {
     static var previews: some View {
-        HStack {
-            Spacer()
-            ProgressIcon(progress: 0.3, iconSize: 100)
-            Spacer()
+        HStack(spacing: 30){
+            ProgressIcon(progress: 0.3, icon: "drop.fill", iconSize: 50)
+            ProgressIcon(progress: 0.5, icon: "circle.fill", iconSize: 50)
+            ProgressIcon(progress: 0.3, iconSize: 50)
+
         }
         .padding(.horizontal)
         .padding()
-//            .bgOverlay(bgColor: .blue)
-//            WaveFormView(progress: 0.3)
-//            WaveFormView(progress: 0.3)
-
     }
 }
 
@@ -107,12 +84,9 @@ struct WaterWave: Shape {
         }
 
         set {
-//            offset = (newValue.first)
             progress = (newValue.second)
         }
     }
-    
-    
     
     func path(in rect: CGRect) -> Path {
         return Path { path in

@@ -7,10 +7,19 @@
 
 import SwiftUI
 
+
+public enum CardPosition: Int {
+    case bottom = 0,
+    center,
+    top
+    
+}
+
 public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: View {
     @Binding var isShown: Bool
     let padding: CGFloat = 50
     let sheetContent: () -> CustomView
+    let position: CardPosition
     
     
     @State var contentHeight: CGFloat = 0.0
@@ -26,6 +35,12 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
         if !isShown {
             return 0
         }
+        
+        if position == .center {
+            return 0.3
+        }
+        
+        
         if self.translation.height == 0 {
             multiplier = 1
         } else {
@@ -37,6 +52,46 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
         }
         return multiplier * maxOpacity
     }
+    
+    
+    
+    
+    func shownPosition(height: CGFloat, cardHeight: CGFloat) -> CGFloat {
+        let padding = 15.0
+        
+        
+        if position == .bottom {
+            return height - cardHeight - padding
+        } else if position == .center {
+            return (height / 2) - (cardHeight / 2) - padding
+
+        }
+//
+        
+        return height
+        
+    }
+    
+    func hiddenPosition(height: CGFloat, cardHeight: CGFloat) -> CGFloat {
+        let padding = 15.0
+        
+        
+        if position == .bottom {
+            return height
+        } else if position == .center {
+            return height / 2.5 + cardHeight
+        }
+        
+//
+//
+        
+        return height
+        
+    }
+    
+    
+    
+    
     
     
     @ViewBuilder
@@ -58,8 +113,9 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                         }
                             .card(color: .white, radius: .bottomMenu)
                             .height(height: $contentHeight)
-                            .offset(y: self.translation.height)
-                            .offset(y: isShown ? proxyHeight - contentHeight - 15 : proxyHeight + contentHeight * 2)
+                            .offset(y: position == .center ? 0 : self.translation.height)
+                            .offset(y: isShown ? shownPosition(height: proxyHeight, cardHeight: contentHeight): hiddenPosition(height: proxyHeight, cardHeight: contentHeight))
+                            .opacity(isShown ? 1 : 0)
                             .animation(.spring(), value: isShown)
                             .animation(.interactiveSpring(), value: self.translation.height)
 
@@ -152,14 +208,14 @@ struct ButtomSheetCard_Previews: PreviewProvider {
         
         .padding()
         .padding(.bottom)
-        .floatingMenuSheet(isPresented: .constant(false)) {
+        .floatingMenuSheet(isPresented: .constant(false), content:  {
             Text("Hello")
-        }
+        }, position: .center)
     }
 }
 
 extension View {
-    public func floatingMenuSheet<CustomView>(isPresented: Binding<Bool>, @ViewBuilder content: @escaping () -> CustomView) -> some View where CustomView: View {
-        modifier(FloatingBottomSheet(isShown: isPresented, sheetContent: content))
+    public func floatingMenuSheet<CustomView>(isPresented: Binding<Bool>, @ViewBuilder content: @escaping () -> CustomView, position: CardPosition = .center) -> some View where CustomView: View {
+        modifier(FloatingBottomSheet(isShown: isPresented, sheetContent: content, position: position))
     }
 }

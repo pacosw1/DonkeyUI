@@ -35,8 +35,6 @@ struct CloudKitStatusRow: View {
             Image(systemName: okay ? "checkmark.circle.fill" : "xmark.circle.fill")
                 .foregroundColor(color)
                 .font(.system(size: 20))
-//                .padding(1)
-//                .bgOverlay(bgColor: .gray.opacity(<#T##opacity: Double##Double#>), radius: 100)
         }
         .frame(height: 40)
     }

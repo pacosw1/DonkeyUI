@@ -21,11 +21,13 @@ public struct BarItem: Identifiable {
 }
 
 public struct StackedChartView: View {
-    public init(barItems: [BarItem]) {
+    public init(barItems: [BarItem], height: CGFloat = 25) {
         self.barItems = barItems
+        self.height = height
     }
     
     var barItems: [BarItem]
+    var height: CGFloat
 
     private var total: Double {
             barItems.reduce(0) { $0 + $1.amount }
@@ -36,28 +38,46 @@ public struct StackedChartView: View {
     }
 
     public var body: some View {
-        GeometryReader { geometry in
-            HStack(alignment: .center, spacing: 0) {
-                ForEach(barItems) { item in
-                    Rectangle()
-                        .fill(item.color)
-                        .frame(width: geometry.size.width * CGFloat(percentage(for: item.amount)) / 100)
+        VStack {
+            GeometryReader { geometry in
+                HStack(alignment: .center, spacing: 0) {
+                    ForEach(barItems) { item in
+                        Rectangle()
+                            .fill(item.color)
+                            .frame(width: geometry.size.width * CGFloat(percentage(for: item.amount)) / 100)
+                    }
                 }
+                .animation(.interactiveSpring(), value: total)
             }
-            .animation(.interactiveSpring(), value: total)
+            .frame(height: height)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(alignment: .center, spacing: 15) {
+                    ForEach(barItems) { item in
+                        HStack(spacing: 5) {
+                            Circle()
+                                .frame(width: 10, height: 10)
+                                .foregroundColor(item.color)
+                            Text(item.name)
+                                .font(.caption)
+                            Text((percentage(for: item.amount)).percentageLabel)
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                        }
+                    }
+                }
+                .padding(.bottom)
+            }
         }
-        .frame(height: 25)
     }
 }
 
 struct StackedChartView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-//            StackedChartView(barItems: [.init(color: .blue, amount: 10), .init(color: .pink, amount: 10), .init(color: .orange, amount: 10)])
+            StackedChartView(barItems: [.init(color: .blue, amount: 300, name: "Social"), .init(color: .pink, amount: 140, name: "Internet"), .init(color: .orange, amount: 90, name: "Sports")])
             Spacer()
-            Button("hi") {
-                
-            }
+         
         }
+        .padding()
     }
 }
