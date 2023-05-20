@@ -31,7 +31,7 @@ public struct CardModifier: ViewModifier {
             content
                 .padding(.vertical, 14 * padding)
                 .padding(.horizontal, 20 * padding)
-                .bordered(color: color, radius: radius)
+                .bordered(color: .clear, radius: radius)
         } else {
             content
             .padding(.vertical, 14 * padding)
