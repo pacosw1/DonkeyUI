@@ -108,7 +108,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                         .animation(.linear, value: fadeProgress(current: self.translation.height, total:  proxyHeight - contentHeight))
 
                     GeometryReader { itemProxy in
-                        VStack {
+                        VStack(alignment: .leading) {
                             sheetContent()
                         }
                             .card(color: .white, radius: .bottomMenu)
