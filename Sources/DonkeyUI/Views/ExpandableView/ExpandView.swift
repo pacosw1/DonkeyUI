@@ -25,7 +25,7 @@ public struct ExpandView<CustomView>: ViewModifier where CustomView: View {
             
         }
         .contentShape(Rectangle())
-        .card(color: show ? Color(UIColor.secondarySystemBackground) : .clear)
+        .card(color: show ? Color(UIColor.secondarySystemBackground) : .gray)
         .animation(.spring(), value: height)
     }
 }
