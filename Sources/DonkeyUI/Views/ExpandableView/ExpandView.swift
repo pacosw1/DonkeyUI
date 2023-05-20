@@ -8,7 +8,7 @@
 import SwiftUI
 
 public struct ExpandView<CustomView>: ViewModifier where CustomView: View {
-    @Binding var show: Bool
+    let show: Bool
     @State var height: CGFloat = 0.0
     let customView: () -> CustomView
     
@@ -27,19 +27,12 @@ public struct ExpandView<CustomView>: ViewModifier where CustomView: View {
         .contentShape(Rectangle())
         .card(color: show ? Color(UIColor.secondarySystemBackground) : .clear)
         .animation(.spring(), value: height)
-        .onTapGesture {
-            withAnimation {
-                if !show {
-                    show = true
-                }
-            }
-        }
     }
 }
 
 extension View {
-    public func expandable<CustomView>(open: Binding<Bool>, @ViewBuilder customView: @escaping () -> CustomView) -> some View where CustomView: View {
-        modifier(ExpandView(show: open, customView: customView))
+    public func expandable<CustomView>(expanded: Bool, @ViewBuilder customView: @escaping () -> CustomView) -> some View where CustomView: View {
+        modifier(ExpandView(show: expanded, customView: customView))
     }
 }
 
@@ -48,7 +41,7 @@ struct ExpandView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
             Text("Hello there")
-                .expandable(open: .constant(true), customView: {
+                .expandable(expanded: true, customView: {
                         VStack {
                             HStack {
                                 Text("Option 1")
