@@ -116,8 +116,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                             .offset(y: position == .center ? 0 : self.translation.height)
                             .offset(y: isShown ? shownPosition(height: proxyHeight, cardHeight: contentHeight): hiddenPosition(height: proxyHeight, cardHeight: contentHeight))
                             .opacity(isShown ? 1 : 0)
-                            .animation(.spring().speed(1.3), value: isShown)
-                            .animation(.interactiveSpring(), value: self.translation.height)
+                          
 
                             .simultaneousGesture(
                                 DragGesture(minimumDistance: 10).updating(self.$translation) { value, state, nigger in
@@ -172,11 +171,8 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                     
                 }
                 .height(height: $proxyHeight)
-        
-                
-            
-            // MArk
-//            .padding()
+                .animation(.spring().speed(1.3), value: isShown)
+                .animation(.interactiveSpring(), value: self.translation.height)
     }
 }
 

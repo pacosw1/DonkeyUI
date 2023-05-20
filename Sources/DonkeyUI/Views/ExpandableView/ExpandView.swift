@@ -8,25 +8,35 @@
 import SwiftUI
 
 public struct ExpandView<CustomView>: ViewModifier where CustomView: View {
-    let show: Bool
+    @State var show: Bool = false
     @State var height: CGFloat = 0.0
+    @State var contentHeight: CGFloat = 0.0
+
     let customView: () -> CustomView
     
 
     public func body(content: Content) -> some View {
         VStack(alignment: .leading) {
                 content
+                    .height(height: $contentHeight)
                 customView()
-                    .height(height: $height)
-                    .opacity(show ? 1 : 0)
-                    .animation(show ? .spring().delay(0.2) : .spring().speed(3), value: show)
-                    .frame(height: show ? height : 0)
-
-            
+                .height(height: $height)
+                .opacity(show ? 1 : 0)
         }
-        .contentShape(Rectangle())
-        .card(color: show ? Color(UIColor.secondarySystemBackground) : .gray)
-        .animation(.spring(), value: height)
+        .frame(height: show ? height : contentHeight, alignment: .top)
+//        .padding()
+        .clipped()
+        .frame(maxWidth: .infinity)
+        .transition(.move(edge: .bottom))
+        .card()
+//        .background(Color.gray.cornerRadius(10.0))
+        .onTapGesture {
+            withAnimation(.spring()) {
+                show.toggle()
+            }
+        }
+//        .card(color: show ? Color(UIColor.secondarySystemBackground) : .gray)
+       
     }
 }
 
@@ -39,25 +49,30 @@ extension View {
 
 struct ExpandView_Previews: PreviewProvider {
     static var previews: some View {
-        VStack {
-            Text("Hello there")
-                .expandable(expanded: true, customView: {
-                        VStack {
+        ScrollView {
+            VStack {
+                                HStack {
+                Text("Hello there")
+                
+                                    Spacer()
+                                }
+                
+            }
+                    .expandable(expanded: true, customView: {
                             HStack {
                                 Text("Option 1")
                                 Text("Option 2")
                                 Text("Option 3")
                             }
-                            Text("Sheesh")
-                            Text("Option 1")
-                            Text("Option 1")
-                            Text("Option 1")
-                        }
-                    
-                })
-          
-
-            Text("Nice cock")
+                            .padding(.top)
+                         
+                        
+                        
+                    })
+                
+                
+                Text("Nice cock")
+            
         }
     }
 }
