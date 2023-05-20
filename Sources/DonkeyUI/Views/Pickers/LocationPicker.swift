@@ -18,6 +18,7 @@ struct Location: Identifiable {
 struct LocationPicker: View {
     
     @State var shown = false
+    @State var selected = 0
     
     @State var mapRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 51.5, longitude: -0.12), span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2))
     
@@ -28,20 +29,43 @@ struct LocationPicker: View {
     
 
     var body: some View {
-            
+        
         VStack {
             Button("Hello", action: {
                 shown.toggle()
             })
+            .floatingMenuSheet(isPresented: $shown, content: {
+                
+                if selected == 1 {
+                    HStack {
+                        Text("Hi man")
+                        IconView(image: "star.fill", color: .green)
+                    }
+                } else if selected == 2 {
+                    HStack {
+                        Text("No way man")
+                        IconView(image: "star.fill", color: .brown)
+                    }
+                } else {
+                    HStack {
+                        Text("Shut the fuck up man")
+                        IconView(image: "star.fill", color: .blue)
+                    }
+                }
+            })
+            
+            Button {
+                selected += 1
+            } label: {
+                Text("hi")
+            }
             
             
             
-           
+            
         }
-        .editToggle(isOn: $shown, systemImage: "star.fill", label: "Nice cock", iconColor: .yellow)
-        
-        
-        }
+    }
+      
     
 }
 

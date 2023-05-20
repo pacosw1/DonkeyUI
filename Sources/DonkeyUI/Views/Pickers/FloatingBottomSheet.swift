@@ -171,7 +171,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                     
                 }
                 .height(height: $proxyHeight)
-                .animation(.spring().speed(1.3), value: isShown)
+                .animation(.interpolatingSpring(stiffness: 300, damping: 100), value: isShown)
                 .animation(.interactiveSpring(), value: self.translation.height)
     }
 }
