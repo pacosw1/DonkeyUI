@@ -29,55 +29,38 @@ public struct EditToggleView: ViewModifier {
         self.isOpen = startExpanded
     }
     
-    
     public func body(content: Content) -> some View {
         VStack(alignment: .leading) {
 
-            Toggle(isOn: $isOn ,label:  {
-                HStack {
-                    IconView(image: systemImage, color: iconColor, size: .verySmall)
-                
-                    
-                    VStack(alignment: .leading) {
-                        Text(label)
-                            .font(.body)
-                        if isOn && !secondaryLabel.isEmpty {
-                            Text(secondaryLabel)
-                                .font(.caption)
-                                .foregroundColor(.accentColor)
-                        }
-                        
-                    }
-                    .animation(.spring(), value: isOn)
-                    Spacer()
-                }
-                .frame(minHeight: 35)
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    if isOn {
-                        isOpen.toggle()
-                    }
-                }
-               
-            })
-           
+            HStack {
+                IconView(image: systemImage, color: iconColor, size: .verySmall)
             
-            .onChange(of: isOn, perform: {
-                _ in
-                isOpen = isOn
-                
-            })
-            
-            
-            if isOpen {
                 VStack(alignment: .leading) {
-                    content
-                        .animation(.easeInOut.delay(isOpen ? 0 : 0), value: isOpen)
+                    Text(label)
+                        .font(.body)
+                    if isOn && !secondaryLabel.isEmpty {
+                        Text(secondaryLabel)
+                            .font(.caption)
+                            .foregroundColor(.accentColor)
+                    }
+                    
                 }
+                .animation(.spring(), value: isOn)
+                Spacer()
+            }
+            .frame(minHeight: 35)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                isOn = true
             }
             
         }
         .animation(!isOpen ? .none : .spring(), value: isOpen)
+        .floatingMenuSheet(isPresented: $isOn) {
+            content
+
+        }
+        .zIndex(999)
       
 //        .padding(.vertical, 10)
 //        .padding(.horizontal)

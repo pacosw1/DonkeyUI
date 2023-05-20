@@ -15,7 +15,6 @@ case filled,
 }
 
 public struct ButtonView: View {
-
     let label: String
     var color: Color
     var buttonType: ButtonType
@@ -113,11 +112,12 @@ public struct ButtonView: View {
                 SpinnerLoadingView(color: color, disabled: isDisabled)
                     .opacity(isLoading ? 1 : 0)
                 
-                HStack(alignment: .center) {
+                HStack(alignment: .center, spacing: 4) {
                     if (icon != nil) {
                         Image(systemName: icon!)
                             .foregroundColor(labelColor)
-                            .fontWeight(.semibold)
+                            .fontWeight(fontWeight)
+                            .font(font)
                     }
                     
                     Text(label)
@@ -127,8 +127,8 @@ public struct ButtonView: View {
                         .opacity(isLoading ? 0 : 1)
                 }
             }
-            .padding(.horizontal, padding * 10)
-            .padding(.vertical, padding * 5)
+            .padding(.horizontal, max(padding * 15, 10))
+            .padding(.vertical, max(padding * 8, 2))
             .frame(maxWidth: fullWidth ? .infinity : nil)
             .bgOverlay(bgColor: bgColor, radius: radius, borderColor: borderColor, borderWidth: 1.5)
             .contentShape(Rectangle())
@@ -148,7 +148,7 @@ struct ButtonView_Previews: PreviewProvider {
 //
 //            ButtonView(label: "Start", color: .pink, buttonTyoe: .filled, action: {}, padding: 3, fullWidth: false, disabled: true)
             ButtonView(label: "Start", icon: "faceid", color: .blue, buttonType: .filled, fullWidth: false, disabled: false, action: {})
-            ButtonView(label: "Start", color: .blue, buttonType: .filled, fullWidth: false, disabled: false, isLoading: true, action: {})
+            ButtonView(label: "Start", icon: "clock", color: .blue, buttonType: .bordered, padding: 0.2, font: .caption, fullWidth: false, disabled: false, isLoading: false, action: {})
 //            ButtonView(label: "Start", color: .purple, buttonTyoe: .filled, action: {}, fullWidth: false, disabled: true, isLoading: false)
 
 

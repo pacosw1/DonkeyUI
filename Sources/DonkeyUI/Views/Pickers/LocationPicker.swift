@@ -34,18 +34,12 @@ struct LocationPicker: View {
                 shown.toggle()
             })
             
+            
+            
            
         }
-        .floatingMenuSheet(isPresented: $shown) {
-            HStack {
-                IconView(image: "drop.fill", color: .blue)
-                Text("Hello world")
-                Spacer()
-                
-                
-            }
-//            .padding()
-        }
+        .editToggle(isOn: $shown, systemImage: "star.fill", label: "Nice cock", iconColor: .yellow)
+        
         
         }
     
