@@ -117,7 +117,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                             .offset(y: position == .center ? 0 : self.translation.height)
                             .offset(y: isShown ? shownPosition(height: proxyHeight, cardHeight: contentHeight): hiddenPosition(height: proxyHeight, cardHeight: contentHeight))
 //                            .opacity(isShown ? 1 : 0.8)
-                            .padding(.bottom, paddingBottom)
+                            .offset(y: -paddingBottom)
                         
                           
 
