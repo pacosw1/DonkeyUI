@@ -20,6 +20,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
     let padding: CGFloat = 50
     let sheetContent: () -> CustomView
     let position: CardPosition
+    var paddingBottom = 0.0
     
     
     @State var contentHeight: CGFloat = 0.0
@@ -115,7 +116,9 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                             .height(height: $contentHeight)
                             .offset(y: position == .center ? 0 : self.translation.height)
                             .offset(y: isShown ? shownPosition(height: proxyHeight, cardHeight: contentHeight): hiddenPosition(height: proxyHeight, cardHeight: contentHeight))
-                            .opacity(isShown ? 1 : 0)
+//                            .opacity(isShown ? 1 : 0.8)
+                            .padding(.bottom, paddingBottom)
+                        
                           
 
                             .simultaneousGesture(
@@ -211,7 +214,7 @@ struct ButtomSheetCard_Previews: PreviewProvider {
 }
 
 extension View {
-    public func floatingMenuSheet<CustomView>(isPresented: Binding<Bool>, @ViewBuilder content: @escaping () -> CustomView, position: CardPosition = .center) -> some View where CustomView: View {
-        modifier(FloatingBottomSheet(isShown: isPresented, sheetContent: content, position: position))
+    public func floatingMenuSheet<CustomView>(isPresented: Binding<Bool>, @ViewBuilder content: @escaping () -> CustomView, position: CardPosition = .center, paddingBottom: CGFloat = 0) -> some View where CustomView: View {
+        modifier(FloatingBottomSheet(isShown: isPresented, sheetContent: content, position: position, paddingBottom: paddingBottom))
     }
 }
