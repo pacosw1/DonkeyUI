@@ -61,15 +61,11 @@ public extension Date {
     }
     
     func addMinutes(minuteDifference: Int) -> Date {
-        var components = DateComponents()
-        components.minute = minuteDifference
-        return Calendar.current.date(byAdding: components, to:self)!
+        return self.addingTimeInterval(Double(minuteDifference) * 60.0)
     }
     
     func addSeconds(secondDifference: Int) -> Date {
-        var components = DateComponents()
-        components.second = secondDifference
-        return Calendar.current.date(byAdding: components, to:self)!
+        return self.addingTimeInterval(Double(secondDifference))
     }
     
     var startOfMonth: Date {
