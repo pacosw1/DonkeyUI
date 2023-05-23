@@ -25,7 +25,7 @@ public struct OverlayModifier: ViewModifier {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: radius)
-                    .stroke(borderColor,
+                    .strokeBorder(borderColor,
                             lineWidth: borderWidth)
             )
     }
