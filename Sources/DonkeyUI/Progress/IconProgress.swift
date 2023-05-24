@@ -43,7 +43,7 @@ public struct ProgressIcon: View {
                         //                            .offset(y: 100 * progress)
                             .animation(.spring(), value: progress)
                             .offset(y: (-progress * iconSize))
-                            .clipShape((Circle()).scale(0.99))
+                            .clipShape((Circle()).scale(0.96))
                     
                 }
               
@@ -102,7 +102,7 @@ struct Wave: Shape {
         let highfudge = 0.98
         
         let newpercent = lowfudge + (highfudge - lowfudge) * percent
-        let waveHeight = 0.02 * rect.height
+        let waveHeight = (percent <= 0.05 ? 0.3 : 0.015) * rect.height
         let yoffset = CGFloat(1 - newpercent) * (rect.height - 4 * waveHeight) + 2 * waveHeight
         let startAngle = offset
         let endAngle = offset + Angle(degrees: 360)
