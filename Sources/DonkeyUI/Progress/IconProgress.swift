@@ -42,12 +42,12 @@ public struct ProgressIcon: View {
                         //                            .frame(height: 500)
                         //                            .offset(y: 100 * progress)
                             .animation(.spring(), value: progress)
-                            .offset(y: -progress * iconSize)
-                            .clipShape((Circle()).scale(0.9))
+                            .offset(y: (-progress * iconSize))
+                            .clipShape((Circle()).scale(0.99))
                     
                 }
               
-                .frame(width: iconSize, height: iconSize, alignment: .center)
+                .frame(width: iconSize, height: iconSize + (0.1 * height), alignment: .center)
                 .onAppear {
                     withAnimation(Animation.linear(duration: 2).repeatForever(autoreverses: false)) {
                            self.offset = Angle(degrees: 360)
