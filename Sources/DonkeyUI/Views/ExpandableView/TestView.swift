@@ -23,7 +23,7 @@ struct TestView: View {
             Text("\(progress)")
             HStack {
                 Spacer()
-                ProgressIcon(progress: progress / 100.0, icon: "circle.fill", square: false)
+                ProgressIcon(progress: progress / 100.0, icon: "circle.fill")
                 Spacer()
             }
             Slider(value: $progress, in: 0.0...100.0)

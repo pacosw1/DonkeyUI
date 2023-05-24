@@ -8,22 +8,21 @@
 import SwiftUI
 
 public struct ProgressIcon: View {
-//    public init(progress: CGFloat, icon: String = "trophy.fill", iconSize: CGFloat = 40) {
-//        self.progress = progress
-//        self.icon = icon
-//        self.iconSize = iconSize
-//        self.offset = .zero
-//        self.square = false
-//    }
+    public init(progress: CGFloat, icon: String = "trophy.fill", iconSize: CGFloat = 40, color: Color = .black) {
+        self.progress = progress
+        self.icon = icon
+        self.iconSize = iconSize
+        self.offset = .zero
+        self.color = color
+    }
     
     var progress: CGFloat = 0.5
     @State var offset: Angle = .degrees(0)
     
     var icon: String = "trophy.fill"
     var iconSize: CGFloat = 200
-    var square: Bool
     @State var height: CGFloat = 0.0
-    let color: Color = .black
+    let color: Color
     
     public var body: some View {
         VStack {
@@ -72,7 +71,7 @@ struct ProgressIcon_Previews: PreviewProvider {
         HStack(spacing: 30){
             Spacer()
 //            ProgressIcon(progress: 0.3, icon: "drop.fill", iconSize: 50)
-            ProgressIcon(offset: .zero, icon: "clock.fill", square: true)
+            ProgressIcon(progress: 0.5, icon: "circle.fill", iconSize: 300)
             Spacer()
 //            ProgressIcon(progress: 0.3, iconSize: 50)
 
