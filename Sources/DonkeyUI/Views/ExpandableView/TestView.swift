@@ -15,34 +15,30 @@ struct TestView_Previews: PreviewProvider {
 
 struct TestView: View {
     
-    @State var isExpanded = false
-    @State var subviewHeight : CGFloat = 0
+    @State var progress : CGFloat = 0
     
     var body: some View {
+        
         VStack {
-            Text("Headline")
-            VStack {
-                Text("More Info")
-                Text("And more")
-                Text("And more")
-                Text("And more")
-                Text("And more")
-                Text("And more")
+            Text("\(progress)")
+            HStack {
+                Spacer()
+                ProgressIcon(progress: progress / 100.0, icon: "circle.fill", square: false)
+                Spacer()
             }
-            .height(height: $subviewHeight)
+            Slider(value: $progress, in: 0.0...100.0)
+            Button {
+                withAnimation() {
+                    progress += 10
+                }
+            } label: {
+                Text("Done")
+            }
+
         }
-       
-        .frame(height: isExpanded ? subviewHeight + 20 : 50, alignment: .top)
         .padding()
-        .clipped()
-        .frame(maxWidth: .infinity)
-        .transition(.move(edge: .trailing))
-        .background(Color.gray.cornerRadius(10.0))
-        .onTapGesture {
-            withAnimation(.spring()) {
-                isExpanded.toggle()
-            }
-        }
+        
+        
     }
 }
 

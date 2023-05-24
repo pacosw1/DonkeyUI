@@ -8,20 +8,22 @@
 import SwiftUI
 
 public struct ProgressIcon: View {
-    public init(progress: CGFloat, icon: String = "trophy.fill", iconSize: CGFloat = 40) {
-        self.progress = progress
-        self.icon = icon
-        self.iconSize = iconSize
-        self.offset = .zero
-        self.square = false
-    }
+//    public init(progress: CGFloat, icon: String = "trophy.fill", iconSize: CGFloat = 40) {
+//        self.progress = progress
+//        self.icon = icon
+//        self.iconSize = iconSize
+//        self.offset = .zero
+//        self.square = false
+//    }
     
-    var progress: CGFloat
+    var progress: CGFloat = 0.5
     @State var offset: Angle = .degrees(0)
     
     var icon: String = "trophy.fill"
-    var iconSize: CGFloat = 40
+    var iconSize: CGFloat = 200
     var square: Bool
+    @State var height: CGFloat = 0.0
+    let color: Color = .black
     
     public var body: some View {
         VStack {
@@ -32,21 +34,21 @@ public struct ProgressIcon: View {
                         .renderingMode(.template)
                         .aspectRatio(contentMode: .fit)
                         .foregroundColor(.gray.opacity(0.15))
-                        .animation(.spring(), value: progress)
+                        .height(height: $height)
+                    
 
-                    Wave(offset: offset, percent: progress)
-                        .fill(gradientColor(color: .yellow))
-                        .clipShape((Circle()).scale(0.92))
-//                        .frame(width: iconSize, height: iconSize, alignment: .center)
-                        .mask {
-                            Image(systemName: icon)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-
-                        }
-                        .animation(.spring(), value: progress)
+                    Wave(offset: offset, percent: 1)
+                            .fill(gradientColor(color: color))
+                            .offset(y: iconSize)
+                        //                            .frame(height: 500)
+                        //                            .offset(y: 100 * progress)
+                            .animation(.spring(), value: progress)
+                            .offset(y: -progress * iconSize)
+                            .clipShape((Circle()).scale(0.9))
+                    
                 }
-//                .frame(width: iconSize, height: iconSize, alignment: .center)
+              
+                .frame(width: iconSize, height: iconSize, alignment: .center)
                 .onAppear {
                     withAnimation(Animation.linear(duration: 2).repeatForever(autoreverses: false)) {
                            self.offset = Angle(degrees: 360)
@@ -54,7 +56,8 @@ public struct ProgressIcon: View {
                 }
             }
         }
-//        .frame(width: iconSize, height: iconSize)
+      
+        .frame(width: iconSize, height: iconSize)
     }
 }
 
@@ -67,9 +70,10 @@ private func gradientColor(color: Color) -> LinearGradient {
 struct ProgressIcon_Previews: PreviewProvider {
     static var previews: some View {
         HStack(spacing: 30){
+            Spacer()
 //            ProgressIcon(progress: 0.3, icon: "drop.fill", iconSize: 50)
-            ProgressIcon(progress: 0.5, icon: "clock.fill", iconSize: 200)
-                .padding()
+            ProgressIcon(offset: .zero, icon: "clock.fill", square: true)
+            Spacer()
 //            ProgressIcon(progress: 0.3, iconSize: 50)
 
         }
@@ -83,9 +87,11 @@ struct Wave: Shape {
     var offset: Angle
     var percent: Double
     
-    var animatableData: Double {
+    var animatableData: CGFloat {
         get { offset.degrees }
-        set { offset = Angle(degrees: newValue) }
+        set {
+            offset.degrees = newValue
+        }
     }
     
     func path(in rect: CGRect) -> Path {
@@ -97,7 +103,7 @@ struct Wave: Shape {
         let highfudge = 0.98
         
         let newpercent = lowfudge + (highfudge - lowfudge) * percent
-        let waveHeight = 0.015 * rect.height
+        let waveHeight = 0.02 * rect.height
         let yoffset = CGFloat(1 - newpercent) * (rect.height - 4 * waveHeight) + 2 * waveHeight
         let startAngle = offset
         let endAngle = offset + Angle(degrees: 360)
