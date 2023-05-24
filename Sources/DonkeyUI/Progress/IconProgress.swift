@@ -44,6 +44,7 @@ public struct ProgressIcon: View {
                                 .aspectRatio(contentMode: .fit)
 
                         }
+                        .animation(.spring(), value: progress)
                 }
 //                .frame(width: iconSize, height: iconSize, alignment: .center)
                 .onAppear {
