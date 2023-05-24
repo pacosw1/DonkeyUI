@@ -37,7 +37,7 @@ public struct ProgressIcon: View {
                     
 
                     Wave(offset: offset, percent: 1)
-                            .fill(gradientColor(color: color))
+                            .fill(color)
                             .offset(y: iconSize)
                         //                            .frame(height: 500)
                         //                            .offset(y: 100 * progress)
