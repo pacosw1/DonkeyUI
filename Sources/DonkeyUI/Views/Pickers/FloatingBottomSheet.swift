@@ -159,7 +159,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                                         return
                                     }
               
-                                    if dir == 0 {
+                                    if dir == 0 && drag {
                                         withAnimation(.spring()) {
                                             isShown = false
                                         }
@@ -219,7 +219,7 @@ struct ButtomSheetCard_Previews: PreviewProvider {
         .padding(.bottom)
         .floatingMenuSheet(isPresented: .constant(true), content:  {
             Text("Hello")
-        }, position: .center)
+        }, position: .center, drag: false)
     }
 }
 

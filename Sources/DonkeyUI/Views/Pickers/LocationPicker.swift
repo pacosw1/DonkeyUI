@@ -52,7 +52,7 @@ struct LocationPicker: View {
                         IconView(image: "star.fill", color: .blue)
                     }
                 }
-            }, position: .bottom)
+            }, position: .bottom, drag: false)
             
             Button {
                 selected += 1
