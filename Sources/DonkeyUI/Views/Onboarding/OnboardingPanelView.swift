@@ -35,7 +35,14 @@ public struct OnboardingPanelView: View {
     ]
     
     @State var showReview: Bool = false
-    @ObservedObject var editMenu = OnboardingModel.shared
+    
+    
+    init(views: [SlideView]) {
+        self.selectedStep = 1
+        self.offset = 0.0
+        self.opacity = 1
+        self.views = views
+    }
     
     
     
@@ -145,7 +152,10 @@ public struct OnboardingPanelView: View {
 
 struct OnboardingPanelView_Previews: PreviewProvider {
     static var previews: some View {
-        OnboardingPanelView()
+        OnboardingPanelView(views: [
+            .init(view: Text("hi"), icon: "figure.dress.line.vertical.figure"),
+            .init(view: Text("bye"), icon: "scalemass.fill")
+        ])
     }
 }
 
