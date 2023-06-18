@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct SlideView: Identifiable {
-    var id = UUID()
+public struct SlideView: Identifiable {
+    public var id = UUID()
     let view: AnyView
     let icon: String
     let title: String
     let color: Color
     
-    init(id: UUID = UUID(), view: some View, icon: String, title: String = "", color: Color = .accentColor) {
+    public init(id: UUID = UUID(), view: some View, icon: String, title: String = "", color: Color = .accentColor) {
         self.id = id
         self.view = AnyView(view)
         self.icon = icon
