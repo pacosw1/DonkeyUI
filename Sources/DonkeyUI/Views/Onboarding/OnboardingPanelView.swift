@@ -89,7 +89,8 @@ public struct OnboardingPanelView: View {
                                   
 //                                        .animation(.spring(), value: selectedStep)
                                     
-                                   
+                                
+                                   Spacer()
                                     slide.view
                                     Spacer()
                                 }
