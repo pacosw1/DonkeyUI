@@ -71,15 +71,15 @@ public struct OnboardingPanelView: View {
         
             
                     VStack(alignment: .leading) {
-                        HStack {
-                            Spacer()
-                            
-                            ProgressIcon(progress: Double(selectedStep) / Double(views.count), icon: views[selectedStep-1].icon, iconSize: 70)
-                                .padding(.top, 30)
-                                .padding(.bottom, 10)
-                            
-                            Spacer()
-                        }
+//                        HStack {
+//                            Spacer()
+//                            
+//                            ProgressIcon(progress: Double(selectedStep) / Double(views.count), icon: views[selectedStep-1].icon, iconSize: 70)
+//                                .padding(.top, 30)
+//                                .padding(.bottom, 10)
+//                            
+//                            Spacer()
+//                        }
                         HStack(spacing: 0) {
                             
                             
