@@ -37,7 +37,7 @@ public struct OnboardingPanelView: View {
     @State var showReview: Bool = false
     
     
-    init(views: [SlideView]) {
+    public init(views: [SlideView]) {
         self.selectedStep = 1
         self.offset = 0.0
         self.opacity = 1
