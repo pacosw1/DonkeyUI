@@ -21,9 +21,10 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
     let sheetContent: () -> CustomView
     let position: CardPosition
     var paddingBottom = 0.0
-    
+    var drag: Bool = false
     
     @State var contentHeight: CGFloat = 0.0
+    
     @State var proxyHeight: CGFloat = 0.0
     @GestureState private var translation: CGSize = CGSize()
 
@@ -37,7 +38,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
             return 0
         }
         
-        if position == .center {
+        if position == .center || !drag {
             return 0.3
         }
         
@@ -114,7 +115,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                         }
                             .card(color: .white, radius: .bottomMenu)
                             .height(height: $contentHeight)
-                            .offset(y: position == .center ? 0 : self.translation.height)
+                            .offset(y: position == .center || !drag ? 0 : self.translation.height)
                             .offset(y: isShown ? shownPosition(height: proxyHeight, cardHeight: contentHeight): hiddenPosition(height: proxyHeight, cardHeight: contentHeight))
 //                            .opacity(isShown ? 1 : 0.8)
                             .offset(y: -paddingBottom)
@@ -207,14 +208,14 @@ struct ButtomSheetCard_Previews: PreviewProvider {
         
         .padding()
         .padding(.bottom)
-        .floatingMenuSheet(isPresented: .constant(false), content:  {
+        .floatingMenuSheet(isPresented: .constant(true), content:  {
             Text("Hello")
         }, position: .center)
     }
 }
 
 extension View {
-    public func floatingMenuSheet<CustomView>(isPresented: Binding<Bool>, @ViewBuilder content: @escaping () -> CustomView, position: CardPosition = .center, paddingBottom: CGFloat = 0) -> some View where CustomView: View {
-        modifier(FloatingBottomSheet(isShown: isPresented, sheetContent: content, position: position, paddingBottom: paddingBottom))
+    public func floatingMenuSheet<CustomView>(isPresented: Binding<Bool>, @ViewBuilder content: @escaping () -> CustomView, position: CardPosition = .center, paddingBottom: CGFloat = 0, drag: Bool = true) -> some View where CustomView: View {
+        modifier(FloatingBottomSheet(isShown: isPresented, sheetContent: content, position: position, paddingBottom: paddingBottom, drag: drag))
     }
 }
