@@ -63,7 +63,7 @@ public struct TipJarView: View {
             Spacer()
             
             VStack(alignment: .center) {
-                ButtonView(label: confirmPurchaseLabel, buttonType: .filled, padding: 3, font: .title3, fullWidth: true, action: purchaseAction)
+                ButtonView(label: confirmPurchaseLabel, buttonType: .filled, padding: 2, font: .title3, fullWidth: true, action: purchaseAction)
                 Text(optionalDisclaimer ?? "")
                     .foregroundColor(.gray)
                     .font(.caption)

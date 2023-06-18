@@ -27,7 +27,3 @@ public struct TipJarOption: Identifiable {
     let label: String
     let price: Float
 }
-
-class TipJarModel: ObservableObject {
-    
-}

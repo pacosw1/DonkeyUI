@@ -8,14 +8,16 @@
 import SwiftUI
 
 public struct ProgressIcon: View {
-    public init(progress: CGFloat, icon: String = "trophy.fill", iconSize: CGFloat = 40, color: Color = .black) {
+    public init(progress: CGFloat, icon: String = "trophy.fill", iconSize: CGFloat = 40, color: Color = .black, shape: any Shape = Circle()) {
+        self.shape = shape
         self.progress = progress
         self.icon = icon
         self.iconSize = iconSize
-        self.offset = .zero
         self.color = color
+        self.offset = .zero
     }
     
+    var shape: any Shape = Circle()
     var progress: CGFloat = 0.5
     @State var offset: Angle = .degrees(0)
     
@@ -40,14 +42,23 @@ public struct ProgressIcon: View {
                             .fill(color)
                             .offset(y: iconSize)
                         //                            .frame(height: 500)
-                        //                            .offset(y: 100 * progress)
+//                                                    .offset(y: 100 * progress)
                             .animation(.spring(), value: progress)
                             .offset(y: (-progress * iconSize))
-                            .clipShape((Circle()).scale(0.96))
+                            .clipShape(Rectangle().scale(0.99))
+                            .mask {
+                                Image(systemName: icon)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+
+                            }
+
+                            
                     
                 }
-              
-                .frame(width: iconSize, height: iconSize + (0.1 * height), alignment: .center)
+                
+//                .frame(width: iconSize, height: iconSize, alignment: .center)
+
                 .onAppear {
                     withAnimation(Animation.linear(duration: 2).repeatForever(autoreverses: false)) {
                            self.offset = Angle(degrees: 360)
@@ -69,11 +80,10 @@ private func gradientColor(color: Color) -> LinearGradient {
 struct ProgressIcon_Previews: PreviewProvider {
     static var previews: some View {
         HStack(spacing: 30){
-            Spacer()
-//            ProgressIcon(progress: 0.3, icon: "drop.fill", iconSize: 50)
-            ProgressIcon(progress: 0.5, icon: "circle.fill", iconSize: 300)
-            Spacer()
-//            ProgressIcon(progress: 0.3, iconSize: 50)
+            ProgressIcon(progress: 0.3, icon: "trophy.fill", iconSize: 50, shape: Rectangle())
+            ProgressIcon(progress: 0.5, icon: "circle.fill", iconSize: 50, shape: Circle())
+//            Spacer()
+            ProgressIcon(progress: 0.6, icon: "drop.fill", iconSize: 200, shape: Rectangle())
 
         }
 //        .padding(.horizontal)
