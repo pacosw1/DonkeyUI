@@ -22,6 +22,8 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
     let position: CardPosition
     var paddingBottom = 0.0
     var drag: Bool = false
+    @Environment(\.colorScheme) var colorScheme
+
     
     @State var contentHeight: CGFloat = 0.0
     
@@ -93,6 +95,13 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
     
     
     
+    var fadeColor: Color {
+        if colorScheme == .dark {
+            return .black
+        }
+        
+        return .black
+    }
     
     
     
@@ -101,7 +110,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                 ZStack {
                     content
 
-                    Color.black
+                    fadeColor
                         .opacity(fadeProgress(current: self.translation.height, total:  proxyHeight - contentHeight))
                         .ignoresSafeArea(.all)
                         .onTapGesture {
@@ -113,7 +122,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                         VStack(alignment: .leading) {
                             sheetContent()
                         }
-                            .card(color: .white, radius: .bottomMenu)
+                        .card(color: colorScheme == .dark ? Color(UIColor.gray).opacity(0.3) : Color(UIColor.white), radius: .bottomMenu)
                             .height(height: $contentHeight)
                             .offset(y: position == .center || !drag ? 0 : self.translation.height)
                             .offset(y: isShown ? shownPosition(height: proxyHeight, cardHeight: contentHeight): hiddenPosition(height: proxyHeight, cardHeight: contentHeight))
