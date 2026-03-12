@@ -6,9 +6,6 @@
 //
 
 import SwiftUI
-#if canImport(WrappingHStack)
-import WrappingHStack
-#endif
 
 public struct ColorPickerItem: View {
 
@@ -68,15 +65,9 @@ public struct ColorPickerView: View {
 
     @ViewBuilder
     private var colorGrid: some View {
-        #if canImport(WrappingHStack)
-        WrappingHStack(alignment: .leading, horizontalSpacing: horizontalSpacing, verticalSpacing: verticalSpacing) {
-            colorItems
-        }
-        #else
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 50), spacing: horizontalSpacing)], spacing: verticalSpacing) {
             colorItems
         }
-        #endif
     }
 
     @ViewBuilder
