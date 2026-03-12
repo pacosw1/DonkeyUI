@@ -9,7 +9,7 @@ class PurchaseHandler: ObservableObject {
     @Published var errorMessage: String = "Connection Error"
 
     // Fetch products from RevenueCat API
-    private func handleError(error: PublicError?) {
+    private func handleError(error: RevenueCat.ErrorCode?) {
         self.errorMessage = error?.localizedDescription ?? self.errorMessage
         self.showErrorMessage = true
     }
@@ -35,7 +35,7 @@ class PurchaseHandler: ObservableObject {
             if let error = genericError as? RevenueCat.ErrorCode {
                 
                 if error != .purchaseCancelledError && error != .missingReceiptFileError {
-                    self.handleError(error: genericError)
+                    self.handleError(error: error)
                 }
             }
             
@@ -54,7 +54,7 @@ class PurchaseHandler: ObservableObject {
         }
     }
     
-    func initiatePurchase(packageId: String, successAction: @escaping() -> Void, errorAction: @escaping (PublicError?, Bool) -> Void) {
+    func initiatePurchase(packageId: String, successAction: @escaping() -> Void, errorAction: @escaping (RevenueCat.ErrorCode?, Bool) -> Void) {
         self.loadingPurchaseScreen = true
         guard let concretePackage = UserViewModel.shared.getPackage(packageId: packageId) else {
             errorMessage = "Unknown Error"
@@ -78,7 +78,7 @@ class PurchaseHandler: ObservableObject {
                 }
             else {
                 if error != nil && !userCancelled {
-                    errorAction(error, userCancelled)
+                    errorAction(error as? RevenueCat.ErrorCode, userCancelled)
                     self.handlePurchaseError(code: error as? RevenueCat.ErrorCode ?? .networkError)
                 }
             }

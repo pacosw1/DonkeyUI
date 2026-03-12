@@ -9,7 +9,7 @@ import RevenueCat
 
 public struct PaywallModifier: ViewModifier {
     
-    public init(user: UserViewModel = UserViewModel.shared, views: [IdentifiableView], successAction: @escaping () -> Void, onOpen: @escaping () -> Void, errorAction: @escaping (PublicError?, Bool) -> Void, privacyUrl: String) {
+    public init(user: UserViewModel = UserViewModel.shared, views: [IdentifiableView], successAction: @escaping () -> Void, onOpen: @escaping () -> Void, errorAction: @escaping (RevenueCat.ErrorCode?, Bool) -> Void, privacyUrl: String) {
         self.user = user
         self.views = views
         self.successAction = successAction
@@ -23,7 +23,7 @@ public struct PaywallModifier: ViewModifier {
     let privacyUrl: String
     var successAction: () -> Void
     var onOpen: () -> Void
-    var errorAction: (PublicError?, Bool) -> Void
+    var errorAction: (RevenueCat.ErrorCode?, Bool) -> Void
 
     
     
@@ -37,7 +37,7 @@ public struct PaywallModifier: ViewModifier {
 }
 
 public extension View {
-    func paywall(views: [IdentifiableView] = [], successAction: @escaping () -> Void, onOpen: @escaping () -> Void, errorAction:  @escaping (PublicError?, Bool) -> Void, privacyUrl: String) -> some View {
+    func paywall(views: [IdentifiableView] = [], successAction: @escaping () -> Void, onOpen: @escaping () -> Void, errorAction:  @escaping (RevenueCat.ErrorCode?, Bool) -> Void, privacyUrl: String) -> some View {
         modifier(PaywallModifier(views: views, successAction: successAction, onOpen: onOpen, errorAction: errorAction, privacyUrl: privacyUrl))
     }
 }
