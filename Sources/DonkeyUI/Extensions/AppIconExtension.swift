@@ -21,9 +21,14 @@ public extension Bundle {
 
 public struct AppIcon: View {
     public var body: some View {
+        #if canImport(UIKit)
         Bundle.main.iconFileName
             .flatMap { UIImage(named: $0) }
             .map { Image(uiImage: $0) }
-        
+        #else
+        Bundle.main.iconFileName
+            .flatMap { NSImage(named: $0) }
+            .map { Image(nsImage: $0) }
+        #endif
     }
 }

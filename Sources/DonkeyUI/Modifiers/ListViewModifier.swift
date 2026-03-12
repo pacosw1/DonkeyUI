@@ -71,7 +71,11 @@ public struct PullList<Content: View>: View {
                 .rotationEffect(.degrees(60.0 + 70 * handleProgress))
                 .opacity(handleProgress)
         }
+        #if canImport(UIKit)
         .position(x: UIScreen.main.bounds.width / 2, y: offsetY <= 0 ? max(offsetY * -1.25, 0) : 0)
+        #else
+        .position(x: (NSScreen.main?.frame.width ?? 0) / 2, y: offsetY <= 0 ? max(offsetY * -1.25, 0) : 0)
+        #endif
         .opacity(offsetY <= 0 ? 1 : 0) // Modified opacity based on offsetY
 
         // Adjusted the position calculation

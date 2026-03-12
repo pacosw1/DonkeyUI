@@ -122,7 +122,11 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                         VStack(alignment: .leading) {
                             sheetContent()
                         }
+                        #if canImport(UIKit)
                         .card(color: colorScheme == .dark ? Color(UIColor.black.lighter(componentDelta: 0.15)) : Color(UIColor.white), radius: .bottomMenu)
+                        #else
+                        .card(color: colorScheme == .dark ? Color(NSColor.black.lighter(componentDelta: 0.15)) : Color(NSColor.white), radius: .bottomMenu)
+                        #endif
                             .height(height: $contentHeight)
                             .offset(y: position == .center || !drag ? 0 : self.translation.height)
                             .offset(y: isShown ? shownPosition(height: proxyHeight, cardHeight: contentHeight): hiddenPosition(height: proxyHeight, cardHeight: contentHeight))

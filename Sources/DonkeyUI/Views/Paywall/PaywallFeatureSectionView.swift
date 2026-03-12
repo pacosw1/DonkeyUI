@@ -38,6 +38,7 @@ struct PaywallFeatureSectionView: View {
             }
         }
         .onAppear() {
+            #if canImport(UIKit)
             if colorScheme == .light {
                 UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(Color.primary)
                 UIPageControl.appearance().pageIndicatorTintColor = UIColor(Color.secondary.opacity(0.4))
@@ -45,11 +46,14 @@ struct PaywallFeatureSectionView: View {
                 UIPageControl.appearance().currentPageIndicatorTintColor = .white
                 UIPageControl.appearance().pageIndicatorTintColor = .darkGray
             }
-            
+            #endif
+
             lastUpdate = Date.now.timestamp()
         }
         
+        #if canImport(UIKit)
         .tabViewStyle(.page(indexDisplayMode: .always))
+        #endif
 
     }
 }

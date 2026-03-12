@@ -30,9 +30,15 @@ public struct PaywallModifier: ViewModifier {
     public func body(content: Content) -> some View {
         content
             .errorToast(presented: $user.showNetworkError)
+            #if !os(macOS)
             .fullScreenCover(isPresented: $user.paywallOn) {
                 PaywallView(views: views, successAction: successAction, onOpen: onOpen, errorAction: errorAction, proEntitlementId: UserViewModel.shared.etitlementId, privacyUrl: privacyUrl)
             }
+            #else
+            .sheet(isPresented: $user.paywallOn) {
+                PaywallView(views: views, successAction: successAction, onOpen: onOpen, errorAction: errorAction, proEntitlementId: UserViewModel.shared.etitlementId, privacyUrl: privacyUrl)
+            }
+            #endif
       }
 }
 

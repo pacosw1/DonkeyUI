@@ -82,7 +82,11 @@ public struct ButtonView: View {
             if buttonType == .filled {
                 return color
             } else if buttonType == .card {
+                #if canImport(UIKit)
                 return Color(UIColor.secondarySystemBackground)
+                #else
+                return Color(NSColor.controlBackgroundColor)
+                #endif
                 
             } else {
                 return .clear
@@ -98,7 +102,11 @@ public struct ButtonView: View {
             }
             return color.opacity(0.3)
         } else if buttonType == .card {
+            #if canImport(UIKit)
             return Color(UIColor(color).darker(componentDelta: 0.3))
+            #else
+            return Color(NSColor(color).darker(componentDelta: 0.3))
+            #endif
         }
         
         return .clear

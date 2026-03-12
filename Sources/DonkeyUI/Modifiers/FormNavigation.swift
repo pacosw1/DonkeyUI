@@ -21,40 +21,59 @@ struct FormNavigation: ViewModifier {
             content
             
                 .toolbar {
+                    #if !os(macOS)
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button(action: {
                             presentationMode.wrappedValue.dismiss()
                         }) {
                             Text("Cancel")
-//                            Image(systemName: "xmark.circle.fill")
-//                                .foregroundColor(Color(white: 0.5))
-//                                .font(.system(size: 20))
-                            
                         }
                         .padding(.top)
                     }
+                    #else
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button(action: {
+                            presentationMode.wrappedValue.dismiss()
+                        }) {
+                            Text("Cancel")
+                        }
+                        .padding(.top)
+                    }
+                    #endif
                     ToolbarItem(placement: .principal) {
                         Text(header)
                             .fontWeight(.heavy)
                             .padding(.top)
                     }
-                   
+                    #if !os(macOS)
                     ToolbarItem(placement: .keyboard) {
                         HStack {
-                            
+
                         }
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        
+
                         Button(action: {
                             submitAction()
                             presentationMode.wrappedValue.dismiss()
-                            
+
                         }) {
                             Text(submitLabel).disabled(submitDisabled)
                         }
                         .padding(.top)
                     }
+                    #else
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button(action: {
+                            submitAction()
+                            presentationMode.wrappedValue.dismiss()
+
+                        }) {
+                            Text(submitLabel).disabled(submitDisabled)
+                        }
+                        .padding(.top)
+                    }
+                    #endif
                 }
                 .fullscreen()
         }

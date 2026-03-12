@@ -43,12 +43,16 @@ public struct ScrollTagSelector: View {
                             .onTapGesture {
                                 withAnimation(.interactiveSpring()) {
                                     if isSelected(tag: tag) {
+                                        #if canImport(UIKit)
                                         let impactHeavy = UIImpactFeedbackGenerator(style: .soft)
                                         impactHeavy.impactOccurred()
+                                        #endif
                                         selected = nil
                                     } else {
+                                        #if canImport(UIKit)
                                         let impactHeavy = UIImpactFeedbackGenerator(style: .light)
                                         impactHeavy.impactOccurred()
+                                        #endif
                                         selected = tag
                                     }
                                 }

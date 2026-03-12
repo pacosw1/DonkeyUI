@@ -38,7 +38,11 @@ public struct ReminderIconView: View {
 //        .frame(width: 30, height: 30)
 //        .padding(.horizontal, 10)
         .padding(.vertical, small ? 3: 10)
+        #if canImport(UIKit)
         .bgOverlay(bgColor: Color(UIColor.tertiarySystemBackground), borderColor: selected ? .accentColor : .gray, borderWidth: selected ? 2 : 1)
+        #else
+        .bgOverlay(bgColor: Color(NSColor.underPageBackgroundColor), borderColor: selected ? .accentColor : .gray, borderWidth: selected ? 2 : 1)
+        #endif
         .overlay {
             
             Color.accentColor.opacity(0.1)

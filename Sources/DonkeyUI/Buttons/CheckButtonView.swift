@@ -51,9 +51,17 @@ public struct CheckButtonView: View {
         self.color = color
     }
     
+    var fillColor: Color {
+        #if canImport(UIKit)
+        return Color(UIColor(color).lighter(componentDelta: 0.05))
+        #else
+        return Color(NSColor(color).lighter(componentDelta: 0.05))
+        #endif
+    }
+
     public var body: some View {
-        
-        RoundedRectangle(cornerRadius: radius, style: .continuous).fill(active ? Color(UIColor(color).lighter(componentDelta: 0.05)) : .clear)
+
+        RoundedRectangle(cornerRadius: radius, style: .continuous).fill(active ? fillColor : .clear)
             .frame(width: size.rawValue, height: size.rawValue)
             .overlay (
                 Image(systemName: "checkmark")
@@ -63,10 +71,10 @@ public struct CheckButtonView: View {
             )
             .opacity(active ? 1 : 0)
             .animation(.interactiveSpring(), value: active)
-        
+
         .overlay(
             RoundedRectangle(cornerRadius: radius)
-                .stroke(Color(UIColor(color).lighter(componentDelta: 0.05)),
+                .stroke(fillColor,
                         lineWidth: 1.5)
         )
         .padding(.trailing, 22)

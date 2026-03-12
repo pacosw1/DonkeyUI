@@ -81,7 +81,7 @@ public struct PaywallView: View {
             }
             .overlay {
                 ZStack {
-                    Color(UIColor.systemBackground)
+                    DonkeyUIDefaults.systemBackground
                         .ignoresSafeArea()
                     VStack {
                         if !isSheet {

@@ -42,7 +42,7 @@ public struct CardModifier: ViewModifier {
 }
 
 extension View {
-    public func card(transparent: Bool = false, color: Color = Color(UIColor.secondarySystemBackground), padding: CGFloat = 1, radius: BorderRadius = .card) -> some View {
+    public func card(transparent: Bool = false, color: Color = DonkeyUIDefaults.secondaryBackground, padding: CGFloat = 1, radius: BorderRadius = .card) -> some View {
         modifier(CardModifier(radius: radius, transparent: transparent, color: color, padding: padding))
     }
 }

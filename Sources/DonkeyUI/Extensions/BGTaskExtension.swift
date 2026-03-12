@@ -6,12 +6,13 @@
 //
 
 import Foundation
+
+#if canImport(UIKit)
 import BackgroundTasks
 
-
 public extension BGTaskScheduler {
-    
-    
+
+
     func replacePendingBackgroundTask() {
 //        BGTaskScheduler.shared.cancelAllTaskRequests()
         self.scheduleAppRefresh()
@@ -19,9 +20,9 @@ public extension BGTaskScheduler {
     func scheduleAppRefresh() {
         let enabled = UserDefaults.standard.bool(forKey: "dailyReminder")
 //        print(enabled ? "Daily reminders enabled" : "Daily reminders disabled")
-        
+
         if enabled {
-            
+
 //            let interval = UserDefaults.standard.double(forKey: "dailyReminderTime")
 //            let setDate = Date(timeIntervalSince1970: interval)
 //
@@ -29,23 +30,25 @@ public extension BGTaskScheduler {
 //            let components = setDate.timeComponents
 //            let reminderDate = Date.now.startOfDay
 //
+//
 //            let final = Calendar.current.date(byAdding: components, to: reminderDate)
 //            print("scheduling reminders at \(final!.dateString) \(final!.timeString)")
 
-            
+
             let request = BGAppRefreshTaskRequest(identifier: "reminderRefresh")
             var time = DateComponents()
             time.hour = 9
             request.earliestBeginDate = Calendar.current.date(byAdding: time, to: Date.now.tomorrow.startOfDay)
-            
+
             do {
                 try BGTaskScheduler.shared.submit(request)
             } catch {
                 print(error.localizedDescription)
             }
-            
-            
-            
+
+
+
         }
     }
 }
+#endif

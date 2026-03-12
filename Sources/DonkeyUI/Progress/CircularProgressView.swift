@@ -26,21 +26,34 @@ public struct CircularProgressView: View {
         return progress == 1
     }
 
-    let impactHeavy = UIImpactFeedbackGenerator(style: .heavy)
+    var colorLighter: Color {
+        #if canImport(UIKit)
+        return Color(UIColor(color).lighter(componentDelta: 0.05))
+        #else
+        return Color(NSColor(color).lighter(componentDelta: 0.05))
+        #endif
+    }
+
+    var colorLighterStrong: Color {
+        #if canImport(UIKit)
+        return Color(UIColor(color).lighter(componentDelta: 10))
+        #else
+        return Color(NSColor(color).lighter(componentDelta: 10))
+        #endif
+    }
 
     public var body: some View {
             ZStack {
                 Circle()
                     .stroke(
-                       Color(UIColor(color).lighter(componentDelta: 0.05)) ,
+                        colorLighter,
                         lineWidth: size / 5
                     )
                     .frame(width: size * 1.2 * 2, height: size * 1.2 * 2)
                     .animation(.spring(), value: complete)
                 Circle()
                     .trim(from: 0, to: CGFloat(progress))
-                    
-                    .stroke(Color(UIColor(color).lighter(componentDelta: 0.05))
+                    .stroke(colorLighter
                             , lineWidth: size)
                     .frame(width: size, height: size)
                     .rotationEffect(.degrees(-90))
@@ -50,7 +63,7 @@ public struct CircularProgressView: View {
                     .overlay {
                         Image(systemName: "checkmark")
                             .opacity(progress == 1 ? 1: 0.0001)
-                            .foregroundColor(Color(UIColor(color).lighter(componentDelta: 10)))
+                            .foregroundColor(colorLighterStrong)
                             .fontWeight(.heavy)
                             .font(.system(size: size / 1.4))
                             .animation(.easeInOut.delay(0.2), value: progress)

@@ -1,20 +1,23 @@
 //
 //  SwiftUIView.swift
-//  
+//
 //
 //  Created by Paco Sainz on 3/14/23.
 //
 
-import PopupView
 import SwiftUI
+#if canImport(PopupView)
+import PopupView
+#endif
 
 public struct ErrorModifier: ViewModifier {
     var errorMessage: String = "Connection Error"
     var subText: String = "Please try again later"
     var errorType: ErrorType = .wifi
     @Binding var presented: Bool
-  
+
     public func body(content: Content) -> some View {
+        #if canImport(PopupView)
         content
             .popup(isPresented: $presented) {
                 HStack {
@@ -40,6 +43,9 @@ public struct ErrorModifier: ViewModifier {
                     .closeOnTapOutside(false)
                     .autohideIn(3)
             }
+        #else
+        content
+        #endif
     }
 }
 

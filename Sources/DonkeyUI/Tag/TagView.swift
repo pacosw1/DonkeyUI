@@ -33,7 +33,11 @@ public struct TagView: View {
     }
 
     var textColor: Color {
+        #if canImport(UIKit)
         return Color(UIColor(color).darker(componentDelta: colorScheme == .light ? 0.3 : 0))
+        #else
+        return Color(NSColor(color).darker(componentDelta: colorScheme == .light ? 0.3 : 0))
+        #endif
     }
     
     var verticalPadding: CGFloat {
@@ -95,7 +99,11 @@ public struct TagView: View {
         .padding(.vertical, verticalPadding)
         .padding(.horizontal, horizontalPadding)
         
+        #if canImport(UIKit)
         .bgOverlay(bgColor: selected ? color.opacity(0.2): dull ? .clear : Color(UIColor(color).lighter(componentDelta: 0.05)).opacity(0.3), radius: 15, borderColor: selected ? color :  dull ? .gray.opacity(0.2) : .clear, borderWidth:  selected ? 3 : dull ? 1 : 0)
+        #else
+        .bgOverlay(bgColor: selected ? color.opacity(0.2): dull ? .clear : Color(NSColor(color).lighter(componentDelta: 0.05)).opacity(0.3), radius: 15, borderColor: selected ? color :  dull ? .gray.opacity(0.2) : .clear, borderWidth:  selected ? 3 : dull ? 1 : 0)
+        #endif
                     
 //            .card(color: Color(color.lighter(componentDelta: 0.0)).opacity(colorScheme == .light ? 0.2 : 0.2), padding: 0.5)
         

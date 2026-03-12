@@ -47,7 +47,11 @@ struct RowView<Content: View>: View {
 
                 }
                 .padding()
+                #if canImport(UIKit)
                 .background(isHighlighted ? Color(.systemGray6) : Color.clear)
+                #else
+                .background(isHighlighted ? Color(NSColor.controlBackgroundColor) : Color.clear)
+                #endif
                 .animation(.spring(), value: isHighlighted)
 
                 .listRowInsets(EdgeInsets())

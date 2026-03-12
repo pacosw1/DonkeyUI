@@ -1,4 +1,4 @@
-// swift-tools-version: 5.7
+// swift-tools-version: 5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -6,33 +6,26 @@ import PackageDescription
 let package = Package(
     name: "DonkeyUI",
     platforms: [
-        .iOS(.v16)
+        .iOS(.v16),
+        .macOS(.v14)
     ],
     products: [
-        // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "DonkeyUI",
             targets: ["DonkeyUI"]),
     ],
     dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        // .package(url: /* package url */, from: "1.0.0"),
-//        .package(url: "https://github.com/maustinstar/liquid.git", from: "0.0.1"),
         .package(url: "https://github.com/exyte/PopupView.git", .upToNextMajor(from: "2.1.1")),
         .package(url: "https://github.com/ksemianov/WrappingHStack", .upToNextMajor(from: "0.1.0")),
-        .package(url: "https://github.com/RevenueCat/purchases-ios.git", .upToNextMajor(from: "4.0.0"))
-        
-
+        .package(url: "https://github.com/RevenueCat/purchases-ios.git", .upToNextMajor(from: "4.0.0")),
     ],
     targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "DonkeyUI",
             dependencies: [
                 .product(name: "WrappingHStack", package: "WrappingHStack"),
                 .product(name: "RevenueCat", package: "purchases-ios"),
-                .product(name: "PopupView", package: "PopupView")
+                .product(name: "PopupView", package: "PopupView", condition: .when(platforms: [.iOS])),
             ]),
         .testTarget(
             name: "DonkeyUITests",

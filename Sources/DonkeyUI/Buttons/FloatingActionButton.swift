@@ -26,8 +26,10 @@ public struct FloatingActionButton: ViewModifier {
             Button(action: {
                 
                 action()
+                #if canImport(UIKit)
                 let impactHeavy = UIImpactFeedbackGenerator(style: .medium)
                 impactHeavy.impactOccurred()
+                #endif
                 
                 // todo
             }) {

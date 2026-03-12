@@ -32,8 +32,7 @@ public struct BorderModifier: ViewModifier {
 }
 
 public extension View {
-    func bordered(color: Color = Color(uiColor: UIColor.secondarySystemBackground), radius: BorderRadius = .card) -> some View {
+    func bordered(color: Color = DonkeyUIDefaults.secondaryBackground, radius: BorderRadius = .card) -> some View {
         modifier(BorderModifier(color: color, radius: radius))
     }
 }
-    

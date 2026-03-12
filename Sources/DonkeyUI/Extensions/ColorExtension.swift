@@ -6,8 +6,13 @@
 //
 
 import Foundation
-import UIKit
 import SwiftUI
+
+#if canImport(UIKit)
+import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
 
 
 public extension Color {
@@ -44,17 +49,16 @@ public extension Color {
 
             self.init(red: r, green: g, blue: b, opacity: a)
         }
-    
-    
 
+    #if canImport(UIKit)
         func buttonText(darkMode: Bool) -> Color {
             return Color(UIColor(self).lighter(componentDelta: darkMode ? 0 : 0.98))
         }
-    
+
         func buttonBackground() -> Color {
             return Color(UIColor(self).lighter(componentDelta: 0.05)).opacity(0.3)
         }
- 
+
         func toHex() -> String? {
             let uic = UIColor(self)
             guard let components = uic.cgColor.components, components.count >= 3 else {
@@ -75,35 +79,51 @@ public extension Color {
                 return String(format: "%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255))
             }
         }
+    #else
+        func buttonText(darkMode: Bool) -> Color {
+            return Color(NSColor(self).lighter(componentDelta: darkMode ? 0 : 0.98))
+        }
 
+        func buttonBackground() -> Color {
+            return Color(NSColor(self).lighter(componentDelta: 0.05)).opacity(0.3)
+        }
+
+        func toHex() -> String? {
+            let nsc = NSColor(self)
+            guard let converted = nsc.usingColorSpace(.sRGB) else { return nil }
+            let r = Float(converted.redComponent)
+            let g = Float(converted.greenComponent)
+            let b = Float(converted.blueComponent)
+            let a = Float(converted.alphaComponent)
+
+            if a != Float(1.0) {
+                return String(format: "%02lX%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255), lroundf(a * 255))
+            } else {
+                return String(format: "%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255))
+            }
+        }
+    #endif
 }
 
+#if canImport(UIKit)
 public extension UIColor {
-    
-  
-    
     private func add(_ value: CGFloat, toComponent: CGFloat) -> CGFloat {
            return max(0, min(1, toComponent + value))
        }
-    
+
     private func makeColor(componentDelta: CGFloat) -> UIColor {
             var red: CGFloat = 0
             var blue: CGFloat = 0
             var green: CGFloat = 0
             var alpha: CGFloat = 0
-            
-            // Extract r,g,b,a components from the
-            // current UIColor
+
             getRed(
                 &red,
                 green: &green,
                 blue: &blue,
                 alpha: &alpha
             )
-            
-            // Create a new UIColor modifying each component
-            // by componentDelta, making the new UIColor either
-            // lighter or darker.
+
             return UIColor(
                 red: add(componentDelta, toComponent: red),
                 green: add(componentDelta, toComponent: green),
@@ -111,12 +131,37 @@ public extension UIColor {
                 alpha: alpha
             )
         }
-    
+
     func lighter(componentDelta: CGFloat = 0.1) -> UIColor {
         return makeColor(componentDelta: componentDelta)
     }
-    
+
     func darker(componentDelta: CGFloat = 0.1) -> UIColor {
         return makeColor(componentDelta: -1*componentDelta)
     }
 }
+#else
+public extension NSColor {
+    private func add(_ value: CGFloat, toComponent: CGFloat) -> CGFloat {
+        return max(0, min(1, toComponent + value))
+    }
+
+    private func makeColor(componentDelta: CGFloat) -> NSColor {
+        guard let c = self.usingColorSpace(.sRGB) else { return self }
+        return NSColor(
+            red: add(componentDelta, toComponent: c.redComponent),
+            green: add(componentDelta, toComponent: c.greenComponent),
+            blue: add(componentDelta, toComponent: c.blueComponent),
+            alpha: c.alphaComponent
+        )
+    }
+
+    func lighter(componentDelta: CGFloat = 0.1) -> NSColor {
+        return makeColor(componentDelta: componentDelta)
+    }
+
+    func darker(componentDelta: CGFloat = 0.1) -> NSColor {
+        return makeColor(componentDelta: -1*componentDelta)
+    }
+}
+#endif

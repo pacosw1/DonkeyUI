@@ -53,7 +53,7 @@ public struct OnboardingPanelView: View {
             
             
             ZStack {
-                Color(uiColor: UIColor.secondarySystemBackground)
+                DonkeyUIDefaults.secondaryBackground
                     .ignoresSafeArea()
                     
 

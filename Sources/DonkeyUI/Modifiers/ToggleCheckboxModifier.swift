@@ -37,8 +37,10 @@ public struct CheckboxViewModifier: ViewModifier {
                         action()
                     }
                     
+                    #if canImport(UIKit)
                     let impactHeavy = UIImpactFeedbackGenerator(style: .medium)
                     impactHeavy.impactOccurred()
+                    #endif
                     
                 }) {
                     CheckButtonView(active: isOn, size: .small)

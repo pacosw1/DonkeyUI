@@ -1,6 +1,6 @@
 //
 //  SwiftUIView.swift
-//  
+//
 //
 //  Created by Paco Sainz on 4/16/23.
 //
@@ -12,7 +12,7 @@ public struct LeaveReviewView: View {
         self.showError = false
         self.url = url
     }
-    
+
     @State var showError = false
     let url: String
     public var body: some View {
@@ -25,9 +25,13 @@ public struct LeaveReviewView: View {
                     showError = true
                     return
                 }
+                #if canImport(UIKit)
                 UIApplication.shared.open(writeReviewURL, options: [:], completionHandler: nil)
+                #else
+                NSWorkspace.shared.open(writeReviewURL)
+                #endif
             }
-            
+
     }
 }
 

@@ -159,7 +159,11 @@ struct PadButton: View {
     @Environment(\.colorScheme) var colorScheme
 
     var buttonColor: Color {
+        #if canImport(UIKit)
         return colorScheme == .dark ? Color(UIColor.secondarySystemBackground) : Color(UIColor.secondarySystemBackground)
+        #else
+        return colorScheme == .dark ? Color(NSColor.controlBackgroundColor) : Color(NSColor.controlBackgroundColor)
+        #endif
     }
     var body: some View {
         Button {

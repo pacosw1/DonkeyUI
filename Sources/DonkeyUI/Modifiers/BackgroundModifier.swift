@@ -30,9 +30,8 @@ public struct BackgroundModifier: ViewModifier {
 
 
 extension View {
-    public func fullscreen(bgColor: Color = Color(uiColor: UIColor.secondarySystemBackground), dim: Bool = false) -> some View {
+    public func fullscreen(bgColor: Color = DonkeyUIDefaults.secondaryBackground, dim: Bool = false) -> some View {
         modifier(BackgroundModifier(backgroundColor: bgColor, dim: dim))
-        
     }
 }
 

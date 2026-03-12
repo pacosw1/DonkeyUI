@@ -38,7 +38,9 @@ struct FeedbackSentView: View {
         }
         .ignoresSafeArea(.keyboard)
         .navigationTitle("")
+        #if !os(macOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
 }
 

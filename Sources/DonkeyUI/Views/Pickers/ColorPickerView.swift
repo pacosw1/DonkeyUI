@@ -16,7 +16,11 @@ public struct ColorPickerItem: View {
     public var body: some View {
         ZStack {
             Circle()
+                #if canImport(UIKit)
                 .stroke(!selected ? .clear : Color(UIColor.tertiaryLabel).opacity(0.8), lineWidth: 4)
+                #else
+                .stroke(!selected ? .clear : Color(NSColor.tertiaryLabelColor).opacity(0.8), lineWidth: 4)
+                #endif
                 .frame(height: 50)
             Circle()
                 .fill(color)

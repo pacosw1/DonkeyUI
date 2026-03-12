@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UserNotifications
 
 public struct DailyReminderView: View {
     @AppStorage("dailyReminder") var dailyReminderOn = true

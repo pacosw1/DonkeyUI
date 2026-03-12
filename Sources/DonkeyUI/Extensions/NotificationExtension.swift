@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import NotificationCenter
+import UserNotifications
 
 public extension UNUserNotificationCenter {
     

@@ -70,12 +70,16 @@ public struct PullSearchModifier: ViewModifier {
             // Arrow
             
         }
+        #if canImport(UIKit)
         .position(x: UIScreen.main.bounds.width / 2, y: offsetY <= 0 ? max(offsetY * -1, 0) : 0)
+        #else
+        .position(x: (NSScreen.main?.frame.width ?? 0) / 2, y: offsetY <= 0 ? max(offsetY * -1, 0) : 0)
+        #endif
         .opacity(offsetY <= 0 ? 1 : 0) // Modified opacity based on offsetY
 
         // Adjusted the position calculation
     }
-    
+
     public func body(content: Content) -> some View {
         ZStack {
             ScrollView {
@@ -132,13 +136,22 @@ struct SearchModifier_Previews: PreviewProvider {
 }
 
 
+#if canImport(UIKit)
+import UIKit
 public enum HapticFeedback {
     static private var generator = UIImpactFeedbackGenerator(style: .medium)
-    
+
     static func trigger() {
         generator.impactOccurred()
     }
 }
+#else
+public enum HapticFeedback {
+    static func trigger() {
+        // No haptic feedback on macOS
+    }
+}
+#endif
 
 
 
@@ -148,7 +161,11 @@ struct SearchBar: View {
         TextField("Search", text: $text)
             .padding(7)
             .padding(.horizontal, 25)
+            #if canImport(UIKit)
             .background(Color(.systemGray6))
+            #else
+            .background(Color(NSColor.controlBackgroundColor))
+            #endif
             .cornerRadius(8)
             .overlay(
                 HStack {
