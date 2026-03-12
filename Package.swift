@@ -23,7 +23,7 @@ let package = Package(
         .target(
             name: "DonkeyUI",
             dependencies: [
-                .product(name: "WrappingHStack", package: "WrappingHStack"),
+                .product(name: "WrappingHStack", package: "WrappingHStack", condition: .when(platforms: [.iOS])),
                 .product(name: "RevenueCat", package: "purchases-ios"),
                 .product(name: "PopupView", package: "PopupView", condition: .when(platforms: [.iOS])),
             ]),

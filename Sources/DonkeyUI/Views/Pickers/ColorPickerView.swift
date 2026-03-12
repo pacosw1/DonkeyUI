@@ -6,7 +6,9 @@
 //
 
 import SwiftUI
+#if canImport(WrappingHStack)
 import WrappingHStack
+#endif
 
 public struct ColorPickerItem: View {
 
@@ -59,17 +61,33 @@ public struct ColorPickerView: View {
     @Binding var selected: Color
     
     public var body: some View {
+        colorGrid
+            .padding()
+            .bordered()
+    }
+
+    @ViewBuilder
+    private var colorGrid: some View {
+        #if canImport(WrappingHStack)
         WrappingHStack(alignment: .leading, horizontalSpacing: horizontalSpacing, verticalSpacing: verticalSpacing) {
-           ForEach(colors, id: \.self) { color in
-               ColorPickerItem(color: color, selected: color.toHex() == selected.toHex())
-                   .onTapGesture {
-                       selected = color
-                   }
-                   .animation(.none, value: selected)
-           }
-       }
-        .padding()
-        .bordered()
+            colorItems
+        }
+        #else
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 50), spacing: horizontalSpacing)], spacing: verticalSpacing) {
+            colorItems
+        }
+        #endif
+    }
+
+    @ViewBuilder
+    private var colorItems: some View {
+        ForEach(colors, id: \.self) { color in
+            ColorPickerItem(color: color, selected: color.toHex() == selected.toHex())
+                .onTapGesture {
+                    selected = color
+                }
+                .animation(.none, value: selected)
+        }
     }
 }
 
