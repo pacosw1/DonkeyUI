@@ -1,45 +1,32 @@
 name: Release
 
-# Auto-bumps version on push to main based on commit messages:
+# Runs AFTER CI passes. Auto-bumps version based on commit messages:
 #   "fix: ..." or "bug: ..."    → patch (1.0.0 → 1.0.1)
 #   "feat: ..." or "add: ..."   → minor (1.0.0 → 1.1.0)
-#   "breaking: ..." or "BREAKING CHANGE" in body → major (1.0.0 → 2.0.0)
+#   "breaking: ..." or "BREAKING CHANGE" → major (1.0.0 → 2.0.0)
 #   anything else                → patch
 #
-# To skip a release, include [skip release] in your commit message.
-# Manual releases: push a tag like v1.2.3 to trigger without auto-bump.
+# To skip: include [skip release] in your commit message.
+# Manual: push a tag like v1.2.3 directly.
 
 on:
-  push:
-    branches: [main]
-    tags:
-      - 'v*'
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
 
 permissions:
   contents: write
 
 jobs:
-  # Gate: only release if tests pass
-  test:
-    name: Test
-    runs-on: macos-14
-    steps:
-      - uses: actions/checkout@v4
-      - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_16.0.app
-      - name: Build
-        run: swift build -c release
-      - name: Test
-        run: swift test
-      - name: Build iOS
-        run: xcodebuild build -scheme DonkeyUI -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' -configuration Release -skipPackagePluginValidation
-
-  release:
+  auto-release:
     name: Auto Release
-    needs: test
     runs-on: ubuntu-latest
-    # Only run on main push, not on tag push (tags already have a version)
-    if: github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip release]')
+    # Only if CI passed, on main branch, not a tag push, not skip
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      !startsWith(github.event.workflow_run.head_commit.message, 'v') &&
+      !contains(github.event.workflow_run.head_commit.message, '[skip release]')
     steps:
       - uses: actions/checkout@v4
         with:
@@ -69,6 +56,13 @@ jobs:
             COMMITS=$(git log --pretty=format:"%s" ${LATEST_TAG}..HEAD)
           fi
 
+          # No new commits since last tag — skip
+          if [ -z "$COMMITS" ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "No new commits since $LATEST_TAG, skipping release"
+            exit 0
+          fi
+
           # Determine bump type from commit messages
           BUMP="patch"
           if echo "$COMMITS" | grep -qiE "^(breaking|BREAKING CHANGE)"; then
@@ -87,12 +81,14 @@ jobs:
           NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "bump=$BUMP" >> $GITHUB_OUTPUT
+          echo "skip=false" >> $GITHUB_OUTPUT
           echo "Bump: $BUMP ($LATEST_TAG → v$NEW_VERSION)"
 
       - name: Generate changelog
+        if: steps.bump.outputs.skip != 'true'
         id: changelog
         run: |
-          LATEST_TAG=${{ steps.bump.outputs.latest_tag || 'v0.0.0' }}
+          LATEST_TAG="${{ steps.bump.outputs.latest_tag }}"
           if [ "$LATEST_TAG" = "v0.0.0" ]; then
             COMMITS=$(git log --pretty=format:"- %s" HEAD)
           else
@@ -102,7 +98,8 @@ jobs:
           echo "$COMMITS" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Create tag
+      - name: Create tag and release
+        if: steps.bump.outputs.skip != 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -110,6 +107,7 @@ jobs:
           git push origin "v${{ steps.bump.outputs.new_version }}"
 
       - name: Create GitHub Release
+        if: steps.bump.outputs.skip != 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.bump.outputs.new_version }}
@@ -129,20 +127,25 @@ jobs:
           draft: false
           prerelease: false
 
-  # Manual tag push — just create the release (no auto-bump)
+  # Manual tag push — create release only if CI passed for that tag
   manual-release:
     name: Manual Release
-    needs: test
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      startsWith(github.event.workflow_run.head_branch, 'v')
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Extract version
+      - name: Get tag from workflow run
         id: version
-        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+        run: |
+          TAG="${{ github.event.workflow_run.head_branch }}"
+          VERSION="${TAG#v}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
 
       - name: Generate changelog
         id: changelog
@@ -160,9 +163,10 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: v${{ steps.version.outputs.version }}
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.tag }}
           body: |
-            ## DonkeyUI v${{ steps.version.outputs.version }}
+            ## DonkeyUI ${{ steps.version.outputs.tag }}
 
             ### Installation
 
@@ -174,4 +178,4 @@ jobs:
 
             ${{ steps.changelog.outputs.commits }}
           draft: false
-          prerelease: ${{ contains(github.ref, '-beta') || contains(github.ref, '-rc') }}
+          prerelease: ${{ contains(steps.version.outputs.tag, '-beta') || contains(steps.version.outputs.tag, '-rc') }}
