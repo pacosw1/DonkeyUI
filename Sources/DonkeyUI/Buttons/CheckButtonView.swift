@@ -81,6 +81,8 @@ public struct CheckButtonView: View {
 //        .bgOverlay(bgColor: .red.opacity(0.2))
         .contentShape(Rectangle())
         .animation(.interactiveSpring(), value: active)
+        .accessibilityLabel(active ? "Checked" : "Unchecked")
+        .accessibilityAddTraits(.isButton)
 
     }
 }

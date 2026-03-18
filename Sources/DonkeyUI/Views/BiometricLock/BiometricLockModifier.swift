@@ -8,7 +8,7 @@ import SwiftUI
 
 public struct BiometricLockModifier: ViewModifier {
     @Environment(\.scenePhase) var scenePhase
-    @StateObject var model = BiomericLockModel()
+    @StateObject var model = BiometricLockModel()
     let enabled: Bool
     
     public func body(content: Content) -> some View {

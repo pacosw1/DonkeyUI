@@ -17,42 +17,29 @@ public extension Date {
         var components = DateComponents()
         components.day = 1
         components.second = -1
-        return Calendar.current.date(byAdding: components, to: startOfDay)!
+        return Calendar.current.date(byAdding: components, to: startOfDay) ?? self
     }
     
     var tomorrow: Date {
-        return Calendar.current.date(byAdding: .day, value: 1, to: self)!
+        return Calendar.current.date(byAdding: .day, value: 1, to: self) ?? self
     }
     
     var yesterday: Date {
-        return Calendar.current.date(byAdding: .day, value: -1, to: self)!
+        return Calendar.current.date(byAdding: .day, value: -1, to: self) ?? self
     }
     
     var time: String {
-        var hour = ""
-        var minute = ""
         let calendar = Calendar(identifier: .gregorian)
         let components = calendar.dateComponents([.hour, .minute], from: self)
-        if components.hour != nil {
-            hour = "\(components.hour!)"
-        } else {
-            hour = "00"
-        }
-        
-        if components.minute  != nil {
-            minute = "\(components.hour!)"
-        } else {
-            minute = "00"
-        }
-            
+        let hour = components.hour.map { String($0) } ?? "00"
+        let minute = components.minute.map { String($0) } ?? "00"
         return "\(hour):\(minute)"
-        
     }
     
     func getDate(dayDifference: Int) -> Date {
         var components = DateComponents()
         components.day = dayDifference
-        return Calendar.current.date(byAdding: components, to:startOfDay)!
+        return Calendar.current.date(byAdding: components, to: startOfDay) ?? self
     }
     
     
@@ -73,7 +60,7 @@ public extension Date {
             let calendar = Calendar(identifier: .gregorian)
             let components = calendar.dateComponents([.year, .month], from: self)
 
-            return  calendar.date(from: components)!
+            return  calendar.date(from: components) ?? self
     }
     
     var timeComponents: DateComponents {
@@ -87,7 +74,7 @@ public extension Date {
            var components = DateComponents()
            components.month = 1
            components.second = -1
-           return Calendar(identifier: .gregorian).date(byAdding: components, to: startOfMonth)!
+           return Calendar(identifier: .gregorian).date(byAdding: components, to: startOfMonth) ?? self
     }
     
     var month: Int {
@@ -202,52 +189,7 @@ public extension Date {
         
         
     }
-        
-    
-//        if years != 0 {
-//            if years == 1 {
-//                return "Next Year"
-//            } else {
-//                if years < 0 {
-//                    if years == -1 {
-//                        return "Last Year"
-//                    } else {
-//                        return "\(years) years Ago"
-//                    }
-//                } else {
-//                    return "In \(years) years"
-//                }
-//            }
-//        } else if months != 0 {
-//            if months > 0 {
-//                if months == 1 {
-//                    return "Next Month"
-//                } else {
-//                    return "In \(months) months"
-//                }
-//            } else {
-//                return "\(months) Months Ago"
-//            }
-//        } else if weeks != 0 {
-//            //check weeks here
-//            if weeks > 0 {
-//                if weeks == 1 {
-//                    return "Next \(curr.dayOfWeekString)"
-//                } else {
-//                    return "In \(weeks) weeks"
-//                }
-//            } else {
-//                if weeks == -1 {
-//                    return "Last Week"
-//                } else {
-//                    return "\(weeks) Weeks Ago"
-//                }
-//            }
-//        } else   {
-//            return "This \(curr.dayOfWeekString)"
-//        }
-        
-    
+
     var dateString: String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat =  "MMMM, dd, YYYY"

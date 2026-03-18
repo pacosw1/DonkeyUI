@@ -77,6 +77,8 @@ public struct ColorPickerView: View {
                 .onTapGesture {
                     selected = color
                 }
+                .accessibilityLabel("Color")
+                .accessibilityAddTraits(.isButton)
                 .animation(.none, value: selected)
         }
     }

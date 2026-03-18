@@ -145,7 +145,8 @@ public struct ButtonView: View {
         }
         
         .disabled(isDisabled)
-        
+        .accessibilityLabel(label)
+
     }
 }
 

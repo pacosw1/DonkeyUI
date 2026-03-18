@@ -92,6 +92,7 @@ public struct TagView: View {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundColor(textColor)
                 }
+                .accessibilityLabel("Remove \(title)")
             }
                 
         }
@@ -104,9 +105,10 @@ public struct TagView: View {
         #else
         .bgOverlay(bgColor: selected ? color.opacity(0.2): dull ? .clear : Color(NSColor(color).lighter(componentDelta: 0.05)).opacity(0.3), radius: 15, borderColor: selected ? color :  dull ? .gray.opacity(0.2) : .clear, borderWidth:  selected ? 3 : dull ? 1 : 0)
         #endif
-                    
+        .accessibilityLabel(title)
+
 //            .card(color: Color(color.lighter(componentDelta: 0.0)).opacity(colorScheme == .light ? 0.2 : 0.2), padding: 0.5)
-        
+
     }
 }
 

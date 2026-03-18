@@ -42,15 +42,8 @@ public struct SettingToggleView: View {
                     .foregroundColor(.gray)
                     .padding(.horizontal, 10)
             }
-        }.onChange(of: isOn) { newVal in
-            
-            if newVal {
-//                play(sound: "SwitchAOn.aif")
-            } else {
-//                play(sound: "SwitchAOff.aif")
-
-            }
         }
+        .accessibilityHint(caption.isEmpty ? "" : caption)
        
     }
 }

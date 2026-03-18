@@ -104,7 +104,7 @@ class PurchaseHandler: ObservableObject {
         case .invalidAppUserIdError:
             self.errorMessage = "Not logged in with AppleID"
         default:
-            self.errorMessage = "Unkown Error"
+            self.errorMessage = "Unknown Error"
             break
         }
         

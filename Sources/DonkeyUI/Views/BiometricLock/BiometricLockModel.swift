@@ -9,7 +9,7 @@ import Foundation
 import LocalAuthentication
 import SwiftUI
 
-public class BiomericLockModel: ObservableObject {
+public class BiometricLockModel: ObservableObject {
     @Published var isUnlocked: Bool = false
     @AppStorage("useBiometrics") var useBiometrics = false
     

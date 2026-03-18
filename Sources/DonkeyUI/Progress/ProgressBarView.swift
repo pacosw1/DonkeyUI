@@ -45,9 +45,8 @@ public struct ProgressBarView: View {
             .frame(width: getWidth(proxy: proxy), height: 10)
         }
         .frame(height: 10)
-        .task {
-        }
-        
+        .accessibilityLabel("Progress: \(Int(progress * 100)) percent")
+        .accessibilityValue("\(Int(progress * 100))%")
     }
     
 }

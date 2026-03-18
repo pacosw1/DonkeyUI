@@ -39,6 +39,7 @@ public struct CloseButton: View {
                 .foregroundColor(.gray.opacity(0.5))
                 .font(getSizeInFont)
         }
+        .accessibilityLabel("Close")
     }
 }
 

@@ -146,6 +146,7 @@ public struct NumberPadInput: View {
                         .foregroundColor(colorScheme == .dark ? .white : .black)
                     }
                     .disabled(enterDisabled)
+                    .accessibilityLabel("Submit")
                 }
             }
         }
@@ -169,8 +170,8 @@ struct PadButton: View {
         Button {
             action()
         } label: {
-            
-            
+
+
             ZStack {
                 RoundedRectangle(cornerRadius: 13)
                     .frame(width: .infinity, height: 70)
@@ -182,6 +183,7 @@ struct PadButton: View {
                     .card()
             }
         }
+        .accessibilityLabel(display)
     }
 }
 

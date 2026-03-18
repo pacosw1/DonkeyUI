@@ -70,6 +70,7 @@ public struct CircularProgressView: View {
                             .scaleEffect(complete ? 1 : 0.001)
                     }
             }
+            .accessibilityLabel("Progress: \(Int(progress * 100)) percent")
         }
 }
 

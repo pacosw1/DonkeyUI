@@ -9,7 +9,7 @@ import SwiftUI
 
 public struct BiometricLockView: View {
         
-    @ObservedObject var model: BiomericLockModel
+    @ObservedObject var model: BiometricLockModel
     public var body: some View {
         ZStack {
             DonkeyUIDefaults.systemBackground
@@ -35,6 +35,6 @@ public struct BiometricLockView: View {
 
 struct BiometricLockView_Previews: PreviewProvider {
     static var previews: some View {
-        BiometricLockView(model: BiomericLockModel())
+        BiometricLockView(model: BiometricLockModel())
     }
 }

@@ -62,7 +62,7 @@ public struct PaywallView: View {
     
     
     func getPackage(packageId: String?) -> Package? {
-        return UserViewModel.shared.offerings!.current!.package(identifier: packageId)
+        return UserViewModel.shared.offerings?.current?.package(identifier: packageId)
     }
     
     public var body: some View {
@@ -74,7 +74,8 @@ public struct PaywallView: View {
                 PaywallFeatureSectionView(views: views)
                 PaywallPlanSectionView(plans: plans, selectedPlan: $selectedPlan)
                 PaywallActionView(selectePrice: selectedPlan?.price ?? "9", billingType: selectedPlan?.billingType ?? "", billingPeriod: selectedPlan?.billingPeriod ?? "", buyAction: {
-                    purchaseHandler.initiatePurchase(packageId: selectedPlan!.id, successAction: successAction, errorAction: errorAction)
+                    guard let plan = selectedPlan else { return }
+                    purchaseHandler.initiatePurchase(packageId: plan.id, successAction: successAction, errorAction: errorAction)
                 }, isDisabled: loading || selectedPlan == nil || purchaseHandler.loadingPurchaseScreen, isLoading: purchaseHandler.loadingPurchaseScreen)
                 Spacer()
                 PaywallPolicyView( restorePurchasesAction: purchaseHandler.restorePurchases, privacyURL: privacyURL, termsOfServiceURL: termsURL)
@@ -117,7 +118,6 @@ public struct PaywallView: View {
 
             }
             .task {
-            Purchases.configure(withAPIKey: "")
             loading = true
                 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {

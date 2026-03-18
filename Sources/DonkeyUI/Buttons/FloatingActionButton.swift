@@ -49,6 +49,7 @@ public struct FloatingActionButton: ViewModifier {
 //            )
             
            
+            .accessibilityLabel("Action button")
             .padding(.init(top: 0, leading: 0, bottom: 20, trailing:20))
             .onAppear {
                 animationScale = 2.0
