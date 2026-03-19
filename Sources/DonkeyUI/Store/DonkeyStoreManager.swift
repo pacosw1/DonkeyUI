@@ -4,7 +4,7 @@
 //
 //  Usage:
 //  1. Create with your product IDs:
-//     let store = DonkeyStoreManager(productIDs: ["com.app.monthly", "com.app.yearly"])
+//     let store = DonkeyStoreManager(config: StoreConfig(productIDs: ["com.app.monthly", "com.app.yearly"]))
 //
 //  2. Inject into environment:
 //     ContentView().environment(store)
@@ -12,7 +12,7 @@
 //  3. Use in views:
 //     @Environment(DonkeyStoreManager.self) var store
 //     if store.isPro { ... }
-//     try await store.purchase(product)
+//     await store.purchase(product)
 //
 
 import StoreKit
@@ -24,7 +24,7 @@ private let logger = Logger(subsystem: "DonkeyUI", category: "Store")
 // MARK: - Configuration
 
 /// Configuration for DonkeyStoreManager. Pass at init.
-public struct StoreConfig {
+public struct StoreConfig: Sendable {
     public let productIDs: Set<String>
     public let userDefaultsSuite: String?
     public let isPurchasedKey: String
@@ -62,7 +62,7 @@ public struct StoreCallbacks: Sendable {
 
 // MARK: - Purchase Result
 
-public enum PurchaseResult {
+public enum PurchaseResult: Sendable {
     case success(StoreKit.Transaction)
     case pending
     case cancelled
@@ -83,8 +83,10 @@ public final class DonkeyStoreManager {
     /// Currently purchased (active) product IDs
     public private(set) var purchasedProductIDs: Set<String> = []
 
-    /// Whether any active entitlement exists
-    public var isPro: Bool { !purchasedProductIDs.isEmpty }
+    /// Whether any active entitlement exists (includes grace period)
+    public var isPro: Bool {
+        !purchasedProductIDs.isEmpty || (activeSubscription?.isInGracePeriod ?? false)
+    }
 
     /// Loading state
     public private(set) var isLoadingProducts = false
@@ -105,6 +107,8 @@ public final class DonkeyStoreManager {
         public let expirationDate: Date?
         public let isInTrial: Bool
         public let willAutoRenew: Bool
+        public let isInGracePeriod: Bool
+        public let isInBillingRetry: Bool
         public let originalTransactionID: UInt64
     }
 
@@ -113,7 +117,7 @@ public final class DonkeyStoreManager {
     private let config: StoreConfig
     private let callbacks: StoreCallbacks
     private let defaults: UserDefaults
-    private var transactionListener: Task<Void, Never>?
+    private nonisolated(unsafe) var transactionListener: Task<Void, Never>?
     private var productsLoaded = false
 
     // MARK: - Init
@@ -147,23 +151,23 @@ public final class DonkeyStoreManager {
         // Start listening for transaction updates
         transactionListener = listenForTransactions()
 
-        // Load products and entitlements
+        // Load products, finish pending transactions, and check entitlements
         Task {
             await loadProducts()
+            await finishUnfinishedTransactions()
             await updateEntitlements()
         }
     }
 
-    // Cancel listener when deallocated
-    private func cleanup() {
+    deinit {
         transactionListener?.cancel()
     }
 
     // MARK: - Load Products
 
     /// Load products from App Store. Retries once on failure.
-    public func loadProducts() async {
-        guard !productsLoaded else { return }
+    public func loadProducts(forceReload: Bool = false) async {
+        guard !productsLoaded || forceReload else { return }
         isLoadingProducts = true
         error = nil
 
@@ -211,11 +215,9 @@ public final class DonkeyStoreManager {
 
                 // Callbacks
                 await callbacks.onPurchaseComplete(transaction, product)
-                if let expiry = transaction.expirationDate {
-                    await callbacks.onSubscriptionChange(product.id, "active", expiry)
-                } else {
-                    await callbacks.onSubscriptionChange(product.id, "active", nil)
-                }
+                await callbacks.onSubscriptionChange(
+                    product.id, "active", transaction.expirationDate
+                )
 
                 logger.info("Purchase successful: \(product.id)")
                 return .success(transaction)
@@ -267,41 +269,68 @@ public final class DonkeyStoreManager {
     /// Refresh entitlements from StoreKit. Called automatically on init and transaction updates.
     public func updateEntitlements() async {
         var purchased: Set<String> = []
-        var latestSubscription: ActiveSubscription?
+        var latestPurchaseDate: Date = .distantPast
 
+        // Step 1: Collect active entitlements from verified transactions
         for await result in Transaction.currentEntitlements {
             guard case .verified(let transaction) = result else { continue }
 
             if transaction.revocationDate == nil {
                 purchased.insert(transaction.productID)
-
-                // Track subscription details
-                if transaction.productType == .autoRenewable {
-                    let isNewer = latestSubscription == nil ||
-                        transaction.purchaseDate > (latestSubscription.map { _ in Date.distantPast } ?? .distantPast)
-
-                    if isNewer {
-                        latestSubscription = ActiveSubscription(
-                            productID: transaction.productID,
-                            expirationDate: transaction.expirationDate,
-                            isInTrial: transaction.offerType == .introductory,
-                            willAutoRenew: true,
-                            originalTransactionID: transaction.originalID
-                        )
-                    }
-                }
             }
         }
 
         purchasedProductIDs = purchased
+
+        // Step 2: Get detailed subscription status from Product.SubscriptionInfo
+        var latestSubscription: ActiveSubscription?
+
+        for product in products where product.type == .autoRenewable {
+            guard let statuses = try? await product.subscription?.status else { continue }
+
+            for status in statuses {
+                guard case .verified(let renewalInfo) = status.renewalInfo,
+                      case .verified(let transaction) = status.transaction else { continue }
+
+                // Only consider non-revoked transactions for products we own
+                guard transaction.revocationDate == nil,
+                      purchased.contains(transaction.productID) else { continue }
+
+                let isNewer = transaction.purchaseDate > latestPurchaseDate
+
+                if latestSubscription == nil || isNewer {
+                    latestPurchaseDate = transaction.purchaseDate
+
+                    latestSubscription = ActiveSubscription(
+                        productID: transaction.productID,
+                        expirationDate: transaction.expirationDate,
+                        isInTrial: transaction.offerType == .introductory,
+                        willAutoRenew: renewalInfo.willAutoRenew,
+                        isInGracePeriod: status.state == .inGracePeriod,
+                        isInBillingRetry: status.state == .inBillingRetryPeriod,
+                        originalTransactionID: transaction.originalID
+                    )
+                }
+            }
+        }
+
         activeSubscription = latestSubscription
+
+        // Grant access during grace period even if entitlements are empty
+        if latestSubscription?.isInGracePeriod == true && purchased.isEmpty {
+            purchasedProductIDs = [latestSubscription!.productID]
+        }
 
         // Persist for fast UI checks (widgets, launch)
         defaults.set(isPro, forKey: config.isPurchasedKey)
 
         // Notify server of current state
         if let sub = latestSubscription {
-            let status = sub.isInTrial ? "trial" : "active"
+            let status: String
+            if sub.isInTrial { status = "trial" }
+            else if sub.isInGracePeriod { status = "grace_period" }
+            else if sub.isInBillingRetry { status = "billing_retry" }
+            else { status = "active" }
             await callbacks.onSubscriptionChange(sub.productID, status, sub.expirationDate)
         } else if purchased.isEmpty {
             await callbacks.onSubscriptionChange("", "free", nil)
@@ -359,12 +388,31 @@ public final class DonkeyStoreManager {
 
     // MARK: - Private
 
+    /// Finish any transactions left over from previous sessions (e.g. Ask to Buy approved while app was closed)
+    private func finishUnfinishedTransactions() async {
+        for await result in Transaction.unfinished {
+            switch result {
+            case .verified(let transaction):
+                await transaction.finish()
+                logger.info("Finished pending transaction: \(transaction.productID)")
+            case .unverified(let transaction, let error):
+                logger.warning("Unverified pending transaction \(transaction.id): \(error)")
+                await transaction.finish()
+            }
+        }
+    }
+
     private func listenForTransactions() -> Task<Void, Never> {
-        Task(priority: .background) { [weak self] in
+        Task.detached(priority: .background) { [weak self] in
             for await result in Transaction.updates {
                 guard let self else { return }
-                if case .verified(let transaction) = result {
+                switch result {
+                case .verified(let transaction):
                     await transaction.finish()
+                    logger.info("Transaction update: \(transaction.productID)")
+                case .unverified(let transaction, let error):
+                    logger.warning("Unverified transaction \(transaction.id): \(error)")
+                    await transaction.finish() // finish to prevent accumulation
                 }
                 await self.updateEntitlements()
             }
@@ -381,12 +429,11 @@ public final class DonkeyStoreManager {
     private func sortOrder(_ product: Product) -> Int {
         switch product.type {
         case .autoRenewable:
-            // Yearly before monthly
             if product.subscription?.subscriptionPeriod.unit == .year { return 0 }
             if product.subscription?.subscriptionPeriod.unit == .month { return 1 }
             return 2
-        case .nonConsumable: return 3 // lifetime
-        case .consumable: return 4    // tips
+        case .nonConsumable: return 3
+        case .consumable: return 4
         default: return 5
         }
     }
