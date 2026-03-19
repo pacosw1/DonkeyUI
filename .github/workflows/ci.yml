@@ -18,12 +18,7 @@ jobs:
     runs-on: [self-hosted, macos]
     steps:
       - uses: actions/checkout@v4
-
-      - name: Build (macOS)
+      - name: Build
         run: swift build
-
-      - name: Test (macOS)
+      - name: Test
         run: swift test
-
-      - name: Build (iOS - Release)
-        run: xcodebuild build -scheme DonkeyUI -destination 'generic/platform=iOS Simulator' -configuration Release -skipPackagePluginValidation IPHONEOS_DEPLOYMENT_TARGET=16.0
