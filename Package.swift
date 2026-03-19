@@ -16,13 +16,11 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/exyte/PopupView.git", .upToNextMajor(from: "2.1.1")),
-        .package(url: "https://github.com/RevenueCat/purchases-ios.git", .upToNextMajor(from: "4.0.0")),
     ],
     targets: [
         .target(
             name: "DonkeyUI",
             dependencies: [
-                .product(name: "RevenueCat", package: "purchases-ios"),
                 .product(name: "PopupView", package: "PopupView", condition: .when(platforms: [.iOS])),
             ]),
         .testTarget(

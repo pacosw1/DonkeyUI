@@ -395,16 +395,22 @@ OnboardingFlow(
 
 ### PaywallScreen
 
-Full paywall screen with features, plans, purchase, and restore.
+Server-driven paywall with hero headline, social proof, reviews carousel, emoji features, plan cards, and purchase flow. No RevenueCat dependency.
+
+**Config types:**
+```swift
+PaywallConfig(headline:headlineAccent:subtitle:memberCount:rating:features:reviews:footerText:)
+PaywallEmojiFeature(emoji:color:text:boldWord:)
+PaywallReview(title:username:timeLabel:description:rating:)
+```
 
 ```swift
 public init(
-    title: String,
-    subtitle: String? = nil,
-    features: [PaywallFeatureItem],
+    config: PaywallConfig,
     plans: [PaywallPlanOption],
     selectedPlanId: Binding<String?>,
     isLoading: Bool = false,
+    isPremium: Bool = false,
     ctaLabel: String = "Continue",
     privacyURL: URL? = nil,
     termsURL: URL? = nil,
@@ -416,9 +422,16 @@ public init(
 
 ```swift
 PaywallScreen(
-    title: "Unlock Everything",
-    features: [PaywallFeatureItem(systemIcon: "star.fill", title: "Pro", description: "All features")],
-    plans: [PaywallPlanOption(id: "annual", title: "Annual", priceDisplay: "$29.99", period: "year", isBestValue: true)],
+    config: PaywallConfig(
+        headline: "GET YOUR SH*T",
+        headlineAccent: "TOGETHER",
+        subtitle: "Don't just track habits, turn your life around",
+        memberCount: "50,000+ Members",
+        rating: "4.6",
+        features: [.init(emoji: "🏋️", color: .green, text: "habits", boldWord: "Unlimited")],
+        reviews: [.init(title: "Perfect app", username: "User1", description: "Love it!")]
+    ),
+    plans: [PaywallPlanOption(id: "annual", title: "Annual", priceDisplay: "$29.99", period: "/year", isBestValue: true)],
     selectedPlanId: $selectedPlan,
     onPurchase: { plan in },
     onRestore: { },
@@ -1109,18 +1122,6 @@ public init(isOn: Binding<Bool>, label: String, systemIcon: String, iconColor: C
 
 ```swift
 SettingToggleView(isOn: $darkMode, label: "Dark Mode", systemIcon: "moon.fill", iconColor: .indigo)
-```
-
-### CloudSyncView
-
-iCloud sync toggle with account check.
-
-```swift
-public init(cloudSync: Binding<Bool>, alertShown: Bool = false)
-```
-
-```swift
-CloudSyncView(cloudSync: $cloudSync)
 ```
 
 ### UseBiometricsToggle
