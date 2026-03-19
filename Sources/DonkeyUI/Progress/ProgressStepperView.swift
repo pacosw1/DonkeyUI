@@ -56,7 +56,7 @@ public struct ProgressStepperView: View {
                         
                     HStack(alignment: .center, spacing: 0) {
                         
-                        ForEach(1..<steps+1) { x in
+                        ForEach(Array(1..<steps+1), id: \.self) { x in
                             ZStack {
                                 
                                 let isSelected = selected(step: x)

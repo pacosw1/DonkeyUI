@@ -58,7 +58,7 @@ class PurchaseManager: NSObject, ObservableObject {
             // Successful purchase
             await transaction.finish()
             await self.updatePurchasedProducts()
-        case let .success(.unverified(_, error)):
+        case .success(.unverified(_, _)):
             
             // Successful purchase but transaction/receipt can't be verified
             // Could be a jailbroken phone
@@ -93,16 +93,14 @@ class PurchaseManager: NSObject, ObservableObject {
 
     private func observeTransactionUpdates() -> Task<Void, Never> {
         Task(priority: .background) { [unowned self] in
-            for await verificationResult in Transaction.updates {
-                // Using verificationResult directly would be better
-                // but this way works for this tutorial
+            for await _ in Transaction.updates {
                 await self.updatePurchasedProducts()
             }
         }
     }
 }
 
-extension PurchaseManager: SKPaymentTransactionObserver {
+extension PurchaseManager: @preconcurrency SKPaymentTransactionObserver {
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
 
     }

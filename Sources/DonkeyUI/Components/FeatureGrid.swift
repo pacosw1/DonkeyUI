@@ -106,30 +106,29 @@ public struct FeatureGrid: View {
 
 // MARK: - Preview
 
-struct FeatureGrid_Previews: PreviewProvider {
-    static var previews: some View {
-        ScrollView {
-            VStack(spacing: 32) {
-                Text("SF Symbol Features").font(.headline)
-                FeatureGrid(features: [
-                    PaywallFeatureItem(systemIcon: "chart.bar.fill", iconColor: .blue, title: "Analytics", description: "Track your progress"),
-                    PaywallFeatureItem(systemIcon: "icloud.fill", iconColor: .cyan, title: "Cloud Sync", description: "Access anywhere"),
-                    PaywallFeatureItem(systemIcon: "bell.badge.fill", iconColor: .orange, title: "Reminders", description: "Never miss a task"),
-                ])
-
-                Divider()
-
-                Text("Emoji Features").font(.headline)
-                FeatureGrid(features: [
-                    PaywallFeatureItem(emoji: "🏋️", color: Color.green.opacity(0.6), text: "habits", boldWord: "Unlimited"),
-                    PaywallFeatureItem(emoji: "📲", color: Color.blue.opacity(0.6), text: "Homescreen", boldWord: "Widgets"),
-                    PaywallFeatureItem(emoji: "📅", color: Color.red.opacity(0.6), text: "Edit Habit History"),
-                    PaywallFeatureItem(emoji: "❤️", color: Color.pink.opacity(0.6), text: "Support an Independent Developer"),
-                    PaywallFeatureItem(emoji: "☁️", color: Color.gray.opacity(0.6), text: "Cloud Sync"),
-                ])
-                .padding(.horizontal, 20)
-            }
-            .padding()
-        }
+#Preview("SF Symbols") {
+    VStack(spacing: 16) {
+        Text("SF Symbol Features").font(.headline)
+        FeatureGrid(features: [
+            PaywallFeatureItem(systemIcon: "chart.bar.fill", iconColor: .blue, title: "Analytics", description: "Track your progress"),
+            PaywallFeatureItem(systemIcon: "icloud.fill", iconColor: .cyan, title: "Cloud Sync", description: "Access anywhere"),
+            PaywallFeatureItem(systemIcon: "bell.badge.fill", iconColor: .orange, title: "Reminders", description: "Never miss a task"),
+        ])
     }
+    .padding()
+}
+
+#Preview("Emoji") {
+    VStack(spacing: 16) {
+        Text("Emoji Features").font(.headline)
+        FeatureGrid(features: [
+            PaywallFeatureItem(emoji: "🏋️", color: Color.green.opacity(0.6), text: "habits", boldWord: "Unlimited"),
+            PaywallFeatureItem(emoji: "📲", color: Color.blue.opacity(0.6), text: "Homescreen", boldWord: "Widgets"),
+            PaywallFeatureItem(emoji: "📅", color: Color.red.opacity(0.6), text: "Edit Habit History"),
+            PaywallFeatureItem(emoji: "❤️", color: Color.pink.opacity(0.6), text: "Support an Independent Developer"),
+            PaywallFeatureItem(emoji: "☁️", color: Color.gray.opacity(0.6), text: "Cloud Sync"),
+        ])
+        .padding(.horizontal, 20)
+    }
+    .padding()
 }

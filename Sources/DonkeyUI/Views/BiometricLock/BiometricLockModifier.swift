@@ -17,8 +17,8 @@ public struct BiometricLockModifier: ViewModifier {
                 BiometricLockView(model: model)
                     .opacity(enabled && !model.isUnlocked ? 1 : 0)
             }
-            .onChange(of: scenePhase) { (phase) in
-                if phase == .background {
+            .onChange(of: scenePhase) {
+                if scenePhase == .background {
                     model.isUnlocked = false
                 }
             }

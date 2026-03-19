@@ -138,10 +138,10 @@ public struct OnboardingPanelView: View {
                     }
 
 //                    .padding(.horizontal, 30)
-                    .onChange(of: selectedStep) { _ in
-                        
-                        
-                       
+                    .onChange(of: selectedStep) {
+
+
+
                     }
             }
 

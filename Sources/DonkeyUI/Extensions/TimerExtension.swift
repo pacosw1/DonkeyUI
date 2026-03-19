@@ -54,7 +54,7 @@ struct TimerExtension: ViewModifier {
         ZStack {
             content
         }
-        .onChange(of: lastUpdate) { newValue in
+        .onChange(of: lastUpdate) {
             model.startTimer(interval: interval, action: action)
         }
     }

@@ -17,7 +17,6 @@ public enum CardPosition: Int {
 
 public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: View {
     @Binding var isShown: Bool
-    let padding: CGFloat = 50
     let sheetContent: () -> CustomView
     let position: CardPosition
     var paddingBottom = 0.0
@@ -77,9 +76,6 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
     }
     
     func hiddenPosition(height: CGFloat, cardHeight: CGFloat) -> CGFloat {
-        let padding = 15.0
-        
-        
         if position == .bottom {
             return height
         } else if position == .center {
@@ -179,7 +175,7 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
                             )
                             
                     }
-                    .onChange(of: isShown) { _ in
+                    .onChange(of: isShown) {
                         if !isShown {
 //                            position = CGSize()
                         }

@@ -53,7 +53,7 @@ public struct DailyReminderPickerView: View {
 
         }
         .padding(.vertical)
-        .onChange(of: date) { _ in
+        .onChange(of: date) {
             dailyReminderHour =  calendar.component(.hour, from: date)
             dailyReminderMinute =  calendar.component(.minute, from: date)
             
@@ -66,7 +66,7 @@ public struct DailyReminderPickerView: View {
             
             scheduleDailyNotification(title: text, body: "", dateComponents: component)
         }
-        .onChange(of: text) { _ in
+        .onChange(of: text) {
             dailyReminderLabel = text
         }
         .task {

@@ -59,7 +59,7 @@ public struct RoundedCorner: Shape {
     }
 }
 
-public struct RectCorner: OptionSet {
+public struct RectCorner: OptionSet, Sendable {
     public let rawValue: UInt
 
     public init(rawValue: UInt) { self.rawValue = rawValue }

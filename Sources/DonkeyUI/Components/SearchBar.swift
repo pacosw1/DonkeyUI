@@ -85,7 +85,7 @@ public struct DonkeySearchBar: View {
         }
         .animation(.easeInOut(duration: 0.2), value: text.isEmpty)
         .animation(.easeInOut(duration: 0.2), value: isEditing)
-        .onChange(of: isFocused) { focused in
+        .onChange(of: isFocused) { _, focused in
             withAnimation(.easeInOut(duration: 0.2)) {
                 isEditing = focused
             }

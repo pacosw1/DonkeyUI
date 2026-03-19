@@ -82,7 +82,7 @@ private struct DebounceModifier<V: Equatable>: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .onChange(of: value) { _ in
+            .onChange(of: value) {
                 debounceTask?.cancel()
                 debounceTask = Task {
                     do {
