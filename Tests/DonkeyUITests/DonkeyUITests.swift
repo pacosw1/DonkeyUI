@@ -288,21 +288,35 @@ final class DonkeyUITests: XCTestCase {
         XCTAssertEqual(d.text, "Hello, World!")
     }
 
-    // MARK: - PaywallPlan
+    // MARK: - PaywallPlanOption
 
-    func testPaywallPlanInit() {
-        let plan = PaywallPlan(
+    func testPaywallPlanOptionInit() {
+        let plan = PaywallPlanOption(
             id: "monthly",
             title: "Monthly",
-            subText: "Billed monthly",
-            price: "$4.99",
-            billingType: "Recurring",
-            billingPeriod: "Month",
-            index: 0
+            subtitle: "Billed monthly",
+            priceDisplay: "$4.99",
+            period: "/month"
         )
         XCTAssertEqual(plan.id, "monthly")
         XCTAssertEqual(plan.title, "Monthly")
-        XCTAssertEqual(plan.price, "$4.99")
+        XCTAssertEqual(plan.priceDisplay, "$4.99")
+    }
+
+    func testPaywallConfigInit() {
+        let config = PaywallConfig(
+            headline: "Go Pro",
+            headlineAccent: "Today",
+            subtitle: "Unlock everything"
+        )
+        XCTAssertEqual(config.headline, "Go Pro")
+        XCTAssertEqual(config.headlineAccent, "Today")
+    }
+
+    func testPaywallReviewInit() {
+        let review = PaywallReview(title: "Great app", username: "user1", description: "Love it", rating: 5)
+        XCTAssertEqual(review.rating, 5)
+        XCTAssertEqual(review.title, "Great app")
     }
 
     // MARK: - Helpers
