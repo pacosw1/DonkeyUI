@@ -10,7 +10,7 @@ public struct PaywallConfig {
     public let subtitle: String
     public let memberCount: String
     public let rating: String
-    public let features: [PaywallEmojiFeature]
+    public let features: [PaywallFeatureItem]
     public let reviews: [PaywallReview]
     public let footerText: String
 
@@ -20,7 +20,7 @@ public struct PaywallConfig {
         subtitle: String = "",
         memberCount: String = "",
         rating: String = "4.8",
-        features: [PaywallEmojiFeature] = [],
+        features: [PaywallFeatureItem] = [],
         reviews: [PaywallReview] = [],
         footerText: String = ""
     ) {
@@ -35,28 +35,6 @@ public struct PaywallConfig {
     }
 }
 
-/// A feature with emoji icon and colored background circle.
-public struct PaywallEmojiFeature: Identifiable {
-    public let id: String
-    public let emoji: String
-    public let color: Color
-    public let text: String
-    public let boldWord: String
-
-    public init(
-        id: String = UUID().uuidString,
-        emoji: String,
-        color: Color,
-        text: String,
-        boldWord: String = ""
-    ) {
-        self.id = id
-        self.emoji = emoji
-        self.color = color
-        self.text = text
-        self.boldWord = boldWord
-    }
-}
 
 /// An app review for the reviews carousel.
 public struct PaywallReview: Identifiable {
@@ -190,9 +168,8 @@ public struct PaywallScreen: View {
                         DonkeyDivider()
                             .padding(.top, theme.spacing.sm)
 
-                        // Emoji features grid
-                        emojiFeatureGrid
-                            .padding(.horizontal, theme.spacing.xxl)
+                        FeatureGrid(features: config.features)
+                            .padding(.horizontal, theme.spacing.xl)
                             .padding(.top, theme.spacing.md)
                     }
 
@@ -323,47 +300,6 @@ public struct PaywallScreen: View {
             borderColor: theme.colors.borderSubtle,
             borderWidth: 1
         )
-    }
-
-    // MARK: - Emoji Feature Grid
-
-    private var emojiFeatureGrid: some View {
-        Grid(alignment: .leading, horizontalSpacing: 22, verticalSpacing: 15) {
-            ForEach(config.features) { feature in
-                GridRow {
-                    // Emoji circle
-                    Text(feature.emoji)
-                        .font(.system(size: 14))
-                        .background {
-                            Circle()
-                                .fill(feature.color.opacity(0.3))
-                                .frame(width: 38, height: 38)
-                        }
-
-                    // Feature text with optional bold word
-                    featureText(feature)
-                        .padding(10)
-                        .bgOverlay(
-                            bgColor: theme.colors.surface,
-                            radius: theme.shape.radiusMedium,
-                            borderColor: theme.colors.borderSubtle,
-                            borderWidth: 1
-                        )
-                }
-            }
-        }
-        .font(.system(size: 13))
-    }
-
-    @ViewBuilder
-    private func featureText(_ feature: PaywallEmojiFeature) -> some View {
-        if feature.boldWord.isEmpty {
-            Text(feature.text)
-                .foregroundStyle(theme.colors.onSurface)
-        } else {
-            Text("\(Text(feature.boldWord).foregroundStyle(theme.colors.accent).fontWeight(.bold)) \(feature.text)")
-                .foregroundStyle(theme.colors.onSurface)
-        }
     }
 
     // MARK: - Purchase Section (fixed bottom)
@@ -501,12 +437,12 @@ struct PaywallScreen_Previews: PreviewProvider {
                     memberCount: "50,000+ Members changing their life",
                     rating: "4.6",
                     features: [
-                        .init(emoji: "🏋️", color: Color(hex: "#D2D4C8") ?? .gray, text: "habits", boldWord: "Unlimited"),
-                        .init(emoji: "📲", color: Color(hex: "#94B0DA") ?? .blue, text: "Homescreen", boldWord: "Widgets"),
-                        .init(emoji: "📅", color: Color(hex: "#DD9787") ?? .red, text: "Edit Habit History"),
-                        .init(emoji: "❤️", color: Color(hex: "#2D5D7B") ?? .blue, text: "Support an Independent Developer"),
-                        .init(emoji: "☁️", color: Color(hex: "#66717E") ?? .gray, text: "Cloud Sync"),
-                        .init(emoji: "🔔", color: Color(hex: "#274690") ?? .blue, text: "Reminders", boldWord: "Multiple"),
+                        PaywallFeatureItem(emoji: "🏋️", color: Color(hex: "#D2D4C8") ?? .gray, text: "habits", boldWord: "Unlimited"),
+                        PaywallFeatureItem(emoji: "📲", color: Color(hex: "#94B0DA") ?? .blue, text: "Homescreen", boldWord: "Widgets"),
+                        PaywallFeatureItem(emoji: "📅", color: Color(hex: "#DD9787") ?? .red, text: "Edit Habit History"),
+                        PaywallFeatureItem(emoji: "❤️", color: Color(hex: "#2D5D7B") ?? .blue, text: "Support an Independent Developer"),
+                        PaywallFeatureItem(emoji: "☁️", color: Color(hex: "#66717E") ?? .gray, text: "Cloud Sync"),
+                        PaywallFeatureItem(emoji: "🔔", color: Color(hex: "#274690") ?? .blue, text: "Reminders", boldWord: "Multiple"),
                     ],
                     reviews: [
                         .init(title: "I'm super picky and this is perfect", username: "Tayl0rDev", timeLabel: "3d ago", description: "As I said above, I'm super picky with what I want out of a habit tracking app and this one is perfect."),
