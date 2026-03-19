@@ -26,4 +26,8 @@ jobs:
         run: swift test
 
       - name: Build (iOS - Release)
-        run: xcodebuild build -scheme DonkeyUI -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' -configuration Release -skipPackagePluginValidation
+        run: |
+          # Pick first available iPhone simulator
+          DEVICE=$(xcrun simctl list devices available -j | python3 -c "import json,sys; devs=json.load(sys.stdin)['devices']; phones=[d['name'] for r in devs.values() for d in r if 'iPhone' in d['name'] and d['isAvailable']]; print(phones[0] if phones else 'iPhone 17 Pro')")
+          echo "Using simulator: $DEVICE"
+          xcodebuild build -scheme DonkeyUI -destination "platform=iOS Simulator,name=$DEVICE,OS=latest" -configuration Release -skipPackagePluginValidation
