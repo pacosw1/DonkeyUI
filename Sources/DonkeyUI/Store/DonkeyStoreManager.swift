@@ -47,7 +47,7 @@ public struct StoreConfig: Sendable {
 public struct StoreCallbacks: Sendable {
     public let onPurchaseComplete: @Sendable (StoreKit.Transaction, Product) async -> Void
     public let onRestoreComplete: @Sendable (Set<String>) async -> Void
-    public let onSubscriptionChange: @Sendable (String, String, Date?) async -> Void // productID, status, expiresAt
+    public let onSubscriptionChange: @Sendable (String, String, Date?) async -> Void
 
     public init(
         onPurchaseComplete: @escaping @Sendable (StoreKit.Transaction, Product) async -> Void = { _, _ in },
@@ -83,9 +83,11 @@ public final class DonkeyStoreManager {
     /// Currently purchased (active) product IDs
     public private(set) var purchasedProductIDs: Set<String> = []
 
-    /// Whether any active entitlement exists (includes grace period)
+    /// Whether any active entitlement exists (includes grace period + billing retry)
     public var isPro: Bool {
-        !purchasedProductIDs.isEmpty || (activeSubscription?.isInGracePeriod ?? false)
+        !purchasedProductIDs.isEmpty
+            || (activeSubscription?.isInGracePeriod ?? false)
+            || (activeSubscription?.isInBillingRetry ?? false)
     }
 
     /// Loading state
@@ -119,19 +121,10 @@ public final class DonkeyStoreManager {
     private let defaults: UserDefaults
     private nonisolated(unsafe) var transactionListener: Task<Void, Never>?
     private var productsLoaded = false
+    private var isUpdatingEntitlements = false
 
     // MARK: - Init
 
-    /// Create a store manager with product IDs and optional callbacks.
-    ///
-    /// ```swift
-    /// let store = DonkeyStoreManager(
-    ///     config: StoreConfig(productIDs: ["com.app.monthly", "com.app.yearly"]),
-    ///     callbacks: StoreCallbacks(
-    ///         onPurchaseComplete: { tx, product in await api.syncPurchase(tx) }
-    ///     )
-    /// )
-    /// ```
     public init(config: StoreConfig, callbacks: StoreCallbacks = StoreCallbacks()) {
         self.config = config
         self.callbacks = callbacks
@@ -148,13 +141,13 @@ public final class DonkeyStoreManager {
             purchasedProductIDs = ["__cached__"]
         }
 
-        // Start listening for transaction updates
+        // Listener is assigned synchronously in init (safe for nonisolated(unsafe))
+        // It drains unfinished transactions first, then listens for updates
         transactionListener = listenForTransactions()
 
-        // Load products, finish pending transactions, and check entitlements
+        // Load products and check entitlements
         Task {
             await loadProducts()
-            await finishUnfinishedTransactions()
             await updateEntitlements()
         }
     }
@@ -178,7 +171,6 @@ public final class DonkeyStoreManager {
             logger.info("Loaded \(self.products.count) products")
         } catch {
             logger.error("Failed to load products: \(error). Retrying...")
-            // Retry once after 2 seconds
             try? await Task.sleep(for: .seconds(2))
             do {
                 products = try await Product.products(for: config.productIDs)
@@ -199,6 +191,8 @@ public final class DonkeyStoreManager {
     /// Purchase a product. Returns the result.
     @discardableResult
     public func purchase(_ product: Product) async -> PurchaseResult {
+        // FIX #4: Guard against concurrent purchases
+        guard !isPurchasing else { return .cancelled }
         isPurchasing = true
         error = nil
 
@@ -213,7 +207,6 @@ public final class DonkeyStoreManager {
                 await transaction.finish()
                 await updateEntitlements()
 
-                // Callbacks
                 await callbacks.onPurchaseComplete(transaction, product)
                 await callbacks.onSubscriptionChange(
                     product.id, "active", transaction.expirationDate
@@ -267,7 +260,13 @@ public final class DonkeyStoreManager {
     // MARK: - Entitlements
 
     /// Refresh entitlements from StoreKit. Called automatically on init and transaction updates.
+    /// Protected against concurrent execution.
     public func updateEntitlements() async {
+        // FIX #1: Guard against concurrent calls (purchase + listener can race)
+        guard !isUpdatingEntitlements else { return }
+        isUpdatingEntitlements = true
+        defer { isUpdatingEntitlements = false }
+
         var purchased: Set<String> = []
         var latestPurchaseDate: Date = .distantPast
 
@@ -280,8 +279,6 @@ public final class DonkeyStoreManager {
             }
         }
 
-        purchasedProductIDs = purchased
-
         // Step 2: Get detailed subscription status from Product.SubscriptionInfo
         var latestSubscription: ActiveSubscription?
 
@@ -292,9 +289,8 @@ public final class DonkeyStoreManager {
                 guard case .verified(let renewalInfo) = status.renewalInfo,
                       case .verified(let transaction) = status.transaction else { continue }
 
-                // Only consider non-revoked transactions for products we own
-                guard transaction.revocationDate == nil,
-                      purchased.contains(transaction.productID) else { continue }
+                // FIX #6: Don't require purchased.contains — grace period may not show in currentEntitlements
+                guard transaction.revocationDate == nil else { continue }
 
                 let isNewer = transaction.purchaseDate > latestPurchaseDate
 
@@ -310,16 +306,17 @@ public final class DonkeyStoreManager {
                         isInBillingRetry: status.state == .inBillingRetryPeriod,
                         originalTransactionID: transaction.originalID
                     )
+
+                    // FIX #6: Grant access from subscription status even if currentEntitlements missed it
+                    if status.state == .subscribed || status.state == .inGracePeriod || status.state == .inBillingRetryPeriod {
+                        purchased.insert(transaction.productID)
+                    }
                 }
             }
         }
 
+        purchasedProductIDs = purchased
         activeSubscription = latestSubscription
-
-        // Grant access during grace period even if entitlements are empty
-        if latestSubscription?.isInGracePeriod == true && purchased.isEmpty {
-            purchasedProductIDs = [latestSubscription!.productID]
-        }
 
         // Persist for fast UI checks (widgets, launch)
         defaults.set(isPro, forKey: config.isPurchasedKey)
@@ -388,22 +385,23 @@ public final class DonkeyStoreManager {
 
     // MARK: - Private
 
-    /// Finish any transactions left over from previous sessions (e.g. Ask to Buy approved while app was closed)
-    private func finishUnfinishedTransactions() async {
-        for await result in Transaction.unfinished {
-            switch result {
-            case .verified(let transaction):
-                await transaction.finish()
-                logger.info("Finished pending transaction: \(transaction.productID)")
-            case .unverified(let transaction, let error):
-                logger.warning("Unverified pending transaction \(transaction.id): \(error)")
-                await transaction.finish()
-            }
-        }
-    }
-
+    /// FIX #2 & #5: Single listener that drains unfinished transactions first,
+    /// then listens for updates. Assigned synchronously in init (safe for deinit).
     private func listenForTransactions() -> Task<Void, Never> {
         Task.detached(priority: .background) { [weak self] in
+            // Drain any unfinished transactions from prior sessions first
+            for await result in Transaction.unfinished {
+                switch result {
+                case .verified(let transaction):
+                    await transaction.finish()
+                    logger.info("Finished pending transaction: \(transaction.productID)")
+                case .unverified(let transaction, let error):
+                    logger.warning("Unverified pending transaction \(transaction.id): \(error)")
+                    await transaction.finish()
+                }
+            }
+
+            // Now listen for new transaction updates
             for await result in Transaction.updates {
                 guard let self else { return }
                 switch result {
@@ -412,7 +410,7 @@ public final class DonkeyStoreManager {
                     logger.info("Transaction update: \(transaction.productID)")
                 case .unverified(let transaction, let error):
                     logger.warning("Unverified transaction \(transaction.id): \(error)")
-                    await transaction.finish() // finish to prevent accumulation
+                    await transaction.finish()
                 }
                 await self.updateEntitlements()
             }
