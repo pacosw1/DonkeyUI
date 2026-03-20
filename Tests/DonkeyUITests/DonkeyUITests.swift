@@ -368,6 +368,94 @@ final class DonkeyUITests: XCTestCase {
         XCTAssertTrue(tier.features.contains("all"))
     }
 
+    func testStoreTierDefaultPriority() {
+        let tier = StoreTier(name: "basic", productIDs: ["b"], features: ["x"])
+        XCTAssertEqual(tier.priority, 0)
+    }
+
+    func testStoreConfigMultiTierAutoAssignsPriority() {
+        let config = StoreConfig(tiers: [
+            StoreTier(name: "basic", productIDs: ["b"], features: ["local"]),
+            StoreTier(name: "pro", productIDs: ["p"], features: ["local", "cloud"]),
+        ])
+        // Auto-assigns priority based on order: 1, 2
+        XCTAssertEqual(config.tiers[0].priority, 1)
+        XCTAssertEqual(config.tiers[1].priority, 2)
+    }
+
+    func testStoreConfigMultiTierAllProductIDsIncludesPromo() {
+        let config = StoreConfig(
+            tiers: [StoreTier(name: "pro", productIDs: ["m", "y"], features: ["all"])],
+            promoProductIDs: ["m_promo"]
+        )
+        XCTAssertTrue(config.allProductIDs.contains("m"))
+        XCTAssertTrue(config.allProductIDs.contains("y"))
+        XCTAssertTrue(config.allProductIDs.contains("m_promo"))
+        XCTAssertEqual(config.allProductIDs.count, 3)
+    }
+
+    func testStoreConfigPromoTargetTierDefaultsToLast() {
+        let config = StoreConfig(
+            tiers: [
+                StoreTier(name: "basic", productIDs: ["b"], features: ["local"]),
+                StoreTier(name: "pro", productIDs: ["p"], features: ["all"]),
+            ],
+            promoProductIDs: ["p_promo"]
+        )
+        XCTAssertEqual(config.promoTargetTier, "pro")
+    }
+
+    func testStoreConfigPromoTargetTierCustom() {
+        let config = StoreConfig(
+            tiers: [
+                StoreTier(name: "basic", productIDs: ["b"], features: ["local"]),
+                StoreTier(name: "pro", productIDs: ["p"], features: ["all"]),
+            ],
+            promoProductIDs: ["b_promo"],
+            promoTargetTier: "basic"
+        )
+        XCTAssertEqual(config.promoTargetTier, "basic")
+    }
+
+    func testStoreConfigSimpleInitCreatesProTier() {
+        let config = StoreConfig(productIDs: ["monthly", "yearly"])
+        XCTAssertEqual(config.tiers.count, 1)
+        XCTAssertEqual(config.tiers[0].name, "pro")
+        XCTAssertTrue(config.tiers[0].features.contains("all"))
+        XCTAssertTrue(config.tiers[0].productIDs.contains("monthly"))
+        XCTAssertTrue(config.tiers[0].productIDs.contains("yearly"))
+    }
+
+    func testStoreConfigNoPromo() {
+        let config = StoreConfig(productIDs: ["m"])
+        XCTAssertTrue(config.promoProductIDs.isEmpty)
+        XCTAssertNil(config.promoTargetTier)
+    }
+
+    func testStoreTierFeaturesAreSet() {
+        let tier = StoreTier(name: "pro", productIDs: ["m"], features: ["cloud", "ai", "sync"])
+        XCTAssertEqual(tier.features.count, 3)
+        XCTAssertTrue(tier.features.contains("cloud"))
+        XCTAssertTrue(tier.features.contains("ai"))
+        XCTAssertTrue(tier.features.contains("sync"))
+        XCTAssertFalse(tier.features.contains("magic"))
+    }
+
+    func testStoreConfigMultiTierExplicitPriorityPreserved() {
+        let config = StoreConfig(tiers: [
+            StoreTier(name: "a", productIDs: ["a"], features: ["x"], priority: 10),
+            StoreTier(name: "b", productIDs: ["b"], features: ["y"], priority: 20),
+        ])
+        XCTAssertEqual(config.tiers[0].priority, 10)
+        XCTAssertEqual(config.tiers[1].priority, 20)
+    }
+
+    func testStoreConfigEmptyTiers() {
+        let config = StoreConfig(tiers: [])
+        XCTAssertTrue(config.allProductIDs.isEmpty)
+        XCTAssertTrue(config.tiers.isEmpty)
+    }
+
     // MARK: - StoreCallbacks Tests
 
     func testStoreCallbacksDefaultInit() {
