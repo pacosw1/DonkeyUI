@@ -1563,6 +1563,253 @@ DeviceInfo.buildNumber     // "42"
 
 ---
 
+## Store (StoreKit 2)
+
+### DonkeyStoreManager
+
+Universal StoreKit 2 manager. No hardcoded product IDs or API clients.
+
+```swift
+public init(config: StoreConfig, callbacks: StoreCallbacks = StoreCallbacks())
+```
+
+**StoreConfig:**
+```swift
+StoreConfig(
+    productIDs: Set<String>,         // ["com.app.monthly", "com.app.yearly"]
+    userDefaultsSuite: String? = nil, // "group.com.app" for widgets
+    isPurchasedKey: String = "donkey_isPro"
+)
+```
+
+**StoreCallbacks:**
+```swift
+StoreCallbacks(
+    onPurchaseComplete: { transaction, product in await api.sync(tx) },
+    onRestoreComplete: { productIDs in },
+    onSubscriptionChange: { productID, status, expiresAt in }
+)
+```
+
+**Usage:**
+```swift
+let store = DonkeyStoreManager(
+    config: StoreConfig(productIDs: ["com.app.monthly", "com.app.yearly"]),
+    callbacks: StoreCallbacks(onPurchaseComplete: { tx, product in await api.sync(tx) })
+)
+
+// Inject
+ContentView().environment(store)
+
+// Read state
+@Environment(DonkeyStoreManager.self) var store
+store.isPro                    // Bool (includes grace period + billing retry)
+store.products                 // [Product] sorted yearly > monthly > lifetime
+store.subscriptionProducts     // auto-renewable only
+store.isPurchasing             // Bool
+store.isLoadingProducts        // Bool
+store.error                    // String?
+store.activeSubscription       // .productID, .expirationDate, .isInTrial, .willAutoRenew, .isInGracePeriod, .isInBillingRetry
+
+// Actions
+await store.purchase(product)  // -> PurchaseResult (.success, .pending, .cancelled, .failed)
+await store.restore()          // -> Bool
+await store.loadProducts(forceReload: true)
+
+// Debug (DEBUG only)
+store.debugGrantPro()
+store.debugClearPurchases()
+
+// Helpers
+DonkeyStoreManager.savingsPercentage(yearly: product1, monthly: product2)  // -> Int? (e.g. 55)
+DonkeyStoreManager.monthlyEquivalent(yearlyProduct)                        // -> Decimal?
+```
+
+### ProFeatureGate
+
+Locks content behind pro. Shows upgrade prompt or dims + intercepts taps.
+
+```swift
+// As a view:
+ProFeatureGate(store: store, showPaywall: $showPaywall) {
+    Text("Pro-only content here")
+}
+
+// As a modifier (dims + intercepts taps):
+Button("Export") { export() }
+    .proGated(store: store, showPaywall: $showPaywall)
+```
+
+---
+
+## Auth (Apple Sign In)
+
+### DonkeyAuthManager
+
+Apple Sign In with Keychain persistence and server sync callbacks.
+
+```swift
+public init(
+    keychainService: String,               // your bundle ID
+    keychainKey: String = "donkey-auth-user",
+    callbacks: AuthCallbacks = AuthCallbacks()
+)
+```
+
+**AuthCallbacks:**
+```swift
+AuthCallbacks(
+    onSignIn: { user, idToken in
+        let resp = try? await api.signIn(token: idToken, name: user.name ?? "")
+        return resp?.user.name  // return server name if available
+    },
+    onSignOut: { await api.logout() }
+)
+```
+
+**DonkeyAuthUser:**
+```swift
+DonkeyAuthUser(id: String, email: String, name: String?, createdAt: Date?)
+```
+
+**Usage:**
+```swift
+let auth = DonkeyAuthManager(
+    keychainService: "com.waterfullapp",
+    callbacks: AuthCallbacks(onSignIn: { user, token in ... })
+)
+ContentView().environment(auth)
+
+@Environment(DonkeyAuthManager.self) var auth
+auth.isAuthenticated   // Bool
+auth.user              // DonkeyAuthUser?
+auth.isLoading         // Bool
+auth.errorMessage      // String?
+auth.signOut()
+```
+
+### AppleSignInView
+
+Themed drop-in Apple Sign In screen.
+
+```swift
+public init(
+    auth: DonkeyAuthManager,
+    appName: String,
+    appIcon: String = "app.fill",
+    features: [String] = [],
+    privacyURL: URL? = nil,
+    termsURL: URL? = nil,
+    onSkip: (() -> Void)? = nil
+)
+```
+
+```swift
+AppleSignInView(
+    auth: auth,
+    appName: "Waterful",
+    appIcon: "drop.fill",
+    features: ["Sync across devices", "Smart reminders", "Track progress"],
+    privacyURL: URL(string: "https://example.com/privacy")
+)
+
+// Or gate content with modifier:
+ContentView()
+    .requireAuth(auth: auth, appName: "Waterful", appIcon: "drop.fill",
+                 features: ["Sync across devices"])
+```
+
+---
+
+## Onboarding
+
+### OnboardingManager
+
+Tracks onboarding completion, first launch, and version-based re-onboarding.
+
+```swift
+public init(
+    suite: String? = nil,                          // App Group suite for widgets
+    completedKey: String = "donkey_onboarding_completed",
+    versionKey: String = "donkey_onboarding_version"
+)
+```
+
+```swift
+let onboarding = OnboardingManager(suite: "group.com.myapp")
+
+onboarding.hasCompleted           // Bool
+onboarding.isFirstLaunch          // Bool
+onboarding.currentVersion         // String
+
+onboarding.complete()             // Mark as done
+onboarding.reset()                // Reset (testing)
+onboarding.needsReOnboarding(since: "2.0.0")  // Bool
+
+// Modifier — shows OnboardingFlow on first launch:
+ContentView()
+    .onboarding(manager: onboarding, pages: [
+        OnboardingPageItem(media: .systemIcon(name: "star.fill", color: .yellow),
+            title: "Welcome", description: "Get started")
+    ])
+```
+
+---
+
+## Event Tracking
+
+### DonkeyEventTracker
+
+Batched event tracking with auto-flush. No hardcoded API.
+
+```swift
+public init(
+    maxQueueSize: Int = 20,
+    flushInterval: TimeInterval = 30,
+    maxRetainedEvents: Int = 200,
+    flushHandler: @escaping @Sendable ([DonkeyEvent]) async throws -> Void
+)
+```
+
+**DonkeyEvent:**
+```swift
+DonkeyEvent(event: String, metadata: [String: String], timestamp: String)
+```
+
+**Usage:**
+```swift
+let tracker = DonkeyEventTracker { events in
+    let payload = events.map { ["event": $0.event, "metadata": $0.metadata, "timestamp": $0.timestamp] }
+    try await api.trackEvents(payload)
+}
+ContentView().environment(tracker)
+
+@Environment(DonkeyEventTracker.self) var tracker
+
+// Core
+tracker.track("custom_event", metadata: ["key": "value"])
+await tracker.flush()
+
+// Lifecycle
+tracker.appOpened()           // tracks with device info
+tracker.appBackgrounded()     // flushes queue
+
+// Sessions
+tracker.sessionStarted()      // -> sessionID
+tracker.sessionEnded()        // tracks duration
+
+// Convenience
+tracker.viewedPage("settings")
+tracker.paywallShown(trigger: "feature_gate")
+tracker.paywallDismissed()
+tracker.purchased(productID: "com.app.yearly")
+tracker.notificationPermission(granted: true)
+tracker.onboardingStep("welcome")
+tracker.onboardingCompleted()
+```
+
+---
+
 ## Extensions
 
 ### Color
