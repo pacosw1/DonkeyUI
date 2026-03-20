@@ -1768,19 +1768,32 @@ SyncStatusRow(state: .error(message: "Connection failed", lastSynced: nil))
 
 ### DonkeyStoreManager
 
-Universal StoreKit 2 manager. No hardcoded product IDs or API clients.
+Universal StoreKit 2 manager with multi-tier support. No hardcoded product IDs or API clients.
 
 ```swift
 public init(config: StoreConfig, callbacks: StoreCallbacks = StoreCallbacks())
 ```
 
-**StoreConfig:**
+**Simple config (single tier):**
+```swift
+StoreConfig(productIDs: ["com.app.monthly", "com.app.yearly"])
+```
+
+**Multi-tier config (free / premium / pro):**
 ```swift
 StoreConfig(
-    productIDs: Set<String>,         // ["com.app.monthly", "com.app.yearly"]
-    userDefaultsSuite: String? = nil, // "group.com.app" for widgets
-    isPurchasedKey: String = "donkey_isPro"
+    tiers: [
+        StoreTier(name: "premium", productIDs: ["lifetime_deal"], features: ["unlimited_local"]),
+        StoreTier(name: "pro", productIDs: ["month", "yearly"], features: ["unlimited_local", "cloud", "ai"]),
+    ],
+    promoProductIDs: ["month_promo", "yearly_promo"],  // maps to highest tier
+    userDefaultsSuite: "group.com.app"                  // for widgets
 )
+```
+
+**StoreTier:**
+```swift
+StoreTier(name: String, productIDs: Set<String>, features: Set<String>, priority: Int? = nil)
 ```
 
 **StoreCallbacks:**
@@ -1789,41 +1802,60 @@ StoreCallbacks(
     onPurchaseComplete: { transaction, product in await api.sync(tx) },
     onRestoreComplete: { productIDs in },
     onSubscriptionChange: { productID, status, expiresAt in }
+    // status: "pro", "premium", "free", "pro_trial", "pro_grace_period", "pro_billing_retry"
 )
 ```
 
 **Usage:**
 ```swift
 let store = DonkeyStoreManager(
-    config: StoreConfig(productIDs: ["com.app.monthly", "com.app.yearly"]),
+    config: StoreConfig(tiers: [
+        StoreTier(name: "premium", productIDs: ["lifetime"], features: ["unlimited_local"]),
+        StoreTier(name: "pro", productIDs: ["month", "yearly"], features: ["unlimited_local", "cloud", "ai"]),
+    ]),
     callbacks: StoreCallbacks(onPurchaseComplete: { tx, product in await api.sync(tx) })
 )
-
-// Inject
 ContentView().environment(store)
 
-// Read state
 @Environment(DonkeyStoreManager.self) var store
-store.isPro                    // Bool (includes grace period + billing retry)
-store.products                 // [Product] sorted yearly > monthly > lifetime
-store.subscriptionProducts     // auto-renewable only
-store.isPurchasing             // Bool
-store.isLoadingProducts        // Bool
-store.error                    // String?
-store.activeSubscription       // .productID, .expirationDate, .isInTrial, .willAutoRenew, .isInGracePeriod, .isInBillingRetry
 
-// Actions
-await store.purchase(product)  // -> PurchaseResult (.success, .pending, .cancelled, .failed)
-await store.restore()          // -> Bool
-await store.loadProducts(forceReload: true)
+// Tier access
+store.isPro                       // Bool — any paid tier (backwards compatible)
+store.currentTier                 // "pro", "premium", or "free"
+store.isSubscriber                // true if active auto-renewable subscription
+store.isLifetimePurchaser         // true if non-consumable lifetime
+store.hasFeature("cloud")         // true only for pro tier
+store.hasFeature("unlimited_local") // true for both premium and pro
+store.premiumCheck(feature: "ai") { runAI() }  // runs action or shows paywall
+
+// Paywall state (bindable)
+store.showPaywall                 // Bool — bind to .fullScreenCover
+store.showPromoPaywall            // Bool — for promo flows
+
+// Products
+store.products                    // [Product] sorted yearly > monthly > lifetime
+store.subscriptionProducts        // auto-renewable only
+store.promoProducts               // loaded separately via loadPromoProducts()
+await store.loadPromoProducts()   // -> [Product]
+
+// Purchase
+await store.purchase(product)     // -> PurchaseResult
+await store.restore()             // -> Bool
+store.isPurchasing                // Bool
+store.error                       // String?
+
+// Subscription details
+store.activeSubscription          // .productID, .expirationDate, .isInTrial, .willAutoRenew,
+                                  // .isInGracePeriod, .isInBillingRetry, .originalTransactionID
 
 // Debug (DEBUG only)
 store.debugGrantPro()
 store.debugClearPurchases()
+store.debugSetTier("premium")     // test specific tier
 
 // Helpers
-DonkeyStoreManager.savingsPercentage(yearly: product1, monthly: product2)  // -> Int? (e.g. 55)
-DonkeyStoreManager.monthlyEquivalent(yearlyProduct)                        // -> Decimal?
+DonkeyStoreManager.savingsPercentage(yearly: p1, monthly: p2)  // -> Int? (e.g. 55)
+DonkeyStoreManager.monthlyEquivalent(yearlyProduct)             // -> Decimal?
 ```
 
 ### ProFeatureGate
