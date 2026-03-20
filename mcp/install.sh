@@ -1,47 +1,91 @@
 #!/bin/bash
-# Install DonkeyUI MCP into the current repo.
-# Usage: Run from any repo root:
-#   bash /Users/franciscosainzwilliams/Documents/GitHub/DonkeyUI/mcp/install.sh
+# Install DonkeyUI MCP for Claude Code and/or Codex.
 #
-# Or with the alias:
-#   donkeyui-mcp
+# Usage:
+#   bash /path/to/DonkeyUI/mcp/install.sh          # installs for both
+#   bash /path/to/DonkeyUI/mcp/install.sh claude    # Claude Code only
+#   bash /path/to/DonkeyUI/mcp/install.sh codex     # Codex only
 
-DONKEYUI_MCP="/Users/franciscosainzwilliams/Documents/GitHub/DonkeyUI/mcp"
-TARGET=".mcp.json"
+set -e
 
-# If .mcp.json already exists, merge the donkeyui server into it
-if [ -f "$TARGET" ]; then
-    # Check if donkeyui is already configured
-    if grep -q "donkeyui" "$TARGET" 2>/dev/null; then
-        echo "DonkeyUI MCP already configured in $TARGET"
-        exit 0
+DONKEYUI_MCP="$(cd "$(dirname "$0")" && pwd)"
+SERVER="$DONKEYUI_MCP/server.mjs"
+TARGET="${1:-both}"
+
+# ── Claude Code (global) ──
+
+install_claude() {
+    local SETTINGS="$HOME/.claude/settings.local.json"
+    mkdir -p "$(dirname "$SETTINGS")"
+
+    if [ -f "$SETTINGS" ] && grep -q "donkeyui" "$SETTINGS" 2>/dev/null; then
+        echo "[Claude] Already configured in $SETTINGS"
+        return
     fi
 
-    # Merge: add donkeyui to existing mcpServers
-    node -e "
-        const fs = require('fs');
-        const config = JSON.parse(fs.readFileSync('$TARGET', 'utf-8'));
-        config.mcpServers = config.mcpServers || {};
-        config.mcpServers.donkeyui = {
-            command: 'node',
-            args: ['$DONKEYUI_MCP/server.mjs']
-        };
-        fs.writeFileSync('$TARGET', JSON.stringify(config, null, 2) + '\n');
-    "
-    echo "Added DonkeyUI MCP to existing $TARGET"
-else
-    # Create new .mcp.json
-    cat > "$TARGET" << EOF
+    if [ -f "$SETTINGS" ] && [ -s "$SETTINGS" ]; then
+        node -e "
+            const fs = require('fs');
+            const config = JSON.parse(fs.readFileSync('$SETTINGS', 'utf-8'));
+            config.mcpServers = config.mcpServers || {};
+            config.mcpServers.donkeyui = { command: 'node', args: ['$SERVER'] };
+            fs.writeFileSync('$SETTINGS', JSON.stringify(config, null, 2) + '\n');
+        "
+    else
+        cat > "$SETTINGS" << EOF
 {
   "mcpServers": {
     "donkeyui": {
       "command": "node",
-      "args": ["$DONKEYUI_MCP/server.mjs"]
+      "args": ["$SERVER"]
     }
   }
 }
 EOF
-    echo "Created $TARGET with DonkeyUI MCP"
-fi
+    fi
+    echo "[Claude] Installed globally → $SETTINGS"
+}
 
-echo "Restart Claude Code to pick up the new MCP server."
+# ── Codex ──
+
+install_codex() {
+    local CONFIG="$HOME/.codex/config.toml"
+
+    if [ ! -f "$CONFIG" ]; then
+        echo "[Codex] No config.toml found at $CONFIG — skipping"
+        return
+    fi
+
+    if grep -q "donkeyui" "$CONFIG" 2>/dev/null; then
+        echo "[Codex] Already configured in $CONFIG"
+        return
+    fi
+
+    # Append MCP server config
+    cat >> "$CONFIG" << EOF
+
+[mcp_servers.donkeyui]
+command = "node"
+args = ["$SERVER"]
+EOF
+    echo "[Codex] Installed → $CONFIG"
+}
+
+# ── Run ──
+
+case "$TARGET" in
+    claude) install_claude ;;
+    codex)  install_codex ;;
+    both|"")
+        install_claude
+        install_codex
+        ;;
+    *)
+        echo "Usage: install.sh [claude|codex|both]"
+        exit 1
+        ;;
+esac
+
+echo ""
+echo "Restart your AI tool to pick up the DonkeyUI MCP server."
+echo "Tools available: search_components, get_component, list_categories, list_components, get_theme_setup, get_usage_example"
