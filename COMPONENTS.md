@@ -1708,6 +1708,62 @@ LinearGradient.lavender  // purple → lavender → light purple
 
 ---
 
+## Sync
+
+### SyncStatusView
+
+Full cloud sync management screen with status, storage, item counts, and actions.
+
+**Data types:**
+```swift
+SyncState: .idle, .syncing(progress:completed:total:), .upToDate(lastSynced:), .error(message:lastSynced:)
+SyncStorageInfo(usedBytes: Int, limitBytes: Int, tier: String, tierLabel: String)
+SyncItemCount(label: String, systemIcon: String, count: Int, limit: Int?)
+SyncStatusData(state:storage:items:userLabel:)
+```
+
+```swift
+public init(
+    data: SyncStatusData,
+    onSync: (() async -> Void)? = nil,
+    onFullSync: (() async -> Void)? = nil,
+    onUpgrade: (() -> Void)? = nil
+)
+```
+
+```swift
+SyncStatusView(
+    data: SyncStatusData(
+        state: .upToDate(lastSynced: lastSync),
+        storage: SyncStorageInfo(usedBytes: 3_500_000, limitBytes: 10_485_760, tier: "free", tierLabel: "Free"),
+        items: [
+            SyncItemCount(label: "Tasks", systemIcon: "checkmark.circle", count: 42, limit: 100),
+            SyncItemCount(label: "Lists", systemIcon: "list.bullet", count: 5, limit: 10),
+        ],
+        userLabel: "paco@example.com"
+    ),
+    onSync: { await syncService.sync() },
+    onFullSync: { await syncService.fullSync() },
+    onUpgrade: { showPaywall = true }
+)
+```
+
+### SyncStatusRow
+
+Compact sync status row for settings lists. Green/orange/gray dot + label + last synced.
+
+```swift
+public init(state: SyncState, onTap: (() -> Void)? = nil)
+```
+
+```swift
+SyncStatusRow(state: .upToDate(lastSynced: .now)) { navigateToSyncDetails() }
+SyncStatusRow(state: .syncing(progress: 0.5, completed: 10, total: 20))
+SyncStatusRow(state: .error(message: "Connection failed", lastSynced: nil))
+```
+
+---
+
 ## Store (StoreKit 2)
 
 ### DonkeyStoreManager
