@@ -323,7 +323,7 @@ final class DonkeyUITests: XCTestCase {
 
     func testStoreConfigInitWithDefaults() {
         let config = StoreConfig(productIDs: ["com.app.monthly", "com.app.yearly"])
-        XCTAssertEqual(config.productIDs, ["com.app.monthly", "com.app.yearly"])
+        XCTAssertEqual(config.allProductIDs, ["com.app.monthly", "com.app.yearly"])
         XCTAssertNil(config.userDefaultsSuite)
         XCTAssertEqual(config.isPurchasedKey, "donkey_isPro")
     }
@@ -334,20 +334,38 @@ final class DonkeyUITests: XCTestCase {
             userDefaultsSuite: "group.com.app",
             isPurchasedKey: "myapp_isPro"
         )
-        XCTAssertEqual(config.productIDs, ["com.app.lifetime"])
+        XCTAssertEqual(config.allProductIDs, ["com.app.lifetime"])
         XCTAssertEqual(config.userDefaultsSuite, "group.com.app")
         XCTAssertEqual(config.isPurchasedKey, "myapp_isPro")
     }
 
     func testStoreConfigEmptyProductIDs() {
         let config = StoreConfig(productIDs: [])
-        XCTAssertTrue(config.productIDs.isEmpty)
+        XCTAssertTrue(config.allProductIDs.isEmpty)
     }
 
     func testStoreConfigProductIDsAreSet() {
-        // Duplicate IDs should collapse since productIDs is a Set
         let config = StoreConfig(productIDs: ["com.app.monthly", "com.app.monthly"])
-        XCTAssertEqual(config.productIDs.count, 1)
+        XCTAssertEqual(config.allProductIDs.count, 1)
+    }
+
+    func testStoreConfigMultiTier() {
+        let config = StoreConfig(tiers: [
+            StoreTier(name: "premium", productIDs: ["lifetime"], features: ["unlimited_local"]),
+            StoreTier(name: "pro", productIDs: ["monthly", "yearly"], features: ["unlimited_local", "cloud", "ai"]),
+        ], promoProductIDs: ["monthly_promo", "yearly_promo"])
+        XCTAssertEqual(config.allProductIDs, ["lifetime", "monthly", "yearly", "monthly_promo", "yearly_promo"])
+        XCTAssertEqual(config.tiers.count, 2)
+        XCTAssertEqual(config.tiers[0].name, "premium")
+        XCTAssertEqual(config.tiers[1].name, "pro")
+        XCTAssertTrue(config.tiers[1].features.contains("cloud"))
+    }
+
+    func testStoreTierInit() {
+        let tier = StoreTier(name: "pro", productIDs: ["m", "y"], features: ["all"], priority: 5)
+        XCTAssertEqual(tier.name, "pro")
+        XCTAssertEqual(tier.priority, 5)
+        XCTAssertTrue(tier.features.contains("all"))
     }
 
     // MARK: - StoreCallbacks Tests
