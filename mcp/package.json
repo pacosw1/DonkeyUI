@@ -1,0 +1,16 @@
+{
+  "name": "donkeyui-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for DonkeyUI component library — search and discover components",
+  "type": "module",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs",
+    "index": "node indexer.mjs",
+    "setup": "npm install && node indexer.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "better-sqlite3": "^11.0.0"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "donkeyui": {
+      "command": "node",
+      "args": ["mcp/server.mjs"]
+    }
+  }
+}
