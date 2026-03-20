@@ -1561,6 +1561,151 @@ DeviceInfo.appVersion      // "2.4.0"
 DeviceInfo.buildNumber     // "42"
 ```
 
+### UnitFormatter
+
+Locale-aware unit formatting for liquids and numbers.
+
+```swift
+UnitFormatter.formatLiquid(500, unit: .milliliters)       // "500 ml"
+UnitFormatter.formatLiquid(500, unit: .fluidOunces)       // "16.9 fl oz"
+UnitFormatter.convert(500, from: .milliliters, to: .cups) // 2.11...
+UnitFormatter.compact(1234567)                             // "1.2M"
+UnitFormatter.withUnit(1234, unit: "steps")                // "1,234 steps"
+UnitFormatter.percentage(0.756, decimals: 1)               // "75.6%"
+```
+
+Units: `.milliliters`, `.liters`, `.fluidOunces`, `.cups`, `.gallons`
+
+### SoundManager
+
+Simple sound player with user preference toggle.
+
+```swift
+SoundManager.play("pop.aif")                // play bundle sound
+SoundManager.play("success.mp3", volume: 0.5)
+SoundManager.playSystem(1057)               // system sound ID
+SoundManager.isEnabled                      // reads UserDefaults
+SoundManager.setEnabled(false)              // toggle off
+```
+
+### AccessibilityHelper
+
+Accessibility state detection.
+
+```swift
+AccessibilityHelper.prefersReducedMotion  // Bool
+AccessibilityHelper.isVoiceOverRunning    // Bool
+AccessibilityHelper.prefersLargeText      // Bool
+AccessibilityHelper.prefersBoldText       // Bool
+
+// Modifier: skip animation when reduced motion is on
+.animateUnlessReduced(.spring(), value: isActive)
+```
+
+---
+
+## Effects
+
+### DonkeyConfettiView
+
+80-particle confetti burst using Canvas + TimelineView.
+
+```swift
+DonkeyConfettiView(colors: [.blue, .pink, .yellow], particleCount: 80)
+
+// Modifier — fires when trigger becomes true:
+.confetti(trigger: showConfetti, colors: [.blue, .pink, .green])
+```
+
+### DonkeySparkleView
+
+Looping 4-pointed star sparkle effect.
+
+```swift
+DonkeySparkleView(isActive: true, centerX: 100, centerY: 100, radius: 90)
+```
+
+### DonkeyGlowRingView
+
+Pulsing radial gradient glow.
+
+```swift
+DonkeyGlowRingView(isActive: goalReached, size: 240, color: .yellow)
+```
+
+### CelebrationModifier
+
+Combined confetti + sparkle + glow + optional sound. Auto-dismisses after 3s.
+
+```swift
+.celebration(isActive: $goalReached, sound: "pop.aif")
+```
+
+### FluidFillView
+
+Realistic water simulation with device tilt. Spring-damper physics, Catmull-Rom rendering, shake detection, haptic feedback.
+
+```swift
+public init(
+    fillPercent: Double,          // 0...1
+    color: Color = .accentColor,
+    enableMotion: Bool = true,
+    iconSize: CGFloat = 200,
+    completionColor: Color? = nil,
+    showCheckmark: Bool = false,
+    maskImage: String? = nil       // SF Symbol name, nil = "drop.fill"
+)
+```
+
+```swift
+// Standalone
+FluidFillView(fillPercent: 0.7, color: .blue, iconSize: 200, maskImage: "drop.fill")
+
+// Any shape mask
+FluidFillView(fillPercent: progress, maskImage: "heart.fill")
+
+// Modifier
+Circle()
+    .fluidFill(fillPercent: 0.6, color: .cyan)
+```
+
+### AnimatedNumberView
+
+Smooth number transitions with `.contentTransition(.numericText())`.
+
+```swift
+public init(
+    value: Double,
+    format: AnimatedNumberFormat = .integer,
+    font: Font = .title,
+    fontWeight: Font.Weight = .bold,
+    color: Color? = nil
+)
+```
+
+Formats: `.integer`, `.decimal(2)`, `.currency("USD")`, `.percentage`, `.compact`
+
+```swift
+AnimatedNumberView(value: 1234.5, format: .currency("USD"), font: .largeTitle)
+AnimatedNumberView(value: progress, format: .percentage)
+AnimatedNumberView(value: followers, format: .compact)
+```
+
+---
+
+## Gradient Presets
+
+```swift
+LinearGradient.sunrise   // orange → yellow → light
+LinearGradient.ocean     // deep blue → cyan → light blue
+LinearGradient.sunset    // purple → pink → orange
+LinearGradient.forest    // dark green → green → mint
+LinearGradient.berry     // purple → magenta → pink
+LinearGradient.gold      // dark gold → gold → light gold
+LinearGradient.midnight  // near-black → dark blue → indigo
+LinearGradient.lavender  // purple → lavender → light purple
+```
+
 ---
 
 ## Store (StoreKit 2)
