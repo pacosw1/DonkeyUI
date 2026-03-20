@@ -91,6 +91,7 @@ public struct AppleSignInView: View {
                 } onCompletion: { result in
                     auth.handleAppleSignIn(result)
                 }
+                .disabled(auth.isLoading)
                 .signInWithAppleButtonStyle(colorScheme == .dark ? .white : .black)
                 .frame(height: 50)
                 .clipShape(RoundedRectangle(cornerRadius: theme.shape.radiusMedium))
@@ -118,7 +119,7 @@ public struct AppleSignInView: View {
         }
         .background(theme.colors.background.ignoresSafeArea())
         .alert("Sign In Failed", isPresented: $showError) {
-            Button("OK") { }
+            Button("OK") { auth.clearError() }
         } message: {
             Text(auth.errorMessage ?? "Unknown error")
         }

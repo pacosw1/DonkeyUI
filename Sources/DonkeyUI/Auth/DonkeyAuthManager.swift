@@ -6,13 +6,16 @@
 //  1. Create with your server sync callback:
 //     let auth = DonkeyAuthManager(
 //         keychainService: "com.myapp",
-//         onSignIn: { user, idToken in await api.signIn(token: idToken, name: user.name ?? "") }
+//         callbacks: AuthCallbacks(onSignIn: { user, token in ... })
 //     )
 //
 //  2. Inject into environment:
 //     ContentView().environment(auth)
 //
-//  3. Use in views:
+//  3. Check credential state on launch:
+//     .task { await auth.checkCredentialState() }
+//
+//  4. Use in views:
 //     @Environment(DonkeyAuthManager.self) var auth
 //     if auth.isAuthenticated { ... }
 //
@@ -29,11 +32,11 @@ private let logger = Logger(subsystem: "DonkeyUI", category: "Auth")
 /// Codable user model stored in Keychain.
 public struct DonkeyAuthUser: Codable, Sendable {
     public let id: String
-    public let email: String
+    public let email: String?
     public let name: String?
     public let createdAt: Date?
 
-    public init(id: String, email: String, name: String?, createdAt: Date? = nil) {
+    public init(id: String, email: String?, name: String?, createdAt: Date? = nil) {
         self.id = id
         self.email = email
         self.name = name
@@ -72,7 +75,7 @@ public final class DonkeyAuthManager {
     /// Whether a sign-in is in progress
     public private(set) var isLoading = false
 
-    /// Whether initial session has been resolved from Keychain
+    /// Whether initial session has been resolved (Keychain + credential state check)
     public private(set) var hasResolvedInitialSession = false
 
     /// Error message from the last failed operation
@@ -86,15 +89,10 @@ public final class DonkeyAuthManager {
     private let keychainService: String
     private let keychainKey: String
     private let callbacks: AuthCallbacks
+    private nonisolated(unsafe) var revocationObserver: NSObjectProtocol?
 
     // MARK: - Init
 
-    /// Create an auth manager.
-    ///
-    /// - Parameters:
-    ///   - keychainService: Your app's bundle ID or unique service name for Keychain storage
-    ///   - keychainKey: Key name for the stored user (default: "donkey-auth-user")
-    ///   - callbacks: Server sync callbacks
     public init(
         keychainService: String,
         keychainKey: String = "donkey-auth-user",
@@ -104,18 +102,71 @@ public final class DonkeyAuthManager {
         self.keychainKey = keychainKey
         self.callbacks = callbacks
 
-        // Load cached user from Keychain
+        // Load cached user from Keychain for instant UI (not yet verified)
         self.user = loadFromKeychain()
-        self.hasResolvedInitialSession = true
+
+        // FIX #2: Listen for credential revocation while app is running
+        revocationObserver = NotificationCenter.default.addObserver(
+            forName: ASAuthorizationAppleIDProvider.credentialRevokedNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            Task { @MainActor in
+                self.signOut()
+                logger.info("Apple ID credential revoked — signed out")
+            }
+        }
+    }
+
+    deinit {
+        if let observer = revocationObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+
+    // MARK: - Credential State Check
+
+    /// FIX #1: Verify Apple credential is still valid. Call on app launch.
+    /// Sets `hasResolvedInitialSession = true` when done.
+    ///
+    /// Usage: `.task { await auth.checkCredentialState() }`
+    public func checkCredentialState() async {
+        guard let storedUser = user ?? loadFromKeychain() else {
+            hasResolvedInitialSession = true
+            return
+        }
+
+        let provider = ASAuthorizationAppleIDProvider()
+        do {
+            let state = try await provider.credentialState(forUserID: storedUser.id)
+            switch state {
+            case .authorized:
+                user = storedUser
+            case .revoked, .notFound:
+                logger.warning("Apple credential state: \(String(describing: state)) — signing out")
+                signOut()
+            default:
+                user = storedUser // Fail open for unknown states
+            }
+        } catch {
+            // Network error checking with Apple — fail open (keep cached session)
+            user = storedUser
+            logger.error("Credential state check failed: \(error)")
+        }
+
+        hasResolvedInitialSession = true
     }
 
     // MARK: - Apple Sign In
 
     /// Handle the result from `SignInWithAppleButton`. Call this in the `onCompletion` handler.
     public func handleAppleSignIn(_ result: Result<ASAuthorization, Error>) {
+        // FIX #3: Guard against double-submit
+        guard !isLoading else { return }
+
         switch result {
         case .failure(let err):
-            // Don't show error for user cancellation
             if (err as NSError).code == ASAuthorizationError.canceled.rawValue {
                 errorMessage = nil
                 return
@@ -133,12 +184,11 @@ public final class DonkeyAuthManager {
             errorMessage = nil
 
             let appleUserID = credential.user
-            let newEmail = credential.email ?? ""
             let newName = Self.fullNameString(from: credential.fullName)
 
-            // Apple only sends name/email on FIRST sign-in — merge with cached
+            // FIX #5: Apple only sends email on FIRST sign-in — keep as Optional
             let existingUser = loadFromKeychain()
-            let email = newEmail.isEmpty ? (existingUser?.email ?? "") : newEmail
+            let email: String? = credential.email ?? existingUser?.email
             let name = newName ?? existingUser?.name
 
             guard let tokenData = credential.identityToken,
@@ -158,7 +208,6 @@ public final class DonkeyAuthManager {
             Task {
                 defer { isLoading = false }
                 let serverName = await callbacks.onSignIn(localUser, idToken)
-                // If server returns a name and we don't have one, update
                 if let serverName, !serverName.isEmpty, name == nil {
                     let updated = DonkeyAuthUser(id: appleUserID, email: email, name: serverName)
                     self.user = updated
@@ -166,6 +215,13 @@ public final class DonkeyAuthManager {
                 }
             }
         }
+    }
+
+    // MARK: - Error Handling
+
+    /// FIX #4: Clear error message so alerts can re-trigger for identical errors.
+    public func clearError() {
+        errorMessage = nil
     }
 
     // MARK: - Sign Out
@@ -184,6 +240,7 @@ public final class DonkeyAuthManager {
 
     // MARK: - Keychain
 
+    // FIX #6: Log Keychain write failures
     private func saveToKeychain(_ user: DonkeyAuthUser) {
         guard let data = try? JSONEncoder().encode(user) else { return }
         deleteFromKeychain()
@@ -194,7 +251,10 @@ public final class DonkeyAuthManager {
             kSecValueData as String: data,
             kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock,
         ]
-        SecItemAdd(query as CFDictionary, nil)
+        let status = SecItemAdd(query as CFDictionary, nil)
+        if status != errSecSuccess {
+            logger.error("Keychain save failed with status: \(status)")
+        }
     }
 
     private func loadFromKeychain() -> DonkeyAuthUser? {
