@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct FormNavigation: ViewModifier {
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) var dismiss
 
     var submitLabel: String
     var submitDisabled: Bool
@@ -17,14 +17,14 @@ struct FormNavigation: ViewModifier {
     @State var text = ""
     
     func body(content: Content) -> some View {
-        NavigationView {
+        NavigationStack {
             content
             
                 .toolbar {
                     #if !os(macOS)
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button(action: {
-                            presentationMode.wrappedValue.dismiss()
+                            dismiss()
                         }) {
                             Text("Cancel")
                         }
@@ -33,7 +33,7 @@ struct FormNavigation: ViewModifier {
                     #else
                     ToolbarItem(placement: .cancellationAction) {
                         Button(action: {
-                            presentationMode.wrappedValue.dismiss()
+                            dismiss()
                         }) {
                             Text("Cancel")
                         }
@@ -55,7 +55,7 @@ struct FormNavigation: ViewModifier {
 
                         Button(action: {
                             submitAction()
-                            presentationMode.wrappedValue.dismiss()
+                            dismiss()
 
                         }) {
                             Text(submitLabel).disabled(submitDisabled)
@@ -66,7 +66,7 @@ struct FormNavigation: ViewModifier {
                     ToolbarItem(placement: .confirmationAction) {
                         Button(action: {
                             submitAction()
-                            presentationMode.wrappedValue.dismiss()
+                            dismiss()
 
                         }) {
                             Text(submitLabel).disabled(submitDisabled)

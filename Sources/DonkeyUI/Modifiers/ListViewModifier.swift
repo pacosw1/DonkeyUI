@@ -108,7 +108,7 @@ public struct PullList<Content: View>: View {
                                 
                                 if offsetY <= actionThreshold && thresholdCrossed == false {
                                     thresholdCrossed = true
-                                    HapticFeedback.trigger()
+                                    DonkeyHaptics.medium()
                                 } else {
                                     if thresholdCrossed && offsetY >= 0.4 * actionThreshold {
                                         onPullThreshold()

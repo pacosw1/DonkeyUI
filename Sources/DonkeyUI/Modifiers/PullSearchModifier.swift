@@ -6,9 +6,6 @@
 //
 
 import SwiftUI
-import CoreHaptics
-
-import SwiftUI
 
 public struct PullSearchModifier: ViewModifier {
     
@@ -136,22 +133,6 @@ struct SearchModifier_Previews: PreviewProvider {
 }
 
 
-#if canImport(UIKit)
-import UIKit
-public enum HapticFeedback {
-    static private var generator = UIImpactFeedbackGenerator(style: .medium)
-
-    static func trigger() {
-        generator.impactOccurred()
-    }
-}
-#else
-public enum HapticFeedback {
-    static func trigger() {
-        // No haptic feedback on macOS
-    }
-}
-#endif
 
 
 

@@ -36,7 +36,7 @@ class TimerModel: ObservableObject {
     }
     
     @objc func fireTimer() {
-        let done = self.action!()
+        guard let done = self.action?() else { return }
 
         if done {
             self.stopTimer()

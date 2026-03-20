@@ -15,9 +15,7 @@ struct GetHeightModifier: ViewModifier {
     func body(content: Content) -> some View {
         content.background(
             GeometryReader { geo -> Color in
-                DispatchQueue.main.async {
-                    height = geo.size.height
-                }
+                height = geo.size.height
                 return Color.clear
             }
         )
