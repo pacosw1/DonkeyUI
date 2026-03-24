@@ -2625,6 +2625,92 @@ StatefulPreviewWrapper(false) { isOn in
 
 ---
 
+## Watch Connectivity
+
+Reusable WatchConnectivity session managers for iPhone ↔ Apple Watch communication.
+
+### DonkeyPhoneSession (iOS)
+
+iPhone-side session manager. Handles WCSession lifecycle, throttled context pushes, and message routing via delegate.
+
+```swift
+public protocol DonkeyPhoneSessionDelegate: AnyObject {
+    func phoneSessionBuildContext() -> [String: Any]
+    func phoneSessionDidReceiveMessage(_ message: [String: Any], replyHandler: (([String: Any]) -> Void)?)
+}
+
+public final class DonkeyPhoneSession: NSObject, WCSessionDelegate {
+    public static let shared: DonkeyPhoneSession
+    public weak var delegate: DonkeyPhoneSessionDelegate?
+    public var throttleInterval: TimeInterval  // default 1s
+    public var isPaired: Bool
+    public var isReachable: Bool
+    public func syncToWatch()
+}
+```
+
+Usage (iPhone app):
+
+```swift
+class MyWatchSync: DonkeyPhoneSessionDelegate {
+    init() {
+        DonkeyPhoneSession.shared.delegate = self
+    }
+
+    func phoneSessionBuildContext() -> [String: Any] {
+        ["token": token, "score": currentScore, "level": level]
+    }
+
+    func phoneSessionDidReceiveMessage(_ message: [String: Any], replyHandler: (([String: Any]) -> Void)?) {
+        if message["request"] as? String == "sync" {
+            replyHandler?(phoneSessionBuildContext())
+        } else if message["action"] as? String == "log" {
+            handleWatchLog(message)
+        }
+    }
+}
+```
+
+### DonkeyWatchSession (watchOS)
+
+Watch-side session manager. Tracks reachability, deduplicates by timestamp, and routes data to delegate.
+
+```swift
+public protocol DonkeyWatchSessionDelegate: AnyObject {
+    func watchSessionDidReceiveData(_ data: [String: Any])
+}
+
+public final class DonkeyWatchSession: NSObject, ObservableObject, WCSessionDelegate {
+    public static let shared: DonkeyWatchSession
+    @Published public var isReachable: Bool
+    public weak var delegate: DonkeyWatchSessionDelegate?
+    @discardableResult public func sendMessage(_ message: [String: Any], errorHandler: ((Error) -> Void)?) -> Bool
+    public func sendMessage(_ message: [String: Any], replyHandler: @escaping ([String: Any]) -> Void, errorHandler: ((Error) -> Void)?) -> Bool
+    public func requestSync(message: [String: Any])
+}
+```
+
+Usage (Watch app):
+
+```swift
+class MyWatchStore: DonkeyWatchSessionDelegate {
+    init() {
+        DonkeyWatchSession.shared.delegate = self
+    }
+
+    func watchSessionDidReceiveData(_ data: [String: Any]) {
+        score = data["score"] as? Int ?? 0
+        level = data["level"] as? Int ?? 1
+    }
+
+    func logAction() {
+        DonkeyWatchSession.shared.sendMessage(["action": "log", "value": 42])
+    }
+}
+```
+
+---
+
 ## DonkeyUIDefaults
 
 Legacy static colors (prefer theme colors instead).
