@@ -2719,3 +2719,76 @@ Legacy static colors (prefer theme colors instead).
 DonkeyUIDefaults.secondaryBackground  // Color
 DonkeyUIDefaults.systemBackground     // Color
 ```
+
+---
+
+## DonkeyChatManager
+
+Observable chat manager with WebSocket real-time delivery, auto-reconnect with exponential backoff, typing indicators, and image upload support. No hardcoded endpoints — apps provide all networking via callbacks.
+
+```swift
+// Config
+let chatConfig = DonkeyChatConfig(
+    websocketURL: { token in URL(string: "wss://api.example.com/chat/ws?token=\(token)") },
+    getSessionToken: { UserDefaults.standard.string(forKey: "sessionToken") },
+    fetchMessages: { limit, offset in
+        let page = try await api.getChatHistory(limit: limit, offset: offset)
+        return DonkeyChatPage(messages: page.messages.map { ... }, hasMore: page.hasMore)
+    },
+    sendMessage: { text, type in
+        let result = try await api.sendChatMessage(text, messageType: type)
+        return DonkeyChatSendResult(id: result.id, createdAt: result.createdAt)
+    },
+    uploadImage: { data in try await api.uploadChatImage(data) },
+    onEvent: { event in EventTracker.shared.track("chat_\(event)") }
+)
+
+let chatManager = DonkeyChatManager(config: chatConfig)
+```
+
+**Public state:** `messages`, `isLoading`, `isSending`, `isConnected`, `isRemoteTyping`, `hasMore`, `isUploadingImage`, `uploadError`, `supportsImages`
+
+**Public methods:** `start()`, `stop()`, `loadMessages()`, `loadMore()`, `sendMessage(_:)`, `sendImage(_:)`, `sendTyping(userId:)`
+
+---
+
+## DonkeyChatView
+
+Drop-in support chat view with message bubbles, image support, typing indicators, pagination, and theme integration. Wraps `DonkeyChatManager`.
+
+```swift
+DonkeyChatView(
+    manager: chatManager,
+    userId: auth.user?.id ?? "",
+    title: "Chat with Support",
+    emptyTitle: "No messages yet",
+    emptySubtitle: "We typically reply within a few hours"
+)
+```
+
+Features:
+- User/admin message bubbles with theme colors
+- Image messages with async loading and fullscreen viewer
+- Photo picker for sending images (when `uploadImage` is configured)
+- Typing indicator ("Developer is typing...")
+- Pagination ("Load earlier messages")
+- Relative timestamps ("Just now", "5m ago", "Yesterday")
+- Auto-scroll to newest message
+
+---
+
+## DonkeyChatMessage
+
+```swift
+public struct DonkeyChatMessage: Identifiable, Equatable, Sendable {
+    public let id: Int
+    public let userId: String
+    public let sender: String        // "user" or "admin"
+    public let message: String
+    public let messageType: String   // "text" or "image"
+    public let readAt: String?
+    public let createdAt: String
+    public var isUser: Bool
+    public var isImage: Bool
+}
+```
