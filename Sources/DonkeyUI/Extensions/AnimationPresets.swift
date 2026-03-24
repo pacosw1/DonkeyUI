@@ -34,4 +34,14 @@ public extension Animation {
     static var snappy: Animation {
         .easeOut(duration: 0.15)
     }
+
+    /// Gentle reveal for onboarding content (0.8s)
+    static var gentleReveal: Animation {
+        .easeInOut(duration: 0.8)
+    }
+
+    /// Content slide for onboarding cards (0.5s spring)
+    static var contentSlide: Animation {
+        .spring(duration: 0.5, bounce: 0.15)
+    }
 }

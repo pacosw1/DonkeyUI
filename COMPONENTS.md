@@ -1958,13 +1958,14 @@ ContentView()
 
 ### OnboardingManager
 
-Tracks onboarding completion, first launch, and version-based re-onboarding.
+Tracks onboarding completion, first launch, version-based re-onboarding, and section-level progress for immersive flows.
 
 ```swift
 public init(
     suite: String? = nil,                          // App Group suite for widgets
     completedKey: String = "donkey_onboarding_completed",
-    versionKey: String = "donkey_onboarding_version"
+    versionKey: String = "donkey_onboarding_version",
+    sectionsKey: String = "donkey_onboarding_sections"
 )
 ```
 
@@ -1974,17 +1975,388 @@ let onboarding = OnboardingManager(suite: "group.com.myapp")
 onboarding.hasCompleted           // Bool
 onboarding.isFirstLaunch          // Bool
 onboarding.currentVersion         // String
+onboarding.completedSections      // Set<String>
 
 onboarding.complete()             // Mark as done
 onboarding.reset()                // Reset (testing)
 onboarding.needsReOnboarding(since: "2.0.0")  // Bool
 
-// Modifier — shows OnboardingFlow on first launch:
+// Section tracking (for immersive onboarding resume):
+onboarding.completeSection("welcome")
+onboarding.isSectionCompleted("welcome")  // Bool
+
+// Simple modifier — shows OnboardingFlow on first launch:
 ContentView()
     .onboarding(manager: onboarding, pages: [
         OnboardingPageItem(media: .systemIcon(name: "star.fill", color: .yellow),
             title: "Welcome", description: "Get started")
     ])
+
+// Immersive modifier — shows ImmersiveOnboardingFlow on first launch:
+ContentView()
+    .immersiveOnboarding(manager: onboarding, sections: [
+        OnboardingSection(title: "Welcome") {
+            TextRevealBlock("Hello!", font: .title)
+        }
+    ])
+```
+
+---
+
+## Immersive Onboarding
+
+Full-screen, progressive onboarding experience with no skip button. Content reveals section-by-section with time-gating, typing effects, haptics, and rich media. Reusable across all apps.
+
+### ImmersiveOnboardingFlow
+
+Main container view. Manages sections, progress bar, continue button, background music.
+
+```swift
+public init(
+    sections: [OnboardingSection],
+    showProgressBar: Bool = true,
+    progressBarColor: Color? = nil,
+    manager: OnboardingManager? = nil,
+    backgroundSound: String? = nil,           // Bundle sound to loop (e.g., "ambient.mp3")
+    backgroundSoundVolume: Float = 0.15,
+    typingSound: TypingSoundStyle = .hapticOnly, // .none, .hapticOnly, .hapticWithSound, .custom(sound:volume:)
+    onComplete: @escaping () -> Void
+)
+```
+
+```swift
+ImmersiveOnboardingFlow(
+    sections: [welcomeSection, featuresSection],
+    backgroundSound: "ambient.mp3",
+    typingSound: .softTick,
+    manager: onboardingManager,
+    onComplete: { }
+)
+```
+
+### OnboardingSection
+
+A single section/chapter containing multiple content blocks that reveal sequentially.
+
+```swift
+public init(
+    id: String = UUID().uuidString,
+    title: String? = nil,
+    subtitle: String? = nil,
+    backgroundColor: Color? = nil,
+    accentColor: Color = .accentColor,
+    minimumDisplayTime: Duration = .seconds(5),
+    continueButtonLabel: String = "Continue",
+    celebrateOnComplete: Bool = false,
+    @ImmersiveBlockBuilder blocks: () -> [any ContentBlock]
+)
+```
+
+```swift
+OnboardingSection(
+    title: "Welcome",
+    accentColor: .blue,
+    minimumDisplayTime: .seconds(6),
+    celebrateOnComplete: true
+) {
+    ImageRevealBlock(.system("star.fill", .blue), timing: .scaleIn)
+    TextRevealBlock("Hello!", font: .title, weight: .bold, timing: .typewriter)
+    FeatureHighlightBlock(icon: "heart.fill", iconColor: .pink,
+        title: "Feature", description: "Description")
+}
+```
+
+### RevealTiming
+
+Timing configuration for content block reveal animations.
+
+```swift
+public init(
+    delay: Duration = .zero,       // Delay after previous block finishes
+    duration: Duration = .seconds(0.6),
+    style: RevealStyle = .fadeIn
+)
+```
+
+Presets: `.standard`, `.slow`, `.typewriter`, `.slideUp`, `.scaleIn`
+
+RevealStyle options: `.fadeIn`, `.typewriter(charactersPerSecond:)`, `.wordByWord(interval:)`, `.slideUp`, `.slideFromLeading`, `.slideFromTrailing`, `.scaleIn`
+
+### TextRevealBlock
+
+Text that reveals progressively via typewriter (character-by-character) or word-by-word animation. Automatically pauses at sentence boundaries (400ms at `.` `!` `?`, 150ms at `,`).
+
+```swift
+public init(
+    id: String = UUID().uuidString,
+    _ text: String,
+    font: Font = .body,
+    weight: Font.Weight? = nil,
+    color: Color? = nil,
+    alignment: TextAlignment = .center,
+    timing: RevealTiming = .typewriter,
+    hapticOnReveal: Bool = false        // Subtle haptic per word (word-by-word only)
+)
+```
+
+```swift
+TextRevealBlock("Welcome to our app!", font: .title, weight: .bold,
+    timing: .typewriter)
+
+TextRevealBlock("Each word fades in smoothly.", font: .body,
+    timing: RevealTiming(style: .wordByWord(interval: .milliseconds(150))),
+    hapticOnReveal: true)
+```
+
+### ImageRevealBlock
+
+Image that reveals with fade/scale animation. Supports asset images and SF Symbols.
+
+```swift
+public init(
+    id: String = UUID().uuidString,
+    _ source: OnboardingImageSource,    // .asset(String) or .system(String, Color)
+    maxHeight: CGFloat = 240,
+    cornerRadius: CGFloat? = nil,
+    timing: RevealTiming = .scaleIn
+)
+```
+
+```swift
+ImageRevealBlock(.system("star.fill", .blue), timing: .scaleIn)
+ImageRevealBlock(.asset("hero-image"), maxHeight: 300)
+```
+
+### FeatureHighlightBlock
+
+Icon + title + description card for showcasing app features.
+
+```swift
+public init(
+    id: String = UUID().uuidString,
+    icon: String,                    // SF Symbol name
+    iconColor: Color = .accentColor,
+    title: String,
+    description: String,
+    timing: RevealTiming = .slideUp
+)
+```
+
+```swift
+FeatureHighlightBlock(
+    icon: "chart.bar.fill", iconColor: .blue,
+    title: "Track Progress",
+    description: "See your trends at a glance.",
+    timing: RevealTiming(delay: .seconds(0.3), style: .slideUp)
+)
+```
+
+### CardRevealBlock
+
+Generic themed card container that slides into view.
+
+```swift
+public init(
+    id: String = UUID().uuidString,
+    timing: RevealTiming = .slideUp,
+    @ViewBuilder content: @escaping () -> Content
+)
+```
+
+```swift
+CardRevealBlock(timing: RevealTiming(style: .slideFromLeading)) {
+    HStack { Text("Step 1"); Text("Do this thing") }
+}
+```
+
+### InteractiveBlock
+
+Pauses onboarding progression until the user completes an interaction.
+
+```swift
+public init(
+    id: String = UUID().uuidString,
+    instruction: String? = nil,
+    timing: RevealTiming = .standard,
+    @ViewBuilder content: @escaping (Binding<Bool>) -> Content
+)
+```
+
+```swift
+InteractiveBlock(instruction: "Tap to continue") { completed in
+    Button("Tap me!") { completed.wrappedValue = true }
+}
+```
+
+### VideoBlock
+
+Inline video player. Auto-plays when revealed, supports looping. Requires AVKit.
+
+```swift
+public init(
+    id: String = UUID().uuidString,
+    source: OnboardingVideoSource,    // .bundle(name:extension:) or .url(URL)
+    aspectRatio: CGFloat = 16.0 / 9.0,
+    autoplay: Bool = true,
+    loops: Bool = true,
+    showControls: Bool = false,
+    cornerRadius: CGFloat? = nil,
+    timing: RevealTiming = .scaleIn
+)
+```
+
+```swift
+VideoBlock(source: .bundle(name: "tutorial", extension: "mp4"))
+VideoBlock(source: .url(URL(string: "https://example.com/video.mp4")!),
+    showControls: true, loops: false)
+```
+
+### SpacerBlock
+
+Animated spacer or divider between content blocks.
+
+```swift
+public init(
+    id: String = UUID().uuidString,
+    height: CGFloat = 16,
+    showDivider: Bool = false,
+    timing: RevealTiming = .init(duration: .seconds(0.3), style: .fadeIn)
+)
+```
+
+```swift
+SpacerBlock(height: 12)
+SpacerBlock(height: 1, showDivider: true)
+```
+
+### CustomBlock
+
+Wrapper for arbitrary SwiftUI content. Receives reveal progress (0...1).
+
+```swift
+public init(
+    id: String = UUID().uuidString,
+    timing: RevealTiming = .standard,
+    @ViewBuilder content: @escaping (Double) -> Content
+)
+```
+
+```swift
+CustomBlock { progress in
+    MyCustomView().opacity(progress)
+}
+```
+
+### TypingSoundStyle
+
+Controls haptics and sound during typewriter text reveal. Haptics use Core Haptics (CHHapticEngine) for reliable rapid-fire patterns.
+
+```swift
+// Options:
+TypingSoundStyle.none                                    // No haptics or sound
+TypingSoundStyle.hapticOnly                              // Haptic rhythm only (default)
+TypingSoundStyle.hapticWithSound                         // Haptic rhythm + system tick sound
+TypingSoundStyle.custom(sound: "typing.mp3", volume: 0.3) // Haptic + custom looping audio
+```
+
+---
+
+## Appearance Modifiers
+
+Reusable view modifiers for entrance animations. Usable in onboarding and throughout any app.
+
+### .donkeyAppear()
+
+Animates a view's appearance when it first appears on screen.
+
+```swift
+.donkeyAppear(_ style: AppearStyle = .fade, delay: Double = 0, animation: Animation = .smoothSpring)
+```
+
+AppearStyle options: `.fade`, `.slideUp(distance:)`, `.slideDown(distance:)`, `.slideLeading(distance:)`, `.slideTrailing(distance:)`, `.scale(from:)`, `.pop(from:)`, `.cardEntrance`, `.blur(radius:)`
+
+```swift
+Text("Hello").donkeyAppear(.slideUp())
+Image("hero").donkeyAppear(.scale(), delay: 0.3)
+CardView().donkeyAppear(.cardEntrance, animation: .bouncySpring)
+Text("Pop!").donkeyAppear(.pop(), delay: 0.5, animation: .bouncySpring)
+```
+
+### .donkeyStagger()
+
+Cascading entrance animation for items in a list. Each item's delay is based on its index.
+
+```swift
+.donkeyStagger(index: Int, style: AppearStyle = .slideUp(), baseDelay: Double = 0.1, interval: Double = 0.08, animation: Animation = .contentSlide)
+```
+
+```swift
+ForEach(Array(items.enumerated()), id: \.element.id) { i, item in
+    ItemRow(item: item)
+        .donkeyStagger(index: i, style: .slideUp())
+}
+```
+
+### Transitions
+
+Custom `AnyTransition` values for SwiftUI transition animations.
+
+```swift
+.transition(.slideUp)           // Slide up + fade (insert), fade (remove)
+.transition(.scaleWithFade)     // Scale + fade both directions
+.transition(.cardEntrance)      // Bottom slide + scale + fade
+.transition(.slideFromLeading)  // Leading edge slide + fade
+.transition(.slideFromTrailing) // Trailing edge slide + fade
+```
+
+---
+
+## Text Renderers (iOS 18+)
+
+Per-glyph text animation effects using Apple's TextRenderer protocol. Falls back to static text on older versions.
+
+### .donkeyWaveText()
+
+Continuous sine-wave ripple animation across each character. Great for titles and celebration moments.
+
+```swift
+.donkeyWaveText(isActive: Bool = true, strength: Double = 4, frequency: Double = 0.4, speed: Double = 3.0)
+```
+
+```swift
+Text("Achievement Unlocked!")
+    .font(.title).bold()
+    .donkeyWaveText()
+
+Text("Welcome")
+    .donkeyWaveText(strength: 6, frequency: 0.3, speed: 2)
+```
+
+### .donkeyShimmerText()
+
+Horizontal shimmer/highlight sweep across text. Good for loading states or drawing attention.
+
+```swift
+.donkeyShimmerText(isActive: Bool = true, speed: Double = 2.0)
+```
+
+```swift
+Text("Loading your data...")
+    .font(.headline)
+    .donkeyShimmerText()
+```
+
+### DonkeyTypewriterRenderer
+
+Per-glyph typewriter reveal with fade + slide-up per character. More polished than string truncation.
+
+```swift
+DonkeyTypewriterRenderer(progress: Double = 1.0)
+```
+
+```swift
+Text("This text reveals beautifully")
+    .textRenderer(DonkeyTypewriterRenderer(progress: revealProgress))
 ```
 
 ---
@@ -2039,6 +2411,103 @@ tracker.purchased(productID: "com.app.yearly")
 tracker.notificationPermission(granted: true)
 tracker.onboardingStep("welcome")
 tracker.onboardingCompleted()
+```
+
+---
+
+### DonkeySyncQueue
+
+Persistent sync queue with debounced batching, entity coalescing, exponential backoff retries, and network-aware flush. Pairs with donkeygo's `POST /api/v1/sync/batch` endpoint. Never loses data — queue survives app kills via `SyncQueueStore` persistence protocol.
+
+```swift
+public init(
+    store: SyncQueueStore,
+    debounceInterval: TimeInterval = 30,
+    maxWaitInterval: TimeInterval = 120,
+    maxBatchSize: Int = 500,
+    maxRetryAttempts: Int = 10,
+    baseRetryDelay: TimeInterval = 5,
+    conflictResolver: SyncConflictResolver? = nil,
+    flushHandler: @escaping @Sendable ([SyncQueueItem], String) async throws -> SyncFlushResult
+)
+```
+
+**SyncQueueItem:**
+```swift
+SyncQueueItem.upsert(entityType: "habit", entityID: "abc", version: 1, fields: ["name": AnySendable("Run")])
+SyncQueueItem.delete(entityType: "habit", entityID: "abc")
+```
+
+**SyncFlushResult:**
+```swift
+SyncFlushResult(succeeded: [SyncItemResult], conflicts: [SyncConflict], failed: [SyncItemFailure])
+SyncItemResult(clientID: String, serverID: String, version: Int)
+SyncConflict(clientID: String, serverVersion: Int)
+SyncItemFailure(clientID: String, error: String)
+```
+
+**Protocols:**
+```swift
+protocol SyncQueueStore: Sendable {
+    func save(_ item: SyncQueueItem) async throws
+    func remove(entityType: String, entityID: String) async throws
+    func loadAll() async throws -> [SyncQueueItem]
+    func removeAll() async throws
+}
+
+protocol SyncConflictResolver: Sendable {
+    func resolve(item: SyncQueueItem, serverVersion: Int) async -> SyncQueueItem?
+}
+```
+
+**Usage:**
+```swift
+let syncQueue = DonkeySyncQueue(store: mySQLiteStore) { items, idempotencyKey in
+    try await api.syncBatch(items: items, idempotencyKey: idempotencyKey)
+}
+
+// Enqueue mutations (coalesces by entity)
+syncQueue.enqueue(.upsert(entityType: "habit", entityID: id, version: 1, fields: ["name": AnySendable("Run")]))
+syncQueue.enqueue(.delete(entityType: "habit", entityID: id))
+
+// Manual flush (pull-to-refresh, etc.)
+await syncQueue.flush()
+
+// Clear on sign out
+await syncQueue.clear()
+
+// Observable state for UI
+syncQueue.state      // SyncState (.idle, .syncing, .upToDate, .error)
+syncQueue.pendingCount  // Int
+```
+
+**Key behaviors:**
+- Debounce: 30s after last enqueue, max 2min before forced flush
+- Coalescing: multiple edits to same entity = one sync item
+- Create + delete in same window = both dropped (cancel out)
+- Auto-flush on: app background, app foreground, network restored
+- Retry: exponential backoff (5s → 10s → 20s → ... capped 5min), max 10 attempts
+- Idempotency key per flush — safe retries via server's `X-Idempotency-Key`
+- Integrates with `NetworkMonitor` and `SyncState` (used by `SyncStatusView`)
+
+---
+
+## Shader Effects (iOS 17+)
+
+Metal GPU shader effects as SwiftUI view modifiers. Runs on the GPU at 60/120fps with negligible CPU cost.
+
+### .donkeyShimmer()
+
+Diagonal shine sweep using HSL lightness boost. Perfect for premium buttons, badges, CTAs, and paywalls.
+
+```swift
+.donkeyShimmer(isActive: Bool = true, duration: Double = 2.0, gradientWidth: Double = 0.3, maxLightness: Double = 0.5)
+```
+
+```swift
+Text("PRO").donkeyShimmer()
+Button("Upgrade") { }.donkeyShimmer(maxLightness: 0.8, duration: 3)
+ThemedButton("Subscribe", role: .primary) { }.donkeyShimmer()
 ```
 
 ---
@@ -2113,6 +2582,15 @@ AppIcon()
 
 ```swift
 Animation.ripple(index: Int)  // Staggered spring animation
+
+// Presets (iOS 17+):
+Animation.quickSpring        // 0.3s, bounce 0.2 — UI feedback
+Animation.smoothSpring       // 0.5s, bounce 0.1 — page transitions
+Animation.bouncySpring       // 0.6s, bounce 0.35 — playful interactions
+Animation.subtle             // 0.2s easeInOut — small changes
+Animation.snappy             // 0.15s easeOut — toggles/switches
+Animation.gentleReveal       // 0.8s easeInOut — onboarding content
+Animation.contentSlide       // 0.5s spring, bounce 0.15 — card slides
 ```
 
 ### Optional<NSSet>

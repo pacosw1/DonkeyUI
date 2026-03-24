@@ -39,6 +39,10 @@ public final class OnboardingManager {
     private let defaults: UserDefaults
     private let completedKey: String
     private let versionKey: String
+    private let sectionsKey: String
+
+    /// Section IDs that have been completed (for immersive onboarding resume support).
+    public private(set) var completedSections: Set<String>
 
     /// Create an onboarding manager.
     ///
@@ -49,17 +53,27 @@ public final class OnboardingManager {
     public init(
         suite: String? = nil,
         completedKey: String = "donkey_onboarding_completed",
-        versionKey: String = "donkey_onboarding_version"
+        versionKey: String = "donkey_onboarding_version",
+        sectionsKey: String = "donkey_onboarding_sections"
     ) {
         let store = suite.flatMap { UserDefaults(suiteName: $0) } ?? .standard
         self.defaults = store
         self.completedKey = completedKey
         self.versionKey = versionKey
+        self.sectionsKey = sectionsKey
         self.currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
 
         let wasCompleted = store.bool(forKey: completedKey)
         self.hasCompleted = wasCompleted
         self.isFirstLaunch = !wasCompleted && store.string(forKey: versionKey) == nil
+
+        // Load completed sections
+        if let data = store.data(forKey: sectionsKey),
+           let ids = try? JSONDecoder().decode(Set<String>.self, from: data) {
+            self.completedSections = ids
+        } else {
+            self.completedSections = []
+        }
     }
 
     /// Mark onboarding as complete.
@@ -74,6 +88,23 @@ public final class OnboardingManager {
         hasCompleted = false
         defaults.set(false, forKey: completedKey)
         defaults.removeObject(forKey: versionKey)
+        completedSections = []
+        defaults.removeObject(forKey: sectionsKey)
+    }
+
+    // MARK: - Section Tracking (Immersive Onboarding)
+
+    /// Mark a specific section as completed. Used for resume-on-relaunch support.
+    public func completeSection(_ id: String) {
+        completedSections.insert(id)
+        if let data = try? JSONEncoder().encode(completedSections) {
+            defaults.set(data, forKey: sectionsKey)
+        }
+    }
+
+    /// Check if a specific section has been completed.
+    public func isSectionCompleted(_ id: String) -> Bool {
+        completedSections.contains(id)
     }
 
     /// Check if onboarding should be shown again for a new app version.

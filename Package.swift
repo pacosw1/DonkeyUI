@@ -22,6 +22,9 @@ let package = Package(
             name: "DonkeyUI",
             dependencies: [
                 .product(name: "PopupView", package: "PopupView", condition: .when(platforms: [.iOS])),
+            ],
+            resources: [
+                .process("Effects/Shaders/DonkeyShaders.metal"),
             ]),
         .testTarget(
             name: "DonkeyUITests",

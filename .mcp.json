@@ -3,6 +3,10 @@
     "donkeyui": {
       "command": "node",
       "args": ["mcp/server.mjs"]
+    },
+    "donkeygo": {
+      "command": "node",
+      "args": ["/Users/franciscosainzwilliams/Documents/GitHub/donkeygo/mcp/server.mjs"]
     }
   }
 }
