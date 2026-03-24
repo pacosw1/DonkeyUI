@@ -29,7 +29,7 @@ public struct CheckboxViewModifier: ViewModifier {
                 
                 
                 content
-                    .offset(x: 35)
+                    .offset(x: size.rawValue + 18)
                 
                 Button(action: {
                     isOn.toggle()
