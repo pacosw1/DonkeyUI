@@ -2722,12 +2722,13 @@ DonkeyUIDefaults.systemBackground     // Color
 
 ---
 
-## DonkeyChatManager
+## Chat
+
+### DonkeyChatManager
 
 Observable chat manager with WebSocket real-time delivery, auto-reconnect with exponential backoff, typing indicators, and image upload support. No hardcoded endpoints — apps provide all networking via callbacks.
 
 ```swift
-// Config
 let chatConfig = DonkeyChatConfig(
     websocketURL: { token in URL(string: "wss://api.example.com/chat/ws?token=\(token)") },
     getSessionToken: { UserDefaults.standard.string(forKey: "sessionToken") },
@@ -2742,19 +2743,34 @@ let chatConfig = DonkeyChatConfig(
     uploadImage: { data in try await api.uploadChatImage(data) },
     onEvent: { event in EventTracker.shared.track("chat_\(event)") }
 )
-
 let chatManager = DonkeyChatManager(config: chatConfig)
 ```
 
-**Public state:** `messages`, `isLoading`, `isSending`, `isConnected`, `isRemoteTyping`, `hasMore`, `isUploadingImage`, `uploadError`, `supportsImages`
+```swift
+// Public state
+chatManager.messages          // [DonkeyChatMessage]
+chatManager.isLoading         // Bool
+chatManager.isSending         // Bool
+chatManager.isConnected       // Bool (WebSocket)
+chatManager.isRemoteTyping    // Bool
+chatManager.hasMore           // Bool (pagination)
+chatManager.isUploadingImage  // Bool
+chatManager.uploadError       // String?
+chatManager.supportsImages    // Bool
 
-**Public methods:** `start()`, `stop()`, `loadMessages()`, `loadMore()`, `sendMessage(_:)`, `sendImage(_:)`, `sendTyping(userId:)`
+// Public methods
+await chatManager.start()                    // Load messages + connect WS
+chatManager.stop()                           // Disconnect WS
+await chatManager.loadMessages()             // Reload from server
+await chatManager.loadMore()                 // Load older messages
+let sent = await chatManager.sendMessage(text)  // Send text, returns Bool
+let sent = await chatManager.sendImage(image)   // Send UIImage, returns Bool
+chatManager.sendTyping(userId: id)           // Send typing indicator
+```
 
----
+### DonkeyChatView
 
-## DonkeyChatView
-
-Drop-in support chat view with message bubbles, image support, typing indicators, pagination, and theme integration. Wraps `DonkeyChatManager`.
+Drop-in support chat view with themed message bubbles, image support, typing indicators, pagination, and relative timestamps. Wraps `DonkeyChatManager`.
 
 ```swift
 DonkeyChatView(
@@ -2766,18 +2782,9 @@ DonkeyChatView(
 )
 ```
 
-Features:
-- User/admin message bubbles with theme colors
-- Image messages with async loading and fullscreen viewer
-- Photo picker for sending images (when `uploadImage` is configured)
-- Typing indicator ("Developer is typing...")
-- Pagination ("Load earlier messages")
-- Relative timestamps ("Just now", "5m ago", "Yesterday")
-- Auto-scroll to newest message
+### DonkeyChatMessage
 
----
-
-## DonkeyChatMessage
+Message model used by DonkeyChatManager and DonkeyChatView.
 
 ```swift
 public struct DonkeyChatMessage: Identifiable, Equatable, Sendable {
@@ -2790,5 +2797,45 @@ public struct DonkeyChatMessage: Identifiable, Equatable, Sendable {
     public let createdAt: String
     public var isUser: Bool
     public var isImage: Bool
+}
+```
+
+### DonkeyChatConfig
+
+Configuration for DonkeyChatManager. All networking is callback-based — no hardcoded endpoints.
+
+```swift
+public struct DonkeyChatConfig {
+    let websocketURL: (String) -> URL?              // Build WS URL from session token
+    let getSessionToken: () -> String?              // Return current session token
+    let fetchMessages: (Int, Int) async throws -> DonkeyChatPage  // (limit, offset)
+    let sendMessage: (String, String) async throws -> DonkeyChatSendResult  // (text, messageType)
+    let uploadImage: ((Data) async throws -> String)?  // Upload image data, return URL
+    let onEvent: ((DonkeyChatConfig.ChatEvent) -> Void)?  // Analytics
+    let adminDisplayName: String                    // Default: "Developer"
+    let imageCompressionQuality: CGFloat            // Default: 0.7
+    let maxReconnectDelay: TimeInterval             // Default: 30
+}
+```
+
+### DonkeyChatPage
+
+Response from fetchMessages callback.
+
+```swift
+public struct DonkeyChatPage {
+    public let messages: [DonkeyChatMessage]
+    public let hasMore: Bool
+}
+```
+
+### DonkeyChatSendResult
+
+Response from sendMessage callback.
+
+```swift
+public struct DonkeyChatSendResult {
+    public let id: Int?
+    public let createdAt: String?
 }
 ```
