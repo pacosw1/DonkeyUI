@@ -13,7 +13,8 @@ public struct CheckboxViewModifier: ViewModifier {
     @Binding var isOn: Bool
     var color: Color
     var disabled: Bool
-     var action: () -> Void
+    var size: ButtonSize
+    var action: () -> Void
     
     @State var opacity = 1.0
     @State var scale = 1.0
@@ -43,7 +44,7 @@ public struct CheckboxViewModifier: ViewModifier {
                     #endif
                     
                 }) {
-                    CheckButtonView(active: isOn, size: .small)
+                    CheckButtonView(active: isOn, size: size)
                         .animation(nil, value: isOn)
                         .opacity(disabled ? 0.2 : 1)
                         .padding(.leading, 5)
@@ -67,7 +68,7 @@ public struct CheckboxViewModifier: ViewModifier {
     }
 }
 public extension View {
-    func checkbox(isOn: Binding<Bool>, color: Color = .accentColor, disabled: Bool, action: @escaping () -> Void) -> some View {
-        modifier(CheckboxViewModifier(isOn: isOn,  color: color, disabled: disabled, action: action))
+    func checkbox(isOn: Binding<Bool>, color: Color = .accentColor, disabled: Bool, size: ButtonSize = .medium, action: @escaping () -> Void) -> some View {
+        modifier(CheckboxViewModifier(isOn: isOn, color: color, disabled: disabled, size: size, action: action))
     }
 }
