@@ -75,11 +75,11 @@ public struct DonkeyChatView: View {
             .toolbar {
                 #if canImport(UIKit)
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") { dismiss() }
+                    CloseButton { dismiss() }
                 }
                 #else
                 ToolbarItem(placement: .automatic) {
-                    Button("Done") { dismiss() }
+                    CloseButton { dismiss() }
                 }
                 #endif
             }
