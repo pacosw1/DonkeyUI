@@ -2839,3 +2839,570 @@ public struct DonkeyChatSendResult {
     public let createdAt: String?
 }
 ```
+
+---
+
+## watchOS UI
+
+> Platform: watchOS 10+ only (`#if os(watchOS)`)
+
+### DonkeyTheme.watchAdjusted()
+
+Returns a theme copy with tighter spacing, bolder weights, and smaller radii suited for watchOS.
+
+```swift
+public extension DonkeyTheme {
+    func watchAdjusted() -> DonkeyTheme
+}
+```
+
+```swift
+ContentView()
+    .donkeyTheme(DonkeyTheme().watchAdjusted())
+```
+
+### WatchListRow
+
+Watch-optimized list row with 44pt+ touch targets, simplified accessories.
+
+```swift
+public init(
+    icon: String? = nil,
+    iconColor: Color = .accentColor,
+    title: String,
+    subtitle: String? = nil,
+    accessory: WatchListRowAccessory = .none,
+    action: (() -> Void)? = nil
+)
+```
+
+Accessories: `.chevron`, `.info(String)`, `.none`
+
+```swift
+WatchListRow(
+    icon: "bell.fill",
+    iconColor: .red,
+    title: "Notifications",
+    accessory: .chevron,
+    action: { }
+)
+```
+
+### WatchCardView
+
+Compact card for watchOS: reduced padding, no shadow, edge-to-edge.
+
+```swift
+public init(@ViewBuilder content: () -> Content)
+```
+
+```swift
+WatchCardView {
+    VStack(alignment: .leading) {
+        Text("Steps").font(.caption)
+        Text("8,432").font(.title2).bold()
+    }
+}
+```
+
+### WatchEmptyState
+
+Compact empty state: 32pt icon, headline title, optional button.
+
+```swift
+public init(
+    systemIcon: String,
+    title: String,
+    buttonLabel: String? = nil,
+    buttonAction: (() -> Void)? = nil
+)
+```
+
+```swift
+WatchEmptyState(
+    systemIcon: "tray",
+    title: "No Items",
+    buttonLabel: "Add",
+    buttonAction: { }
+)
+```
+
+### Digital Crown Modifiers
+
+Bind Digital Crown rotation with haptic feedback.
+
+```swift
+// Continuous rotation
+.donkeyCrownRotation(value: Binding<Double>, range: ClosedRange<Double>, sensitivity: DigitalCrownRotationalSensitivity = .medium)
+
+// Discrete stepping
+.donkeyCrownStepper(value: Binding<Double>, in: ClosedRange<Double>, step: Double = 1.0)
+```
+
+```swift
+Text("Volume: \(Int(volume))")
+    .donkeyCrownRotation(value: $volume, range: 0...100)
+
+Text("Rating: \(Int(rating))")
+    .donkeyCrownStepper(value: $rating, in: 1...5, step: 1)
+```
+
+### WatchNotificationView
+
+Themed container for watchOS notification views.
+
+```swift
+public init(
+    icon: String,
+    iconColor: Color = .accentColor,
+    title: String,
+    body: String
+)
+```
+
+```swift
+WatchNotificationView(
+    icon: "bell.fill",
+    iconColor: .orange,
+    title: "Reminder",
+    body: "Don't forget your workout."
+)
+```
+
+### WatchConfirmation
+
+Full-screen confirmation overlay with large tap targets.
+
+```swift
+public init(
+    isPresented: Binding<Bool>,
+    message: String,
+    confirmLabel: String = "Confirm",
+    cancelLabel: String = "Cancel",
+    isDestructive: Bool = false,
+    onConfirm: @escaping () -> Void
+)
+```
+
+```swift
+// As a modifier:
+.watchConfirmation(
+    isPresented: $showConfirm,
+    message: "Delete this item?",
+    confirmLabel: "Delete",
+    isDestructive: true,
+    onConfirm: { deleteItem() }
+)
+```
+
+---
+
+## macOS
+
+> Items marked `#if !os(watchOS)` work on both macOS and iOS. Items marked `#if os(macOS)` are macOS-only.
+
+### DonkeyShortcutModifier
+
+Applies a keyboard shortcut. Available on macOS and iOS (hardware keyboard).
+
+```swift
+.donkeyShortcut(_ key: KeyEquivalent, modifiers: EventModifiers = .command)
+```
+
+```swift
+Button("Save") { save() }
+    .donkeyShortcut("s")
+```
+
+### DonkeyShortcutGroup
+
+Renders a styled list of keyboard shortcuts for a help overlay.
+
+```swift
+public init(title: String = "Keyboard Shortcuts", shortcuts: [DonkeyShortcutDescriptor])
+```
+
+```swift
+DonkeyShortcutGroup(shortcuts: [
+    DonkeyShortcutDescriptor(title: "New Item", key: "N"),
+    DonkeyShortcutDescriptor(title: "Save", key: "S"),
+])
+```
+
+### DonkeyHoverModifier
+
+Animated hover effect for macOS pointer and iPad cursor interactions.
+
+```swift
+.donkeyHover(scale: CGFloat = 1.02, opacity: CGFloat = 0.9, highlightColor: Color? = nil)
+```
+
+```swift
+Text("Hover me")
+    .padding()
+    .donkeyHover(highlightColor: .blue.opacity(0.1))
+```
+
+### DonkeySidebarNavigation
+
+Themed `NavigationSplitView` wrapper with sidebar and detail panes.
+
+```swift
+public init(
+    columnVisibility: Binding<NavigationSplitViewVisibility> = .constant(.automatic),
+    @ViewBuilder sidebar: () -> Sidebar,
+    @ViewBuilder detail: () -> Detail
+)
+```
+
+```swift
+DonkeySidebarNavigation {
+    List(selection: $selected) { ... }
+} detail: {
+    DetailView(item: selected)
+}
+```
+
+### DonkeyToolbarStyle
+
+Toolbar modifier with platform-correct leading/trailing placements.
+
+```swift
+.donkeyToolbar(leading: () -> some View, trailing: () -> some View)
+```
+
+```swift
+ContentView()
+    .donkeyToolbar {
+        Button("Back") { }
+    } trailing: {
+        Button("Save") { }
+    }
+```
+
+### DonkeySettingsTab
+
+macOS-only. Themed settings tab with Form styling. `#if os(macOS)`
+
+```swift
+public init(_ label: String, systemImage: String, @ViewBuilder content: () -> Content)
+```
+
+```swift
+TabView {
+    DonkeySettingsTab("General", systemImage: "gear") {
+        Toggle("Notifications", isOn: $notifs)
+    }
+}
+```
+
+### DonkeyMenuBarSection / DonkeyMenuBarRow
+
+macOS-only. Components for `MenuBarExtra` content. `#if os(macOS)`
+
+```swift
+DonkeyMenuBarSection(title: "Actions") {
+    DonkeyMenuBarRow(icon: "plus", title: "New Window", shortcut: "⌘N") { }
+    DonkeyMenuBarRow(icon: "gear", title: "Preferences") { }
+}
+```
+
+### DonkeyPasteboard / .donkeyCopyable()
+
+Cross-platform clipboard helper.
+
+```swift
+DonkeyPasteboard.copy("Hello")
+
+Text("Copy me")
+    .donkeyCopyable("Copy me")  // adds "Copy" context menu
+```
+
+### DonkeyWindowHelper
+
+macOS-only. Window configuration via NSViewRepresentable. `#if os(macOS)`
+
+```swift
+.donkeyWindowStyle(titleBarHidden: Bool = false, minSize: CGSize? = nil)
+```
+
+```swift
+ContentView()
+    .donkeyWindowStyle(titleBarHidden: true, minSize: CGSize(width: 300, height: 200))
+```
+
+---
+
+## Adaptive / iPad
+
+> Size-class-aware components for iPad and macOS. Most use `#if !os(watchOS)`.
+
+### AdaptiveLayout
+
+Renders compact or regular content based on horizontal size class. Always compact on watchOS. Works on all platforms.
+
+```swift
+public init(
+    @ViewBuilder compact: @escaping () -> Compact,
+    @ViewBuilder regular: @escaping () -> Regular
+)
+```
+
+```swift
+AdaptiveLayout {
+    VStack { items }
+} regular: {
+    HStack { items }
+}
+```
+
+### AdaptiveColumns
+
+Responsive grid with automatic column count based on available width.
+
+```swift
+public init(minWidth: CGFloat = 300, spacing: CGFloat? = nil, @ViewBuilder content: @escaping () -> Content)
+```
+
+```swift
+AdaptiveColumns(minWidth: 200) {
+    ForEach(items) { item in
+        CardView(item: item)
+    }
+}
+```
+
+### SplitDetailView
+
+Two-column sidebar + detail with selection state and empty placeholder.
+
+```swift
+public init(
+    selection: Binding<Item?>,
+    @ViewBuilder sidebar: @escaping () -> Sidebar,
+    @ViewBuilder detail: @escaping (Item) -> Detail
+)
+```
+
+```swift
+SplitDetailView(selection: $selected) {
+    List(items, selection: $selected) { item in
+        Text(item.name).tag(item)
+    }
+} detail: { item in
+    ItemDetailView(item: item)
+}
+```
+
+### DonkeyPointerStyle
+
+iPadOS pointer hover effect. `#if os(iOS)`
+
+```swift
+.donkeyPointerStyle(_ effect: DonkeyPointerEffect = .automatic)
+```
+
+Effects: `.lift`, `.highlight`, `.automatic`
+
+```swift
+Button("Tap") { }
+    .donkeyPointerStyle(.lift)
+```
+
+### AdaptiveSheet
+
+Sheet on compact, popover on regular.
+
+```swift
+.donkeyAdaptiveSheet(isPresented: Binding<Bool>, arrowEdge: Edge = .bottom, content: () -> Content)
+```
+
+```swift
+Button("Show") { showSheet = true }
+    .donkeyAdaptiveSheet(isPresented: $showSheet) {
+        SettingsView()
+    }
+```
+
+### DonkeyDragDrop
+
+Simplified drag-and-drop modifiers for `Transferable` types.
+
+```swift
+.donkeyDraggable(_ data: some Transferable)
+.donkeyDropTarget(for: T.Type, action: ([T]) -> Bool)
+```
+
+```swift
+Text(item.name)
+    .donkeyDraggable(item.name)
+
+DropZone()
+    .donkeyDropTarget(for: String.self) { strings in
+        handleDrop(strings); return true
+    }
+```
+
+### DonkeyMultiWindowSupport
+
+Provides access to `openWindow` environment action.
+
+```swift
+public struct DonkeyMultiWindowSupport: View {
+    public init(onReady: @escaping (OpenWindowAction) -> Void)
+}
+
+.donkeyOpenWindow(perform: @escaping @Sendable (OpenWindowAction) -> Void)
+```
+
+### AdaptiveNavigationTitle
+
+Navigation title with per-size-class display modes. `#if os(iOS)`
+
+```swift
+.donkeyNavigationTitle(_ title: String, compactMode: NavigationBarItem.TitleDisplayMode = .large, regularMode: NavigationBarItem.TitleDisplayMode = .inline)
+```
+
+```swift
+ContentView()
+    .donkeyNavigationTitle("Dashboard", compactMode: .large, regularMode: .inline)
+```
+
+---
+
+## Widgets (WidgetKit)
+
+> Items marked `#if canImport(WidgetKit)` require a widget extension target. `DonkeyDeepLink` is pure Foundation.
+
+### DonkeyWidgetTheme
+
+Static theme for widgets (widgets can't use `@Environment`).
+
+```swift
+public init(from theme: DonkeyTheme = DonkeyTheme())
+public static let `default`: DonkeyWidgetTheme
+```
+
+```swift
+let theme = DonkeyWidgetTheme.default
+// or
+let theme = DonkeyWidgetTheme(from: myTheme)
+```
+
+### .donkeyContainerBackground()
+
+Applies widget container background.
+
+```swift
+.donkeyContainerBackground(_ color: Color)
+```
+
+### DonkeySmallWidget / DonkeyMediumWidget / DonkeyLargeWidget
+
+Pre-built widget layouts per family with themed padding and container background.
+
+```swift
+DonkeySmallWidget(theme: .default) {
+    Image(systemName: "star.fill")
+    Text("Score")
+    Text("42").font(.largeTitle).bold()
+}
+
+DonkeyMediumWidget {
+    VStack { Text("Left") }
+    Spacer()
+    VStack { Text("Right") }
+}
+
+DonkeyLargeWidget {
+    // header
+    Text("Today").font(.headline)
+} content: {
+    // content
+    ForEach(items) { Text($0.name) }
+}
+```
+
+### DonkeyAccessoryCircular / DonkeyAccessoryRectangular / DonkeyAccessoryInline
+
+Lock screen / watch complication layouts with `widgetAccentable()`.
+
+```swift
+DonkeyAccessoryCircular {
+    Image(systemName: "heart.fill")
+}
+
+DonkeyAccessoryRectangular {
+    Text("Steps").font(.caption)
+    Text("8,432").font(.headline)
+    Text("Today").font(.caption2)
+}
+
+DonkeyAccessoryInline("8,432 steps") {
+    Image(systemName: "figure.walk")
+}
+```
+
+### DonkeyDeepLink
+
+Type-safe URL builder for widget tap targets. Pure Foundation — no WidgetKit import needed.
+
+```swift
+public protocol DonkeyDeepLinkable {
+    var scheme: String { get }  // default "donkey"
+    var host: String { get }
+    var path: String { get }
+    var queryItems: [URLQueryItem] { get }  // default []
+    var url: URL { get }  // computed
+}
+
+public enum DonkeyDeepLink {
+    public static func parse<T: DonkeyDeepLinkable>(_ url: URL, as type: T.Type) -> T?
+        where T: RawRepresentable, T.RawValue == String
+}
+```
+
+```swift
+enum AppLink: String, DonkeyDeepLinkable {
+    case home, settings, profile
+
+    var host: String { rawValue }
+    var path: String { "/" }
+}
+
+// Build URL:
+let url = AppLink.home.url  // donkey://home/
+
+// Parse URL:
+if let link = DonkeyDeepLink.parse(url, as: AppLink.self) { ... }
+```
+
+### DonkeyTimelineHelper
+
+Static helpers for building widget timelines.
+
+```swift
+// Single entry refreshing after N minutes
+DonkeyTimelineHelper.singleEntry(entry, refreshAfter: 30)
+
+// Multiple entries at regular intervals
+DonkeyTimelineHelper.entries(count: 24, interval: 3600) { date in
+    MyEntry(date: date, value: fetchValue())
+}
+```
+
+### DonkeyWidgetPreviewContainer
+
+Preview container that simulates widget family sizes.
+
+```swift
+public init(family: WidgetFamily, @ViewBuilder content: @escaping () -> Content)
+```
+
+```swift
+#Preview {
+    DonkeyWidgetPreviewContainer(family: .systemSmall) {
+        DonkeySmallWidget { Text("Preview") }
+    }
+}
+```
