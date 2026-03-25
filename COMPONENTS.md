@@ -3594,3 +3594,258 @@ struct Article: DonkeySearchable {
 
 try await DonkeySpotlightIndexer.index(articles)
 ```
+
+---
+
+## Share
+
+> Share sheet helpers. `#if !os(watchOS)`.
+
+### DonkeyShareItem
+
+`Transferable` wrapper for common share payloads (text, URL, or both).
+
+```swift
+public init(text: String? = nil, url: URL? = nil)
+
+public static func text(_ text: String) -> DonkeyShareItem
+public static func url(_ url: URL) -> DonkeyShareItem
+public static func textAndURL(_ text: String, url: URL) -> DonkeyShareItem
+```
+
+```swift
+let item = DonkeyShareItem.textAndURL("Check this out!", url: myURL)
+```
+
+### ThemedShareButton
+
+Themed `ShareLink` wrapper with DonkeyTheme styling.
+
+```swift
+public init(_ label: String = "Share", icon: String = "square.and.arrow.up", item: Data, preview: SharePreview<Never, Never>)
+
+// Convenience for strings:
+ThemedShareButton(text: "Hello, world!")
+
+// Convenience for URLs:
+ThemedShareButton(url: myURL, title: "My Page")
+```
+
+### .activitySheet()
+
+`UIActivityViewController` as a SwiftUI modifier (iOS only). For when `ShareLink` isn't enough.
+
+```swift
+.activitySheet(
+    isPresented: Binding<Bool>,
+    items: [Any],
+    excludedTypes: [UIActivity.ActivityType] = [],
+    onComplete: ((Bool) -> Void)? = nil
+)
+```
+
+```swift
+Button("Share") { showShare = true }
+    .activitySheet(isPresented: $showShare, items: ["Hello", myURL])
+```
+
+---
+
+## App Lifecycle
+
+> Utilities for app lifecycle, sessions, and updates.
+
+### DonkeyAppInfo
+
+Static app metadata utility. Available on all platforms.
+
+```swift
+DonkeyAppInfo.bundleIdentifier  // "com.example.myapp"
+DonkeyAppInfo.displayName       // "My App"
+DonkeyAppInfo.version           // "1.2.3"
+DonkeyAppInfo.buildNumber       // "42"
+DonkeyAppInfo.formattedVersion  // "1.2.3 (42)"
+DonkeyAppInfo.isDebug           // true in DEBUG
+DonkeyAppInfo.isTestFlight      // true in TestFlight
+DonkeyAppInfo.isAppStore        // true in production
+```
+
+### DonkeyLifecycleObserver
+
+Observable ScenePhase observer with typed callbacks.
+
+```swift
+public init()
+public func onPhaseChange(to phase: ScenePhase, handler: @escaping @MainActor () -> Void)
+public func phaseChanged(to newPhase: ScenePhase)
+
+// View modifier for automatic observation:
+.observeLifecycle(_ observer: DonkeyLifecycleObserver)
+```
+
+```swift
+let lifecycle = DonkeyLifecycleObserver()
+lifecycle.onPhaseChange(to: .background) { saveState() }
+lifecycle.onPhaseChange(to: .active) { refreshData() }
+
+ContentView()
+    .observeLifecycle(lifecycle)
+```
+
+### DonkeySessionTracker
+
+Session counting and duration tracking via UserDefaults.
+
+```swift
+public init(suite: String? = nil, keyPrefix: String = "donkeyui.session")
+
+public var sessionCount: Int
+public var currentSessionDuration: TimeInterval
+public var totalForegroundTime: TimeInterval
+public var isFirstSession: Bool
+public var daysSinceInstall: Int
+
+public func sessionStarted()
+public func sessionEnded()
+```
+
+```swift
+let tracker = DonkeySessionTracker()
+tracker.sessionStarted()  // call on foreground
+tracker.sessionEnded()    // call on background
+
+if tracker.isFirstSession { showOnboarding() }
+```
+
+### DonkeyAppUpdateChecker
+
+App Store version checker. `#if !os(watchOS)`.
+
+```swift
+public init(countryCode: String? = nil)
+
+public var status: AppUpdateStatus?
+public var isChecking: Bool
+
+public func check() async
+```
+
+```swift
+let checker = DonkeyAppUpdateChecker()
+await checker.check()
+
+if let status = checker.status, status.isUpdateAvailable {
+    // Show "Update to \(status.storeVersion)" banner
+}
+```
+
+---
+
+## Charts (Swift Charts)
+
+> Themed chart wrappers using Swift Charts. `#if canImport(Charts)` (not available on watchOS).
+
+### DonkeyChartable / DonkeyChartItem
+
+Protocol and concrete data type for chart data.
+
+```swift
+public protocol DonkeyChartable: Identifiable {
+    var label: String { get }
+    var value: Double { get }
+}
+
+public init(id: String = UUID().uuidString, label: String, value: Double, category: String? = nil, date: Date? = nil)
+```
+
+```swift
+let data = [
+    DonkeyChartItem(label: "Mon", value: 10),
+    DonkeyChartItem(label: "Tue", value: 25),
+    DonkeyChartItem(label: "Wed", value: 18),
+]
+```
+
+### DonkeyChartStyle
+
+Chart style configuration with DonkeyTheme factory.
+
+```swift
+public init(
+    foregroundColors: [Color], axisColor: Color, gridColor: Color,
+    labelFont: Font, labelColor: Color,
+    showGrid: Bool, showAxis: Bool, showLegend: Bool
+)
+
+public static func fromTheme(_ theme: DonkeyTheme) -> DonkeyChartStyle
+```
+
+### ThemedLineChart
+
+Line chart with optional area fill, points, and animated appearance.
+
+```swift
+public init(
+    data: [Data],
+    showArea: Bool = false,
+    showPoints: Bool = true,
+    animate: Bool = true,
+    style: DonkeyChartStyle? = nil,
+    height: CGFloat = 200
+)
+```
+
+```swift
+ThemedLineChart(data: items, showArea: true)
+```
+
+### ThemedBarChart
+
+Bar chart with optional value annotations and animated appearance.
+
+```swift
+public init(
+    data: [Data],
+    showValues: Bool = false,
+    animate: Bool = true,
+    style: DonkeyChartStyle? = nil,
+    height: CGFloat = 200
+)
+```
+
+```swift
+ThemedBarChart(data: revenue, showValues: true)
+```
+
+### ThemedAreaChart
+
+Area chart with gradient fill and configurable interpolation.
+
+```swift
+public init(
+    data: [Data],
+    interpolation: InterpolationMethod = .catmullRom,
+    animate: Bool = true,
+    style: DonkeyChartStyle? = nil,
+    height: CGFloat = 200
+)
+```
+
+```swift
+ThemedAreaChart(data: trend, interpolation: .monotone)
+```
+
+### .donkeyChartStyle()
+
+Apply DonkeyTheme styling to any custom Swift Charts `Chart` view.
+
+```swift
+.donkeyChartStyle(_ style: DonkeyChartStyle? = nil)
+```
+
+```swift
+Chart(data) { item in
+    BarMark(x: .value("X", item.label), y: .value("Y", item.value))
+}
+.donkeyChartStyle()
+```
