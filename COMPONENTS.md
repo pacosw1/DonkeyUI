@@ -3406,3 +3406,191 @@ public init(family: WidgetFamily, @ViewBuilder content: @escaping () -> Content)
     }
 }
 ```
+
+---
+
+## Apple Intelligence
+
+> On-device AI helpers. Foundation Models require iOS 26+ / macOS 26+ (`#if canImport(FoundationModels)`).
+> Writing Tools require iOS 18.1+. Spotlight works on all versions. Siri/AppIntents require iOS 16+.
+
+### DonkeyAISession
+
+Observable session wrapper for Apple's on-device Foundation Models. Manages generation state, errors, and conversation history.
+
+```swift
+@available(iOS 26, macOS 26, *)
+public init(instructions: String = "")
+
+public static var isAvailable: Bool
+public private(set) var isGenerating: Bool
+public private(set) var error: DonkeyAIError?
+
+public func respond(to prompt: String) async throws -> String
+public func respond<T: Generable>(to prompt: String, generating type: T.Type) async throws -> T
+public func streamResponse(to prompt: String) -> AsyncThrowingStream<String, Error>
+public func reset()
+```
+
+```swift
+let session = DonkeyAISession(instructions: "You are a helpful assistant.")
+
+if DonkeyAISession.isAvailable {
+    let answer = try await session.respond(to: "Explain SwiftUI")
+}
+```
+
+### DonkeyAISummarizer
+
+One-call text summarization using the on-device model.
+
+```swift
+@available(iOS 26, macOS 26, *)
+public static func summarize(
+    _ text: String,
+    style: DonkeySummaryStyle = .concise,
+    maxSentences: Int = 3
+) async throws -> String
+```
+
+Styles: `.concise`, `.detailed`, `.bullets`, `.oneLine`
+
+```swift
+let summary = try await DonkeyAISummarizer.summarize(longText, style: .bullets)
+```
+
+### DonkeyAIClassifier
+
+Classify text into caller-defined categories using structured output.
+
+```swift
+@available(iOS 26, macOS 26, *)
+public static func classify(
+    _ text: String,
+    categories: [String],
+    instructions: String? = nil
+) async throws -> DonkeyAIClassification
+```
+
+```swift
+let result = try await DonkeyAIClassifier.classify(
+    "I can't log in to my account",
+    categories: ["billing", "technical", "account", "general"]
+)
+print(result.category)   // "account"
+print(result.reasoning)  // "User is having login issues"
+```
+
+### DonkeyAIExtractor
+
+Extract structured data from text into any `@Generable` type.
+
+```swift
+@available(iOS 26, macOS 26, *)
+public static func extract<T: Generable>(
+    from text: String,
+    as type: T.Type,
+    instructions: String? = nil
+) async throws -> T
+```
+
+```swift
+@Generable struct ContactInfo {
+    @Guide(description: "Person's name") var name: String
+    @Guide(description: "Email address") var email: String
+}
+
+let contact = try await DonkeyAIExtractor.extract(
+    from: "Reach out to Jane at jane@example.com",
+    as: ContactInfo.self
+)
+```
+
+### DonkeyWritingEditor
+
+Themed `TextEditor` with Apple Intelligence Writing Tools enabled (iOS 18.1+). Includes placeholder text and border styling.
+
+```swift
+public init(
+    text: Binding<String>,
+    placeholder: String = "Start writing...",
+    minHeight: CGFloat = 120
+)
+```
+
+```swift
+DonkeyWritingEditor(text: $notes, placeholder: "Write your notes...")
+```
+
+### DonkeySiriTip
+
+Themed `SiriTipView` wrapper. iOS only.
+
+```swift
+public init(intent: Intent, isVisible: Binding<Bool>)
+
+// As a modifier:
+.donkeySiriTip(myIntent, isVisible: $showTip)
+```
+
+```swift
+DonkeySiriTip(intent: OpenAppIntent(), isVisible: $showSiriTip)
+
+// Or as overlay modifier:
+ContentView()
+    .donkeySiriTip(OpenAppIntent(), isVisible: $showTip)
+```
+
+### DonkeyAppIntent
+
+Protocol extending `AppIntent` with default icon support.
+
+```swift
+public protocol DonkeyAppIntent: AppIntent {
+    static var iconName: String { get }  // default: "star"
+}
+```
+
+```swift
+struct OpenAppIntent: DonkeyAppIntent {
+    static var title: LocalizedStringResource = "Open App"
+    static var iconName: String { "app" }
+
+    func perform() async throws -> some IntentResult { .result() }
+}
+```
+
+### DonkeySpotlightIndexer
+
+Index app content for Spotlight search (including semantic search on iOS 18+).
+
+```swift
+public protocol DonkeySearchable {
+    var searchableID: String { get }
+    var searchableDomain: String { get }
+    var searchableTitle: String { get }
+    var searchableDescription: String? { get }  // default nil
+    var searchableKeywords: [String] { get }     // default []
+    var searchableThumbnailData: Data? { get }   // default nil
+}
+
+public enum DonkeySpotlightIndexer {
+    public static func index(_ items: [any DonkeySearchable]) async throws
+    public static func index(_ item: any DonkeySearchable) async throws
+    public static func remove(identifiers: [String]) async throws
+    public static func remove(domain: String) async throws
+    public static func removeAll() async throws
+}
+```
+
+```swift
+struct Article: DonkeySearchable {
+    let id: String
+    let title: String
+    var searchableID: String { id }
+    var searchableDomain: String { "articles" }
+    var searchableTitle: String { title }
+}
+
+try await DonkeySpotlightIndexer.index(articles)
+```
