@@ -65,7 +65,7 @@ public struct CheckButtonView: View {
             .frame(width: size.rawValue, height: size.rawValue)
             .overlay (
                 Image(systemName: "checkmark")
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .fontWeight(.heavy)
                     .font(.system(size: checkSize))
             )

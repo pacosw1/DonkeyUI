@@ -48,12 +48,12 @@ public struct ListRow: View {
                 Text(title)
                     .font(theme.typography.body)
                     .fontWeight(theme.typography.defaultWeight)
-                    .foregroundColor(theme.colors.onSurface)
+                    .foregroundStyle(theme.colors.onSurface)
 
                 if let subtitle = subtitle {
                     Text(subtitle)
                         .font(theme.typography.footnote)
-                        .foregroundColor(theme.colors.secondary)
+                        .foregroundStyle(theme.colors.secondary)
                 }
             }
 
@@ -82,7 +82,7 @@ public struct ListRow: View {
             Image(systemName: "chevron.right")
                 .font(theme.typography.footnote)
                 .fontWeight(.semibold)
-                .foregroundColor(theme.colors.secondary.opacity(0.5))
+                .foregroundStyle(theme.colors.secondary.opacity(0.5))
 
         case .toggle(let binding):
             Toggle("", isOn: binding)
@@ -93,7 +93,7 @@ public struct ListRow: View {
             Text(text)
                 .font(theme.typography.caption)
                 .fontWeight(theme.typography.emphasisWeight)
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .padding(.horizontal, theme.spacing.sm)
                 .padding(.vertical, theme.spacing.xs)
                 .bgOverlay(bgColor: color, radius: theme.shape.radiusFull)
@@ -101,7 +101,7 @@ public struct ListRow: View {
         case .info(let value):
             Text(value)
                 .font(theme.typography.body)
-                .foregroundColor(theme.colors.secondary)
+                .foregroundStyle(theme.colors.secondary)
 
         case .none:
             EmptyView()

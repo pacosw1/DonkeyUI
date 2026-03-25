@@ -9,8 +9,8 @@ import SwiftUI
 
 struct FeedbackFormView: View {
     
-    @State var text = ""
-    @State var email = ""
+    @State private var text = ""
+    @State private var email = ""
     @Binding var state: FeedbackState
     @FocusState var focused: Bool
     

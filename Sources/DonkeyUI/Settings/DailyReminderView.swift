@@ -28,8 +28,8 @@ struct DailyReminderView_Previews: PreviewProvider {
 }
 
 public struct DailyReminderPickerView: View {
-    @State var date: Date = Date.now.startOfDay
-    @State var text: String = ""
+    @State private var date: Date = Date.now.startOfDay
+    @State private var text: String = ""
     
     @AppStorage("dailyReminderHour") var dailyReminderHour  = 9
     @AppStorage("dailyReminderMinute") var dailyReminderMinute = 0

@@ -23,9 +23,9 @@ class CarouselItem: Identifiable {
 }
 
 struct InfiniteCarouselView: View {
-    @State var selectedIndex: Int = 0
-    @State var x = false
-    @State var items: [CarouselItem] = [
+    @State private var selectedIndex: Int = 0
+    @State private var x = false
+    @State private var items: [CarouselItem] = [
         .init(index: 0, view: AnyView(Text("hello")), next: 1, prev: 2),
         .init(index: 1, view: AnyView(Text("No way")), next: 2, prev: 0),
         .init(index: 2, view: AnyView(Text("sheesh")), next: 0, prev: 1)

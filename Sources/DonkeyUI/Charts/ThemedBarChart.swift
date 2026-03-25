@@ -35,7 +35,7 @@ public struct ThemedBarChart<Data: DonkeyChartable>: View {
                 y: .value("Value", isAnimated ? item.value : 0)
             )
             .foregroundStyle(resolvedStyle.foregroundColors.first ?? theme.colors.primary)
-            .cornerRadius(theme.shape.radiusSmall)
+            .clipShape(.rect(cornerRadius: theme.shape.radiusSmall))
 
             if showValues {
                 BarMark(
@@ -45,7 +45,7 @@ public struct ThemedBarChart<Data: DonkeyChartable>: View {
                 .annotation(position: .top) {
                     Text(String(format: "%.0f", item.value))
                         .font(resolvedStyle.labelFont)
-                        .foregroundColor(resolvedStyle.labelColor)
+                        .foregroundStyle(resolvedStyle.labelColor)
                 }
             }
         }

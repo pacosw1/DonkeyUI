@@ -294,7 +294,7 @@ public extension AnyTransition {
                     Text("Item \(i + 1)")
                     Spacer()
                     Image(systemName: "chevron.right")
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
                 .padding()
                 .background(Color.gray.opacity(0.12))

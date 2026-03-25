@@ -18,7 +18,7 @@ struct ErrorView: View {
     var errorMessage: String = "Connection Error"
     var subText: String = "Please try again later"
     var errorType: ErrorType = .wifi
-    @State var presented = false
+    @State private var presented = false
     var body: some View {
         VStack {
             Text("Hello")

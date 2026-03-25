@@ -41,7 +41,7 @@ public struct InteractiveBlock: ContentBlock, View {
             if let instruction, !isCompleted {
                 Text(instruction)
                     .font(theme.typography.caption)
-                    .foregroundColor(theme.colors.secondary)
+                    .foregroundStyle(theme.colors.secondary)
                     .multilineTextAlignment(.center)
                     .transition(.opacity)
             }
@@ -49,11 +49,11 @@ public struct InteractiveBlock: ContentBlock, View {
             if isCompleted {
                 HStack(spacing: theme.spacing.sm) {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(theme.colors.success)
+                        .foregroundStyle(theme.colors.success)
                     Text("Done!")
                         .font(theme.typography.subheadline)
                         .fontWeight(theme.typography.emphasisWeight)
-                        .foregroundColor(theme.colors.success)
+                        .foregroundStyle(theme.colors.success)
                 }
                 .transition(.scale.combined(with: .opacity))
             }

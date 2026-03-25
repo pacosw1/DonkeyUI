@@ -56,7 +56,7 @@ public struct WhatsNewView: View {
                                     .fontWeight(.semibold)
                                 Text(item.description)
                                     .font(.callout)
-                                    .foregroundColor(.primary.opacity(0.8))
+                                    .foregroundStyle(.primary.opacity(0.8))
                             }
                         }
                     }

@@ -107,7 +107,7 @@ public struct AsyncCachedImage: View {
             .overlay {
                 Image(systemName: "photo")
                     .font(theme.typography.title2)
-                    .foregroundColor(theme.colors.secondary.opacity(0.5))
+                    .foregroundStyle(theme.colors.secondary.opacity(0.5))
             }
     }
 

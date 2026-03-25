@@ -56,12 +56,12 @@ public struct StackedChartView: View {
                         HStack(spacing: 5) {
                             Circle()
                                 .frame(width: 10, height: 10)
-                                .foregroundColor(item.color)
+                                .foregroundStyle(item.color)
                             Text(item.name)
                                 .font(.caption)
                             Text((percentage(for: item.amount)).percentageLabel)
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .foregroundStyle(.gray)
                         }
                     }
                 }

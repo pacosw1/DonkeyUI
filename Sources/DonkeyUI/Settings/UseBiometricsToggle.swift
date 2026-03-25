@@ -21,7 +21,7 @@ public struct UseBiometricsToggle: View {
         
     }
     
-    @State var biometricType: LABiometryType
+    @State private var biometricType: LABiometryType
     @AppStorage("useBiometrics") var useBiometrics: Bool = false
     
     public var body: some View {

@@ -13,24 +13,26 @@ public struct LeaveReviewView: View {
         self.url = url
     }
 
-    @State var showError = false
+    @State private var showError = false
     let url: String
     public var body: some View {
-        IconRowView(icon: "star.fill", label: "Leave a Review", color: .yellow, badgeCount: 0)
-            .errorToast(errorMessage: "Could not open the review page", presented: $showError)
-            .contentShape(Rectangle())
-            .onTapGesture {
-                guard let writeReviewURL = URL(string: url)
-                    else {
-                    showError = true
-                    return
-                }
-                #if canImport(UIKit)
-                UIApplication.shared.open(writeReviewURL, options: [:], completionHandler: nil)
-                #else
-                NSWorkspace.shared.open(writeReviewURL)
-                #endif
+        Button {
+            guard let writeReviewURL = URL(string: url)
+                else {
+                showError = true
+                return
             }
+            #if canImport(UIKit)
+            UIApplication.shared.open(writeReviewURL, options: [:], completionHandler: nil)
+            #else
+            NSWorkspace.shared.open(writeReviewURL)
+            #endif
+        } label: {
+            IconRowView(icon: "star.fill", label: "Leave a Review", color: .yellow, badgeCount: 0)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .errorToast(errorMessage: "Could not open the review page", presented: $showError)
 
     }
 }

@@ -37,7 +37,7 @@ public struct StatusBadge: View {
         Text(label)
             .font(theme.typography.caption)
             .fontWeight(theme.typography.emphasisWeight)
-            .foregroundColor(style.foregroundColor)
+            .foregroundStyle(style.foregroundColor)
             .padding(.horizontal, theme.spacing.sm + 2)
             .padding(.vertical, theme.spacing.xs)
             .background(
@@ -78,7 +78,7 @@ struct StatusBadge_Previews: PreviewProvider {
                             .font(.headline)
                         Text("Renews Dec 15, 2026")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
                     Spacer()
                     StatusBadge(label: "Active", style: .active)
@@ -93,7 +93,7 @@ struct StatusBadge_Previews: PreviewProvider {
                             .font(.headline)
                         Text("Ended Nov 1, 2026")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
                     Spacer()
                     StatusBadge(label: "Expired", style: .expired)

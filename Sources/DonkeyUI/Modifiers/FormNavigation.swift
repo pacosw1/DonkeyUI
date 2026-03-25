@@ -14,7 +14,7 @@ struct FormNavigation: ViewModifier {
     var submitDisabled: Bool
     var submitAction: () -> Void
     var header: String
-    @State var text = ""
+    @State private var text = ""
     
     func body(content: Content) -> some View {
         NavigationStack {
@@ -22,7 +22,7 @@ struct FormNavigation: ViewModifier {
             
                 .toolbar {
                     #if !os(macOS)
-                    ToolbarItem(placement: .navigationBarLeading) {
+                    ToolbarItem(placement: .topBarLeading) {
                         Button(action: {
                             dismiss()
                         }) {
@@ -51,7 +51,7 @@ struct FormNavigation: ViewModifier {
 
                         }
                     }
-                    ToolbarItem(placement: .navigationBarTrailing) {
+                    ToolbarItem(placement: .topBarTrailing) {
 
                         Button(action: {
                             submitAction()

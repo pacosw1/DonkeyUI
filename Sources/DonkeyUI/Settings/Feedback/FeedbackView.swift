@@ -18,7 +18,7 @@ public struct FeedbackView: View {
         self.onSubmit = onSubmit
     }
     
-    @State var state: FeedbackState
+    @State private var state: FeedbackState
     var onSubmit: (String, String) -> Void
     
     public var body: some View {

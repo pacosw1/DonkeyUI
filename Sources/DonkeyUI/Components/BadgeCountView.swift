@@ -22,7 +22,7 @@ public struct BadgeCountModifier: ViewModifier {
         Text(displayCount)
             .font(theme.typography.caption2)
             .fontWeight(theme.typography.heavyWeight)
-            .foregroundColor(.white)
+            .foregroundStyle(.white)
             .padding(.horizontal, count > 9 ? 6 : 0)
             .frame(minWidth: 20, minHeight: 20)
             .bgOverlay(
@@ -76,7 +76,7 @@ struct BadgeCountView_Previews: PreviewProvider {
                     .frame(width: 60, height: 60)
                     .overlay {
                         Image(systemName: "message.fill")
-                            .foregroundColor(.blue)
+                            .foregroundStyle(.blue)
                     }
                     .badgeCount(count)
 

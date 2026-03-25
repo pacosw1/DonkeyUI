@@ -39,7 +39,7 @@ public struct RatingPromptView: View {
                 } label: {
                     Image(systemName: "xmark")
                         .font(theme.typography.callout)
-                        .foregroundColor(theme.colors.secondary)
+                        .foregroundStyle(theme.colors.secondary)
                         .frame(width: 32, height: 32)
                         .bgOverlay(
                             bgColor: theme.colors.secondary.opacity(0.1),
@@ -79,12 +79,12 @@ public struct RatingPromptView: View {
                 Text("Enjoying \(appName)?")
                     .font(theme.typography.title3)
                     .fontWeight(theme.typography.emphasisWeight)
-                    .foregroundColor(theme.colors.onSurface)
+                    .foregroundStyle(theme.colors.onSurface)
                     .multilineTextAlignment(.center)
 
                 Text("Your feedback helps us improve")
                     .font(theme.typography.body)
-                    .foregroundColor(theme.colors.secondary)
+                    .foregroundStyle(theme.colors.secondary)
                     .multilineTextAlignment(.center)
             }
 
@@ -113,12 +113,12 @@ public struct RatingPromptView: View {
                 Text("We'd love to hear from you")
                     .font(theme.typography.title3)
                     .fontWeight(theme.typography.emphasisWeight)
-                    .foregroundColor(theme.colors.onSurface)
+                    .foregroundStyle(theme.colors.onSurface)
                     .multilineTextAlignment(.center)
 
                 Text("Tell us how we can make \(appName) better")
                     .font(theme.typography.body)
-                    .foregroundColor(theme.colors.secondary)
+                    .foregroundStyle(theme.colors.secondary)
                     .multilineTextAlignment(.center)
             }
 
@@ -134,7 +134,7 @@ public struct RatingPromptView: View {
                 } label: {
                     Text("No Thanks")
                         .font(theme.typography.callout)
-                        .foregroundColor(theme.colors.secondary)
+                        .foregroundStyle(theme.colors.secondary)
                 }
                 .buttonStyle(.plain)
             }

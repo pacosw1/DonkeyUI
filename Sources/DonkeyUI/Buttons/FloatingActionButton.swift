@@ -36,7 +36,7 @@ public struct FloatingActionButton: ViewModifier {
                 IconView(image: systemIcon, color: .accentColor)
             }
 //            .cornerRadius(50)
-//            .foregroundColor(Color.blue)
+//            .foregroundStyle(Color.blue)
 //            .overlay(
 //                Circle()
 //                    .stroke(.blue)

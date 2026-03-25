@@ -33,7 +33,7 @@ public struct ReviewCard: View {
                     ForEach(1...5, id: \.self) { star in
                         Image(systemName: star <= rating ? "star.fill" : "star")
                             .font(theme.typography.caption)
-                            .foregroundColor(star <= rating ? .orange : theme.colors.borderSubtle)
+                            .foregroundStyle(star <= rating ? .orange : theme.colors.borderSubtle)
                     }
                 }
 
@@ -42,13 +42,13 @@ public struct ReviewCard: View {
                     Text(title)
                         .font(theme.typography.headline)
                         .fontWeight(theme.typography.emphasisWeight)
-                        .foregroundColor(theme.colors.onSurface)
+                        .foregroundStyle(theme.colors.onSurface)
                 }
 
                 // Body
                 Text(bodyText)
                     .font(theme.typography.body)
-                    .foregroundColor(theme.colors.onSurface.opacity(0.85))
+                    .foregroundStyle(theme.colors.onSurface.opacity(0.85))
                     .fixedSize(horizontal: false, vertical: true)
 
                 // Author + date
@@ -56,16 +56,16 @@ public struct ReviewCard: View {
                     Text(authorName)
                         .font(theme.typography.footnote)
                         .fontWeight(theme.typography.emphasisWeight)
-                        .foregroundColor(theme.colors.secondary)
+                        .foregroundStyle(theme.colors.secondary)
 
                     if let date = date {
                         Text("·")
                             .font(theme.typography.footnote)
-                            .foregroundColor(theme.colors.secondary.opacity(0.5))
+                            .foregroundStyle(theme.colors.secondary.opacity(0.5))
 
                         Text(DonkeyDateFormatter.format(date, style: .relative))
                             .font(theme.typography.footnote)
-                            .foregroundColor(theme.colors.secondary)
+                            .foregroundStyle(theme.colors.secondary)
                     }
 
                     Spacer()

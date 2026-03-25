@@ -202,7 +202,7 @@ public struct PaywallScreen: View {
                 Text(config.headlineAccent)
                     .font(theme.typography.largeTitle)
                     .fontWeight(.heavy)
-                    .foregroundColor(theme.colors.accent)
+                    .foregroundStyle(theme.colors.accent)
             }
 
             if !config.subtitle.isEmpty {
@@ -375,7 +375,7 @@ public struct PaywallScreen: View {
                 Spacer()
                 Text(plan.priceDisplay)
                     .fontWeight(.semibold)
-                    .foregroundColor(isSelected ? theme.colors.onSurface : theme.colors.secondary.opacity(0.9))
+                    .foregroundStyle(isSelected ? theme.colors.onSurface : theme.colors.secondary.opacity(0.9))
                     .font(theme.typography.body)
                     .padding(.vertical, 6)
                     .frame(minWidth: 90)
@@ -401,7 +401,7 @@ public struct PaywallScreen: View {
             if let privacyURL {
                 Link("Privacy", destination: privacyURL)
                     .font(theme.typography.caption)
-                    .foregroundColor(theme.colors.secondary)
+                    .foregroundStyle(theme.colors.secondary)
             }
 
             Button("Restore Purchases", action: onRestore)
@@ -410,7 +410,7 @@ public struct PaywallScreen: View {
             if let termsURL {
                 Link("Terms", destination: termsURL)
                     .font(theme.typography.caption)
-                    .foregroundColor(theme.colors.secondary)
+                    .foregroundStyle(theme.colors.secondary)
             }
             Spacer()
         }

@@ -36,7 +36,7 @@ where T.AllCases: RandomAccessCollection {
             Text(item.description)
                 .font(theme.typography.subheadline)
                 .fontWeight(selection == item ? theme.typography.emphasisWeight : theme.typography.defaultWeight)
-                .foregroundColor(selection == item ? theme.colors.onSurface : theme.colors.secondary)
+                .foregroundStyle(selection == item ? theme.colors.onSurface : theme.colors.secondary)
                 .lineLimit(1)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, theme.spacing.sm)

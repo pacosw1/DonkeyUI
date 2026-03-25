@@ -43,7 +43,7 @@ public struct DonkeyDivider: View {
             Text(text)
                 .font(theme.typography.caption)
                 .fontWeight(theme.typography.defaultWeight)
-                .foregroundColor(theme.colors.secondary)
+                .foregroundStyle(theme.colors.secondary)
                 .lineLimit(1)
                 .layoutPriority(1)
             line

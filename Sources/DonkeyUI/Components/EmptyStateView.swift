@@ -30,7 +30,7 @@ public struct EmptyStateView: View {
             Image(systemName: systemIcon)
                 .font(.system(size: 48))
                 .fontWeight(.light)
-                .foregroundColor(theme.colors.secondary.opacity(0.6))
+                .foregroundStyle(theme.colors.secondary.opacity(0.6))
                 .frame(width: 88, height: 88)
                 .bgOverlay(
                     bgColor: theme.colors.secondary.opacity(0.08),
@@ -41,13 +41,13 @@ public struct EmptyStateView: View {
                 Text(title)
                     .font(theme.typography.title3)
                     .fontWeight(theme.typography.emphasisWeight)
-                    .foregroundColor(theme.colors.onBackground)
+                    .foregroundStyle(theme.colors.onBackground)
                     .multilineTextAlignment(.center)
 
                 if let description = description {
                     Text(description)
                         .font(theme.typography.body)
-                        .foregroundColor(theme.colors.secondary)
+                        .foregroundStyle(theme.colors.secondary)
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
                 }

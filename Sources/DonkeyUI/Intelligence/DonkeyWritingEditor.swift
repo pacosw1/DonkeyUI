@@ -22,7 +22,7 @@ public struct DonkeyWritingEditor: View {
         ZStack(alignment: .topLeading) {
             TextEditor(text: $text)
                 .font(theme.typography.body)
-                .foregroundColor(theme.colors.onSurface)
+                .foregroundStyle(theme.colors.onSurface)
                 .scrollContentBackground(.hidden)
                 .padding(theme.spacing.sm)
                 .frame(minHeight: minHeight)
@@ -31,7 +31,7 @@ public struct DonkeyWritingEditor: View {
             if text.isEmpty {
                 Text(placeholder)
                     .font(theme.typography.body)
-                    .foregroundColor(theme.colors.secondary.opacity(0.6))
+                    .foregroundStyle(theme.colors.secondary.opacity(0.6))
                     .padding(theme.spacing.sm)
                     .padding(.top, 8)
                     .padding(.leading, 4)

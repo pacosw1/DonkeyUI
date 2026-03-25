@@ -26,11 +26,11 @@ public struct ErrorModifier: ViewModifier {
                         Text(errorMessage)
                             .fontWeight(.heavy)
                             .font(.subheadline)
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                         Text(subText)
                             .font(.caption)
                             .fontWeight(.semibold)
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                     }
                 }
                 .card(color: .pink.opacity(0.9))
@@ -39,7 +39,7 @@ public struct ErrorModifier: ViewModifier {
                 $0
                     .type(.floater())
                     .position(.top)
-                    .animation(.spring())
+                    .animation(.spring(response: 0.4, dampingFraction: 0.8))
                     .closeOnTapOutside(false)
                     .autohideIn(3)
             }

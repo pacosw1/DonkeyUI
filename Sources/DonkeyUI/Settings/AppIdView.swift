@@ -17,9 +17,9 @@ public struct AppIdView: View {
         HStack(alignment: .center, spacing: 5) {
             Text("App ID:")
                 .font(.caption2)
-                .foregroundColor(.gray)
+                .foregroundStyle(.gray)
             Text(id == "" ? "Log in to iCloud" : id)
-                .foregroundColor(.gray)
+                .foregroundStyle(.gray)
                 .font(.caption)
                 .textSelection(.enabled)
         }

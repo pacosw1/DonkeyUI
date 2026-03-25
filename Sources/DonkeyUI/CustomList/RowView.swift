@@ -38,8 +38,8 @@ struct RowView<Content: View>: View {
                             content
                             Spacer()
                             Image(systemName: "chevron.right")
-                                .foregroundColor(.gray)
-                            //                            .foregroundColor(isHighlighted ? .white : .secondary)
+                                .foregroundStyle(.gray)
+                            //                            .foregroundStyle(isHighlighted ? .white : .secondary)
                                 .animation(.none, value: isHighlighted)
                         }
                         .contentShape(Rectangle())

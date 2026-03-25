@@ -34,7 +34,7 @@ public struct OnboardingFlow: View {
                         Text("Skip")
                             .font(theme.typography.subheadline)
                             .fontWeight(theme.typography.emphasisWeight)
-                            .foregroundColor(theme.colors.secondary)
+                            .foregroundStyle(theme.colors.secondary)
                     }
                     .buttonStyle(.plain)
                 }
@@ -102,12 +102,12 @@ public struct OnboardingFlow: View {
                 Text(page.title)
                     .font(theme.typography.title)
                     .fontWeight(theme.typography.heavyWeight)
-                    .foregroundColor(theme.colors.onBackground)
+                    .foregroundStyle(theme.colors.onBackground)
                     .multilineTextAlignment(.center)
 
                 Text(page.description)
                     .font(theme.typography.body)
-                    .foregroundColor(theme.colors.secondary)
+                    .foregroundStyle(theme.colors.secondary)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -125,7 +125,7 @@ public struct OnboardingFlow: View {
             Image(systemName: name)
                 .font(.system(size: 64))
                 .fontWeight(.light)
-                .foregroundColor(color)
+                .foregroundStyle(color)
                 .frame(width: 120, height: 120)
                 .bgOverlay(
                     bgColor: color.opacity(0.1),

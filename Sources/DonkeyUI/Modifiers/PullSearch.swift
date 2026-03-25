@@ -18,7 +18,7 @@ struct ContentOffsetKey: PreferenceKey {
 }
 
 struct PullSearch: View {
-    @State var pulledUp = false
+    @State private var pulledUp = false
     var body: some View {
         GeometryReader { geometry in
             VStack {

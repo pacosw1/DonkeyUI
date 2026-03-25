@@ -48,10 +48,10 @@ public struct ProFeatureGate<Content: View>: View {
             } label: {
                 HStack(spacing: theme.spacing.sm) {
                     Image(systemName: lockedIcon)
-                        .foregroundColor(theme.colors.accent)
+                        .foregroundStyle(theme.colors.accent)
                     Text(lockedMessage)
                         .font(theme.typography.subheadline)
-                        .foregroundColor(theme.colors.secondary)
+                        .foregroundStyle(theme.colors.secondary)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(theme.spacing.lg)

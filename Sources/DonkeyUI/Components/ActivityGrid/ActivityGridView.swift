@@ -246,7 +246,7 @@ struct ContributionCell: View {
 
     var body: some View {
         RoundedRectangle(cornerRadius: 2)
-            .foregroundColor(count == 0 ? .gray.opacity(0.2) : color.opacity(intensityOpacity(for: count)))
+            .foregroundStyle(count == 0 ? .gray.opacity(0.2) : color.opacity(intensityOpacity(for: count)))
             .aspectRatio(1, contentMode: .fit)
             .overlay(
                 RoundedRectangle(cornerRadius: 2, style: .continuous)

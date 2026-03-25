@@ -50,13 +50,13 @@ public struct ChangelogView: View {
                 Text("v\(entry.version)")
                     .font(theme.typography.title3)
                     .fontWeight(theme.typography.heavyWeight)
-                    .foregroundColor(theme.colors.onSurface)
+                    .foregroundStyle(theme.colors.onSurface)
 
                 if isLatest {
                     Text("Latest")
                         .font(theme.typography.caption2)
                         .fontWeight(theme.typography.emphasisWeight)
-                        .foregroundColor(theme.colors.onPrimary)
+                        .foregroundStyle(theme.colors.onPrimary)
                         .padding(.horizontal, theme.spacing.sm)
                         .padding(.vertical, theme.spacing.xxs)
                         .bgOverlay(
@@ -69,7 +69,7 @@ public struct ChangelogView: View {
 
                 Text(formattedDate(entry.date))
                     .font(theme.typography.caption)
-                    .foregroundColor(theme.colors.secondary)
+                    .foregroundStyle(theme.colors.secondary)
             }
 
             // Divider
@@ -88,7 +88,7 @@ public struct ChangelogView: View {
 
                         Text(change)
                             .font(theme.typography.body)
-                            .foregroundColor(theme.colors.onSurface)
+                            .foregroundStyle(theme.colors.onSurface)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }

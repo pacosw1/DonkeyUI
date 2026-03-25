@@ -26,7 +26,7 @@ public struct ThemedShareButton<Data: Transferable>: View {
             Label(label, systemImage: icon)
                 .font(theme.typography.body)
                 .fontWeight(theme.typography.emphasisWeight)
-                .foregroundColor(theme.colors.primary)
+                .foregroundStyle(theme.colors.primary)
                 .padding(.horizontal, theme.spacing.lg)
                 .padding(.vertical, theme.spacing.sm)
                 .background(theme.colors.primary.opacity(0.1))

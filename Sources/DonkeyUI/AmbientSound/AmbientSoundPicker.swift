@@ -50,7 +50,7 @@ public struct AmbientSoundPicker: View {
         HStack(spacing: theme.spacing.sm) {
             Image(systemName: volumeIcon)
                 .font(theme.typography.caption)
-                .foregroundColor(theme.colors.secondary)
+                .foregroundStyle(theme.colors.secondary)
                 .frame(width: 20)
 
             Slider(value: Binding(
@@ -128,13 +128,13 @@ public struct AmbientSoundCell: View {
                 Image(systemName: sound.icon)
                     .font(.title2)
                     .symbolEffect(.pulse, isActive: isPlaying)
-                    .foregroundColor(isSelected ? theme.colors.primary : theme.colors.secondary)
+                    .foregroundStyle(isSelected ? theme.colors.primary : theme.colors.secondary)
                     .frame(height: 28)
 
                 Text(sound.name)
                     .font(theme.typography.caption)
                     .fontWeight(isSelected ? .semibold : .regular)
-                    .foregroundColor(isSelected ? theme.colors.onSurface : theme.colors.secondary)
+                    .foregroundStyle(isSelected ? theme.colors.onSurface : theme.colors.secondary)
                     .lineLimit(1)
             }
             .frame(maxWidth: .infinity)
@@ -189,7 +189,7 @@ public struct AmbientSoundMiniControl: View {
                         .font(.caption2)
                 }
             }
-            .foregroundColor(player.isPlaying ? theme.colors.primary : theme.colors.secondary)
+            .foregroundStyle(player.isPlaying ? theme.colors.primary : theme.colors.secondary)
             .padding(.horizontal, theme.spacing.sm)
             .padding(.vertical, theme.spacing.xs)
             .background(

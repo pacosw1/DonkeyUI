@@ -168,7 +168,7 @@ struct DonkeyBottomSheet_Previews: PreviewProvider {
 
                         Text("Drag down to dismiss or tap the background.")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
 
                         Spacer()
@@ -184,7 +184,7 @@ struct DonkeyBottomSheet_Previews: PreviewProvider {
                         ForEach(0..<8, id: \.self) { i in
                             HStack {
                                 Image(systemName: "star.fill")
-                                    .foregroundColor(.orange)
+                                    .foregroundStyle(.orange)
                                 Text("Item \(i + 1)")
                                 Spacer()
                             }

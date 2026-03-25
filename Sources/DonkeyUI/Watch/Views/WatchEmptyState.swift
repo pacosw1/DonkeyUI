@@ -27,12 +27,12 @@ public struct WatchEmptyState: View {
         VStack(spacing: theme.spacing.md) {
             Image(systemName: systemIcon)
                 .font(.system(size: 32, weight: .light))
-                .foregroundColor(theme.colors.secondary.opacity(0.6))
+                .foregroundStyle(theme.colors.secondary.opacity(0.6))
 
             Text(title)
                 .font(theme.typography.headline)
                 .fontWeight(theme.typography.emphasisWeight)
-                .foregroundColor(theme.colors.onBackground)
+                .foregroundStyle(theme.colors.onBackground)
                 .multilineTextAlignment(.center)
 
             if let label = buttonLabel, let action = buttonAction {

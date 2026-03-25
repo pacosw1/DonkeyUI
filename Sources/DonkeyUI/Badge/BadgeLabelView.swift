@@ -18,7 +18,7 @@ public struct BadgeLabelView: View {
     
     public var body: some View {
         Text("\(count)")
-            .foregroundColor(color == .clear ? .gray : .white)
+            .foregroundStyle(color == .clear ? .gray : .white)
         .fontWeight(.semibold)
         .font(.callout)
         .monospacedDigit()

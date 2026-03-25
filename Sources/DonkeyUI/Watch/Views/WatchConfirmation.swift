@@ -35,7 +35,7 @@ public struct WatchConfirmation: View {
                 Text(message)
                     .font(theme.typography.headline)
                     .fontWeight(theme.typography.emphasisWeight)
-                    .foregroundColor(theme.colors.onBackground)
+                    .foregroundStyle(theme.colors.onBackground)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
 

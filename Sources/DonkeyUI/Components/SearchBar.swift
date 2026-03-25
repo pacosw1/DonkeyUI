@@ -30,11 +30,11 @@ public struct DonkeySearchBar: View {
             HStack(spacing: theme.spacing.sm) {
                 Image(systemName: "magnifyingglass")
                     .font(theme.typography.body)
-                    .foregroundColor(theme.colors.secondary)
+                    .foregroundStyle(theme.colors.secondary)
 
                 TextField(placeholder, text: $text)
                     .font(theme.typography.body)
-                    .foregroundColor(theme.colors.onSurface)
+                    .foregroundStyle(theme.colors.onSurface)
                     .focused($isFocused)
                     .submitLabel(.search)
                     .onSubmit { onSubmit?() }
@@ -55,7 +55,7 @@ public struct DonkeySearchBar: View {
                     } label: {
                         Image(systemName: "xmark.circle.fill")
                             .font(theme.typography.body)
-                            .foregroundColor(theme.colors.secondary)
+                            .foregroundStyle(theme.colors.secondary)
                     }
                     .buttonStyle(.plain)
                     .transition(.opacity.combined(with: .scale))
@@ -79,7 +79,7 @@ public struct DonkeySearchBar: View {
                     }
                 }
                 .font(theme.typography.body)
-                .foregroundColor(theme.colors.primary)
+                .foregroundStyle(theme.colors.primary)
                 .transition(.move(edge: .trailing).combined(with: .opacity))
             }
         }

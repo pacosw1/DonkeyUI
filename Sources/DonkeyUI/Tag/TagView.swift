@@ -82,7 +82,7 @@ public struct TagView: View {
             Text(label)
                     .fontWeight(.semibold)
                     .font(titleFont)
-                    .foregroundColor(dull ? .primary.opacity(0.6) : textColor)
+                    .foregroundStyle(dull ? .primary.opacity(0.6) : textColor)
                     .animation(.none, value: label)
             
             if delete {
@@ -90,7 +90,7 @@ public struct TagView: View {
                     deleteAction(id)
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(textColor)
+                        .foregroundStyle(textColor)
                 }
                 .accessibilityLabel("Remove \(title)")
             }

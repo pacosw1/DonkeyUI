@@ -24,9 +24,9 @@ public struct SlideView: Identifiable {
 }
 
 public struct OnboardingPanelView: View {
-    @State var selectedStep = 1
-    @State var offset = 0.0
-    @State var opacity = 1
+    @State private var selectedStep = 1
+    @State private var offset = 0.0
+    @State private var opacity = 1
     var views: [SlideView] = [.init(view: InvestingView(), icon: "figure.dress.line.vertical.figure"),
                               .init(view: WeightView(), icon: "scalemass.fill"),
                               .init(view: Text("2"), icon: "circle.fill"),
@@ -34,7 +34,7 @@ public struct OnboardingPanelView: View {
                               .init(view: Text("2"), icon: "circle.fill")
     ]
     
-    @State var showReview: Bool = false
+    @State private var showReview: Bool = false
     
     
     public init(views: [SlideView]) {
@@ -183,7 +183,7 @@ class OnboardingModel: ObservableObject {
 // Views
 
 struct InvestingView: View {
-    @State var months = 1
+    @State private var months = 1
     var body: some View {
         VStack(alignment: .leading) {
             Text("Biological Sex")
@@ -202,10 +202,10 @@ struct InvestingView: View {
                         ZStack {
                             RoundedRectangle(cornerRadius: 10)
                                 .frame(width: .infinity, height: 50)
-                                .foregroundColor(selected ? .black : .white)
+                                .foregroundStyle(selected ? .black : .white)
                             Text("\(x * 10)%")
                                 .font(.title3)
-                                .foregroundColor(selected ? .white : .black)
+                                .foregroundStyle(selected ? .white : .black)
                                 .fontWeight(.heavy)
                         }
                         .bgOverlay(bgColor: .clear, radius: 10, borderColor: selected ? .black : .black)
@@ -229,9 +229,9 @@ struct InvestingView: View {
 
 
 struct WeightView: View {
-    @State var months = 1
-    @State var weight = "0"
-    @State var shown = false
+    @State private var months = 1
+    @State private var weight = "0"
+    @State private var shown = false
     var body: some View {
         VStack(alignment: .leading) {
             Text("How much do you weigh")
@@ -250,10 +250,10 @@ struct WeightView: View {
                         ZStack {
                             RoundedRectangle(cornerRadius: 10)
                                 .frame(width: .infinity, height: 50)
-                                .foregroundColor(selected ? .black : .white)
+                                .foregroundStyle(selected ? .black : .white)
                             Text("\(x * 10)%")
                                 .font(.title3)
-                                .foregroundColor(selected ? .white : .black)
+                                .foregroundStyle(selected ? .white : .black)
                                 .fontWeight(.heavy)
                         }
                         .bgOverlay(bgColor: .clear, radius: 10, borderColor: selected ? .black : .black)

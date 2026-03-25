@@ -8,12 +8,16 @@
 import SwiftUI
 
 public struct ExpandView<CustomView>: ViewModifier where CustomView: View {
-    @State var show: Bool = false
-    @State var height: CGFloat = 0.0
-    @State var contentHeight: CGFloat = 0.0
+    @State private var show: Bool
+    @State private var height: CGFloat = 0.0
+    @State private var contentHeight: CGFloat = 0.0
 
     let customView: () -> CustomView
-    
+
+    public init(show: Bool = false, customView: @escaping () -> CustomView) {
+        self._show = State(wrappedValue: show)
+        self.customView = customView
+    }
 
     public func body(content: Content) -> some View {
         VStack(alignment: .leading) {

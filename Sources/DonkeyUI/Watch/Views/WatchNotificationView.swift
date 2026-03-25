@@ -28,18 +28,18 @@ public struct WatchNotificationView: View {
             HStack(spacing: theme.spacing.sm) {
                 Image(systemName: icon)
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(iconColor)
+                    .foregroundStyle(iconColor)
 
                 Text(title)
                     .font(theme.typography.headline)
                     .fontWeight(theme.typography.emphasisWeight)
-                    .foregroundColor(theme.colors.onBackground)
+                    .foregroundStyle(theme.colors.onBackground)
                     .lineLimit(2)
             }
 
             Text(self.body)
                 .font(theme.typography.body)
-                .foregroundColor(theme.colors.onBackground.opacity(0.8))
+                .foregroundStyle(theme.colors.onBackground.opacity(0.8))
                 .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)

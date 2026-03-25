@@ -140,10 +140,10 @@ public struct NumberPadInput: View {
                             RoundedRectangle(cornerRadius: 13)
                                 .frame(width: .infinity, height: 70)
                             Image(systemName: "checkmark.square.fill")
-                                .foregroundColor(colorScheme == .dark ? .black : .white)
+                                .foregroundStyle(colorScheme == .dark ? .black : .white)
                                 .font(.title)
                         }
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .foregroundStyle(colorScheme == .dark ? .white : .black)
                     }
                     .disabled(enterDisabled)
                     .accessibilityLabel("Submit")
@@ -175,10 +175,10 @@ struct PadButton: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 13)
                     .frame(width: .infinity, height: 70)
-                    .foregroundColor(buttonColor)
+                    .foregroundStyle(buttonColor)
                 Text(display)
                     .font(.title)
-                    .foregroundColor(.primary)
+                    .foregroundStyle(.primary)
                     .fontWeight(.semibold)
                     .card()
             }

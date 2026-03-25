@@ -145,13 +145,13 @@ public struct ImmersiveOnboardingFlow: View {
             Text(title)
                 .font(theme.typography.largeTitle)
                 .fontWeight(theme.typography.heavyWeight)
-                .foregroundColor(theme.colors.onBackground)
+                .foregroundStyle(theme.colors.onBackground)
                 .multilineTextAlignment(.center)
 
             if let subtitle {
                 Text(subtitle)
                     .font(theme.typography.subheadline)
-                    .foregroundColor(theme.colors.secondary)
+                    .foregroundStyle(theme.colors.secondary)
                     .multilineTextAlignment(.center)
             }
         }
@@ -203,7 +203,7 @@ public struct ImmersiveOnboardingFlow: View {
                 // Section counter
                 Text("\(engine.currentSectionIndex + 1) of \(engine.totalSections)")
                     .font(theme.typography.caption)
-                    .foregroundColor(theme.colors.secondary)
+                    .foregroundStyle(theme.colors.secondary)
             }
             .padding(.horizontal, theme.spacing.xl)
             .padding(.bottom, theme.spacing.xxl)
@@ -455,7 +455,7 @@ final class OnboardingMusicPlayer {
                     HStack(spacing: 12) {
                         Text("1")
                             .font(.title3).fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .frame(width: 32, height: 32)
                             .background(Color.purple)
                             .clipShape(Circle())
@@ -467,7 +467,7 @@ final class OnboardingMusicPlayer {
                     HStack(spacing: 12) {
                         Text("2")
                             .font(.title3).fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .frame(width: 32, height: 32)
                             .background(Color.purple)
                             .clipShape(Circle())
@@ -479,7 +479,7 @@ final class OnboardingMusicPlayer {
                     HStack(spacing: 12) {
                         Text("3")
                             .font(.title3).fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .frame(width: 32, height: 32)
                             .background(Color.purple)
                             .clipShape(Circle())
@@ -511,11 +511,11 @@ final class OnboardingMusicPlayer {
                         VStack(spacing: 12) {
                             Image(systemName: completed.wrappedValue ? "checkmark.circle.fill" : "hand.tap.fill")
                                 .font(.system(size: 48))
-                                .foregroundColor(completed.wrappedValue ? .green : .mint)
+                                .foregroundStyle(completed.wrappedValue ? .green : .mint)
                                 .symbolEffect(.bounce, value: completed.wrappedValue)
                             Text(completed.wrappedValue ? "Nice!" : "Tap me")
                                 .font(.headline)
-                                .foregroundColor(completed.wrappedValue ? .green : .primary)
+                                .foregroundStyle(completed.wrappedValue ? .green : .primary)
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 32)

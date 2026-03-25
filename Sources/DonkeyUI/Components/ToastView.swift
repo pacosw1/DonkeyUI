@@ -60,12 +60,12 @@ public struct ToastView: View {
         HStack(spacing: theme.spacing.md) {
             Image(systemName: item.type.icon)
                 .font(theme.typography.title3)
-                .foregroundColor(item.type.color(from: theme))
+                .foregroundStyle(item.type.color(from: theme))
 
             Text(item.message)
                 .font(theme.typography.subheadline)
                 .fontWeight(theme.typography.emphasisWeight)
-                .foregroundColor(theme.colors.onSurface)
+                .foregroundStyle(theme.colors.onSurface)
                 .lineLimit(2)
 
             Spacer(minLength: 0)

@@ -41,7 +41,7 @@ struct BackgroundModifier_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
             Text("Hello World")
-                .foregroundColor(.blue)
+                .foregroundStyle(.blue)
         }
         .fullscreen(dim: true)
         .preferredColorScheme(.dark)

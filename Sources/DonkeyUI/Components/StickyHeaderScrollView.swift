@@ -102,12 +102,12 @@ struct StickyHeaderScrollView_Previews: PreviewProvider {
                 VStack {
                     Image(systemName: "star.fill")
                         .font(.system(size: 40))
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
 
                     Text("Sticky Header")
                         .font(.title)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                 }
             }
         } content: {
@@ -118,7 +118,7 @@ struct StickyHeaderScrollView_Previews: PreviewProvider {
                             .font(.body)
                         Spacer()
                         Image(systemName: "chevron.right")
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
                     .padding()
                     Divider()

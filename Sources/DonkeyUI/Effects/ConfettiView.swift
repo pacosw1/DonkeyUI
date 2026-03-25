@@ -74,17 +74,12 @@ public struct DonkeyConfettiView: View {
         .ignoresSafeArea()
     }
 
-    public func fire() {
+    public func fire(in size: CGSize) {
         let now = Date.now.timeIntervalSinceReferenceDate
         var newParticles: [ConfettiParticle] = []
 
-        #if canImport(UIKit)
-        let screenWidth = UIScreen.main.bounds.width
-        let screenHeight = UIScreen.main.bounds.height
-        #else
-        let screenWidth: CGFloat = 800
-        let screenHeight: CGFloat = 600
-        #endif
+        let screenWidth = size.width
+        let screenHeight = size.height
 
         for _ in 0..<particleCount {
             newParticles.append(ConfettiParticle(
@@ -122,11 +117,13 @@ private struct ConfettiModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .overlay {
-                confettiView
-            }
-            .onChange(of: trigger) { _, newValue in
-                if newValue {
-                    confettiView.fire()
+                GeometryReader { geometry in
+                    confettiView
+                        .onChange(of: trigger) { _, newValue in
+                            if newValue {
+                                confettiView.fire(in: geometry.size)
+                            }
+                        }
                 }
             }
     }

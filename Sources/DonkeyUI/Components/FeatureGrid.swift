@@ -41,7 +41,7 @@ public struct FeatureGrid: View {
                 Image(systemName: name)
                     .font(theme.typography.body)
                     .fontWeight(theme.typography.emphasisWeight)
-                    .foregroundColor(feature.iconColor)
+                    .foregroundStyle(feature.iconColor)
                     .frame(width: 36, height: 36)
                     .bgOverlay(
                         bgColor: feature.iconColor.opacity(0.12),
@@ -53,12 +53,12 @@ public struct FeatureGrid: View {
                 Text(feature.title)
                     .font(theme.typography.subheadline)
                     .fontWeight(theme.typography.emphasisWeight)
-                    .foregroundColor(theme.colors.onSurface)
+                    .foregroundStyle(theme.colors.onSurface)
 
                 if !feature.description.isEmpty {
                     Text(feature.description)
                         .font(theme.typography.footnote)
-                        .foregroundColor(theme.colors.secondary)
+                        .foregroundStyle(theme.colors.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }

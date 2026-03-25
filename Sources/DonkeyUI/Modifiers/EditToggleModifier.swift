@@ -15,8 +15,8 @@ public struct EditToggleView: ViewModifier {
     let secondaryLabel: String
     let iconColor: Color
     let startExpanded: Bool
-    @State var isOpen: Bool
-    @State var firstOpen: Bool = true
+    @State private var isOpen: Bool
+    @State private var firstOpen: Bool = true
     
     
     public init(isOn: Binding<Bool>, systemImage: String, label: String, secondaryLabel: String, iconColor: Color, startExpanded: Bool) {
@@ -32,27 +32,29 @@ public struct EditToggleView: ViewModifier {
     public func body(content: Content) -> some View {
         VStack(alignment: .leading) {
 
-            HStack {
-                IconView(image: systemImage, color: iconColor, size: .verySmall)
-            
-                VStack(alignment: .leading) {
-                    Text(label)
-                        .font(.body)
-                    if isOn && !secondaryLabel.isEmpty {
-                        Text(secondaryLabel)
-                            .font(.caption)
-                            .foregroundColor(.accentColor)
-                    }
-                    
-                }
-                .animation(.spring(), value: isOn)
-                Spacer()
-            }
-            .frame(minHeight: 35)
-            .contentShape(Rectangle())
-            .onTapGesture {
+            Button {
                 isOn = true
+            } label: {
+                HStack {
+                    IconView(image: systemImage, color: iconColor, size: .verySmall)
+
+                    VStack(alignment: .leading) {
+                        Text(label)
+                            .font(.body)
+                        if isOn && !secondaryLabel.isEmpty {
+                            Text(secondaryLabel)
+                                .font(.caption)
+                                .foregroundStyle(Color.accentColor)
+                        }
+
+                    }
+                    .animation(.spring(), value: isOn)
+                    Spacer()
+                }
+                .frame(minHeight: 35)
+                .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
             
         }
         .animation(!isOpen ? .none : .spring(), value: isOpen)

@@ -39,24 +39,26 @@ public struct ScrollTagSelector: View {
             ScrollView(.horizontal) {
                 HStack(spacing: 10) {
                     ForEach(tags, id: \.internalId) { tag in
-                        TagView(id: tag.getId(), title: tag.getLabel(), color: tag.getColor())
-                            .onTapGesture {
-                                withAnimation(.interactiveSpring()) {
-                                    if isSelected(tag: tag) {
-                                        #if canImport(UIKit)
-                                        let impactHeavy = UIImpactFeedbackGenerator(style: .soft)
-                                        impactHeavy.impactOccurred()
-                                        #endif
-                                        selected = nil
-                                    } else {
-                                        #if canImport(UIKit)
-                                        let impactHeavy = UIImpactFeedbackGenerator(style: .light)
-                                        impactHeavy.impactOccurred()
-                                        #endif
-                                        selected = tag
-                                    }
+                        Button {
+                            withAnimation(.interactiveSpring()) {
+                                if isSelected(tag: tag) {
+                                    #if canImport(UIKit)
+                                    let impactHeavy = UIImpactFeedbackGenerator(style: .soft)
+                                    impactHeavy.impactOccurred()
+                                    #endif
+                                    selected = nil
+                                } else {
+                                    #if canImport(UIKit)
+                                    let impactHeavy = UIImpactFeedbackGenerator(style: .light)
+                                    impactHeavy.impactOccurred()
+                                    #endif
+                                    selected = tag
                                 }
                             }
+                        } label: {
+                            TagView(id: tag.getId(), title: tag.getLabel(), color: tag.getColor())
+                        }
+                        .buttonStyle(.plain)
                     }
                     Text("")
                         .opacity(0)

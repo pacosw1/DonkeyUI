@@ -16,8 +16,8 @@ public struct CheckboxViewModifier: ViewModifier {
     var size: ButtonSize
     var action: () -> Void
     
-    @State var opacity = 1.0
-    @State var scale = 1.0
+    @State private var opacity = 1.0
+    @State private var scale = 1.0
     
     @State private var isPressed = false
 

@@ -36,7 +36,7 @@ public struct FeatureHighlightBlock: ContentBlock, View {
             Image(systemName: icon)
                 .font(.system(size: 28))
                 .fontWeight(.medium)
-                .foregroundColor(iconColor)
+                .foregroundStyle(iconColor)
                 .frame(width: 52, height: 52)
                 .background(iconColor.opacity(0.12))
                 .clipShape(RoundedRectangle(cornerRadius: theme.shape.radiusMedium, style: .continuous))
@@ -45,11 +45,11 @@ public struct FeatureHighlightBlock: ContentBlock, View {
                 Text(title)
                     .font(theme.typography.headline)
                     .fontWeight(theme.typography.emphasisWeight)
-                    .foregroundColor(theme.colors.onBackground)
+                    .foregroundStyle(theme.colors.onBackground)
 
                 Text(description)
                     .font(theme.typography.subheadline)
-                    .foregroundColor(theme.colors.secondary)
+                    .foregroundStyle(theme.colors.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
 

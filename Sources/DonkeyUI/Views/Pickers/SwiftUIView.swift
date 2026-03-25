@@ -15,10 +15,10 @@ case left,
 }
 
 struct PopoverView<PopoverContent>: ViewModifier where PopoverContent: View {
-    @State var position: CGFloat = 0.0
-    @State var isShown: Bool = false
+    @State private var position: CGFloat = 0.0
+    @State private var isShown: Bool = false
     let popoverContent: () -> PopoverContent
-    @State var popoverHeight: CGFloat = 0.0
+    @State private var popoverHeight: CGFloat = 0.0
     
     func body(content: Content) -> some View {
         GeometryReader { x in

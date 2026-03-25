@@ -30,7 +30,7 @@ public struct IconRowView: View {
 //                                        .padding(5)
 //                                        .bgOverlay(bgColor: view.color)
             Text(label)
-                .foregroundColor(.primary)
+                .foregroundStyle(.primary)
                 .fontWeight(.semibold)
             Spacer()
             BadgeLabelView(count: badgeCount, color: badgeColor)

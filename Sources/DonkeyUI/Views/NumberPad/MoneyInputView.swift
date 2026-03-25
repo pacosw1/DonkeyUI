@@ -35,7 +35,7 @@ struct MoneyInputView: View {
 //            Text("$")
 //                .fontWeight(.heavy)
 //                .font(.largeTitle)
-//                .foregroundColor(.gray)
+//                .foregroundStyle(.gray)
             Text(text == "" ? "0" : text)
                 .font(.largeTitle)
                 .fontWeight(.heavy)

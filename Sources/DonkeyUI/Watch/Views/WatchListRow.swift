@@ -42,7 +42,7 @@ public struct WatchListRow: View {
             if let icon = icon {
                 Image(systemName: icon)
                     .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(iconColor)
+                    .foregroundStyle(iconColor)
                     .frame(width: 28, height: 28)
             }
 
@@ -50,13 +50,13 @@ public struct WatchListRow: View {
                 Text(title)
                     .font(theme.typography.body)
                     .fontWeight(theme.typography.emphasisWeight)
-                    .foregroundColor(theme.colors.onSurface)
+                    .foregroundStyle(theme.colors.onSurface)
                     .lineLimit(2)
 
                 if let subtitle = subtitle {
                     Text(subtitle)
                         .font(theme.typography.caption)
-                        .foregroundColor(theme.colors.secondary)
+                        .foregroundStyle(theme.colors.secondary)
                         .lineLimit(1)
                 }
             }
@@ -85,12 +85,12 @@ public struct WatchListRow: View {
             Image(systemName: "chevron.right")
                 .font(theme.typography.caption)
                 .fontWeight(.bold)
-                .foregroundColor(theme.colors.secondary.opacity(0.5))
+                .foregroundStyle(theme.colors.secondary.opacity(0.5))
 
         case .info(let value):
             Text(value)
                 .font(theme.typography.caption)
-                .foregroundColor(theme.colors.secondary)
+                .foregroundStyle(theme.colors.secondary)
 
         case .none:
             EmptyView()

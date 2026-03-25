@@ -26,7 +26,7 @@ public struct CountdownView: View {
                 Text(label)
                     .font(theme.typography.caption)
                     .fontWeight(theme.typography.emphasisWeight)
-                    .foregroundColor(theme.colors.secondary)
+                    .foregroundStyle(theme.colors.secondary)
                     .textCase(.uppercase)
                     .tracking(1)
             }
@@ -69,7 +69,7 @@ public struct CountdownView: View {
         VStack(spacing: theme.spacing.xxs) {
             Text(String(format: "%02d", value))
                 .font(.system(size: 28, weight: .bold, design: .monospaced))
-                .foregroundColor(theme.colors.onSurface)
+                .foregroundStyle(theme.colors.onSurface)
                 .monospacedDigit()
                 .contentTransition(.numericText())
                 .animation(.spring(response: 0.3, dampingFraction: 0.7), value: value)
@@ -77,7 +77,7 @@ public struct CountdownView: View {
             Text(unit)
                 .font(theme.typography.caption2)
                 .fontWeight(theme.typography.emphasisWeight)
-                .foregroundColor(theme.colors.secondary)
+                .foregroundStyle(theme.colors.secondary)
                 .tracking(0.5)
         }
         .frame(minWidth: 48)
@@ -92,7 +92,7 @@ public struct CountdownView: View {
     private var colonSeparator: some View {
         Text(":")
             .font(.system(size: 24, weight: .bold, design: .monospaced))
-            .foregroundColor(theme.colors.secondary.opacity(0.5))
+            .foregroundStyle(theme.colors.secondary.opacity(0.5))
             .padding(.bottom, 18)
     }
 
@@ -100,12 +100,12 @@ public struct CountdownView: View {
         HStack(spacing: theme.spacing.sm) {
             Image(systemName: "clock.badge.xmark")
                 .font(theme.typography.title3)
-                .foregroundColor(theme.colors.error)
+                .foregroundStyle(theme.colors.error)
 
             Text("Expired")
                 .font(theme.typography.headline)
                 .fontWeight(theme.typography.emphasisWeight)
-                .foregroundColor(theme.colors.error)
+                .foregroundStyle(theme.colors.error)
         }
         .padding(.vertical, theme.spacing.md)
         .padding(.horizontal, theme.spacing.xl)

@@ -18,7 +18,7 @@ public struct BiometricLockView: View {
                 IconView(image: "lock.shield.fill", color: .primary, size: .veryLarge)
                 Text("App Locked")
                     .fontWeight(.heavy)
-                    .foregroundColor(.primary)
+                    .foregroundStyle(.primary)
                     .font(.title2)
                 
                 

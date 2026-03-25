@@ -15,6 +15,7 @@ import CoreMotion
 // MARK: - Motion Manager
 
 @available(iOS 17.0, macOS 14.0, *)
+@MainActor
 @Observable
 public final class DonkeyMotionManager {
     public var tiltX: Double = 0
@@ -77,6 +78,7 @@ public final class DonkeyMotionManager {
 // MARK: - Fluid Simulation
 
 @available(iOS 17.0, macOS 14.0, *)
+@MainActor
 @Observable
 public final class DonkeyFluidSimulation {
     /// Number of control points along the surface.
@@ -272,7 +274,7 @@ public struct FluidFillView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: iconSize, height: iconSize)
-                .foregroundColor(color.opacity(0.12))
+                .foregroundStyle(color.opacity(0.12))
 
             // Fluid simulation rendered via Canvas
             TimelineView(.animation(minimumInterval: 1.0 / 60.0)) { timeline in
@@ -325,7 +327,7 @@ public struct FluidFillView: View {
             // Checkmark
             if isComplete && showCheckmark {
                 Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .font(.system(size: iconSize * 0.2))
                     .transition(.scale.combined(with: .opacity))
             }

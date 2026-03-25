@@ -36,7 +36,7 @@ public struct LoadingOverlay: View {
                         Text(message)
                             .font(theme.typography.callout)
                             .fontWeight(theme.typography.emphasisWeight)
-                            .foregroundColor(theme.colors.onSurface)
+                            .foregroundStyle(theme.colors.onSurface)
                             .multilineTextAlignment(.center)
                             .lineLimit(3)
                     }

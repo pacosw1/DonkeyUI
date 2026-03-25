@@ -33,7 +33,7 @@ struct WatchCardView_Previews: PreviewProvider {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Steps")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                         Text("8,432")
                             .font(.title2)
                             .fontWeight(.bold)
@@ -43,7 +43,7 @@ struct WatchCardView_Previews: PreviewProvider {
                 WatchCardView {
                     HStack {
                         Image(systemName: "heart.fill")
-                            .foregroundColor(.red)
+                            .foregroundStyle(.red)
                         Text("72 BPM")
                             .fontWeight(.semibold)
                     }

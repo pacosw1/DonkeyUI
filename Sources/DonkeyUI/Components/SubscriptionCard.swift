@@ -27,7 +27,7 @@ public struct SubscriptionCard: View {
                         Text(subscription.planName)
                             .font(theme.typography.title3)
                             .fontWeight(theme.typography.heavyWeight)
-                            .foregroundColor(theme.colors.onSurface)
+                            .foregroundStyle(theme.colors.onSurface)
 
                         statusRow
                     }
@@ -41,11 +41,11 @@ public struct SubscriptionCard: View {
                     HStack(spacing: theme.spacing.xs) {
                         Image(systemName: expiryIcon)
                             .font(theme.typography.caption)
-                            .foregroundColor(expiryColor)
+                            .foregroundStyle(expiryColor)
 
                         Text(DonkeyDateFormatter.format(expiresAt, style: .expiresOn))
                             .font(theme.typography.footnote)
-                            .foregroundColor(theme.colors.secondary)
+                            .foregroundStyle(theme.colors.secondary)
                     }
                 }
 
@@ -69,11 +69,11 @@ public struct SubscriptionCard: View {
             if subscription.renewsAutomatically && subscription.status == .active {
                 Text("Auto-renews")
                     .font(theme.typography.caption)
-                    .foregroundColor(theme.colors.secondary)
+                    .foregroundStyle(theme.colors.secondary)
             } else if subscription.isTrial {
                 Text("Free trial")
                     .font(theme.typography.caption)
-                    .foregroundColor(theme.colors.primary)
+                    .foregroundStyle(theme.colors.primary)
             }
         }
     }
@@ -84,7 +84,7 @@ public struct SubscriptionCard: View {
         Text(statusLabel)
             .font(theme.typography.caption)
             .fontWeight(theme.typography.emphasisWeight)
-            .foregroundColor(.white)
+            .foregroundStyle(.white)
             .padding(.horizontal, theme.spacing.sm)
             .padding(.vertical, theme.spacing.xs)
             .bgOverlay(bgColor: statusColor, radius: theme.shape.radiusFull)

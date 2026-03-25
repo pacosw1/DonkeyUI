@@ -68,7 +68,7 @@ public struct VideoBlock: ContentBlock, View {
         #else
         Text("Video not supported on this platform")
             .font(theme.typography.caption)
-            .foregroundColor(theme.colors.secondary)
+            .foregroundStyle(theme.colors.secondary)
         #endif
     }
 }

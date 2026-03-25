@@ -63,7 +63,7 @@ public struct CircularProgressView: View {
                     .overlay {
                         Image(systemName: "checkmark")
                             .opacity(progress == 1 ? 1: 0.0001)
-                            .foregroundColor(colorLighterStrong)
+                            .foregroundStyle(colorLighterStrong)
                             .fontWeight(.heavy)
                             .font(.system(size: size / 1.4))
                             .animation(.easeInOut.delay(0.2), value: progress)

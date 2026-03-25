@@ -28,18 +28,18 @@ public struct AccountCard: View {
                     Text(account.displayName)
                         .font(theme.typography.headline)
                         .fontWeight(theme.typography.emphasisWeight)
-                        .foregroundColor(theme.colors.onSurface)
+                        .foregroundStyle(theme.colors.onSurface)
 
                     if let email = account.email {
                         Text(email)
                             .font(theme.typography.footnote)
-                            .foregroundColor(theme.colors.secondary)
+                            .foregroundStyle(theme.colors.secondary)
                     }
 
                     if let memberSince = account.memberSince {
                         Text(DonkeyDateFormatter.format(memberSince, style: .memberSince))
                             .font(theme.typography.caption)
-                            .foregroundColor(theme.colors.secondary.opacity(0.7))
+                            .foregroundStyle(theme.colors.secondary.opacity(0.7))
                     }
                 }
 
@@ -53,7 +53,7 @@ public struct AccountCard: View {
                     Image(systemName: "chevron.right")
                         .font(theme.typography.footnote)
                         .fontWeight(.semibold)
-                        .foregroundColor(theme.colors.secondary.opacity(0.5))
+                        .foregroundStyle(theme.colors.secondary.opacity(0.5))
                 }
             }
         }
@@ -92,7 +92,7 @@ public struct AccountCard: View {
     private var fallbackAvatar: some View {
         Image(systemName: account.avatarSystemIcon)
             .font(.system(size: 36))
-            .foregroundColor(theme.colors.primary)
+            .foregroundStyle(theme.colors.primary)
             .frame(width: 48, height: 48)
     }
 
@@ -100,7 +100,7 @@ public struct AccountCard: View {
         Text(statusLabel(for: status))
             .font(theme.typography.caption2)
             .fontWeight(theme.typography.emphasisWeight)
-            .foregroundColor(.white)
+            .foregroundStyle(.white)
             .padding(.horizontal, theme.spacing.sm)
             .padding(.vertical, theme.spacing.xs)
             .bgOverlay(bgColor: statusColor(for: status), radius: theme.shape.radiusFull)

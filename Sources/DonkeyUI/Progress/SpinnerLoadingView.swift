@@ -25,12 +25,12 @@ public struct SpinnerLoadingView: View {
             Circle()
                 .stroke(lineWidth: lineWidth)
                 .opacity(0.3)
-                .foregroundColor(.gray)
+                .foregroundStyle(.gray)
 
             Circle()
                 .trim(from: 0, to: 0.4)
                 .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
-                .foregroundColor(color.opacity(disabled ? 0.5 : 1))
+                .foregroundStyle(color.opacity(disabled ? 0.5 : 1))
                 .rotationEffect(Angle(degrees: isAnimating ? 360 : 0))
                 .animation(.linear(duration: 0.8).repeatForever(autoreverses: false), value: isAnimating)
         }

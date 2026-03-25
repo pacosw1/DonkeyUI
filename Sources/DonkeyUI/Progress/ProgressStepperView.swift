@@ -42,12 +42,12 @@ public struct ProgressStepperView: View {
                 ZStack(alignment: .leading) {
                     Rectangle()
                         .frame(width: proxy.size.width, height: lineHeight)
-                        .foregroundColor(.gray.opacity(0.2))
+                        .foregroundStyle(.gray.opacity(0.2))
                                         
                     Rectangle()
                         .frame(width: progressSize(width: proxy.size.width), height: lineHeight)
                         .animation(.interpolatingSpring(stiffness: 200, damping: 100), value: currentStep)
-                        .foregroundColor(color.opacity(0.8))
+                        .foregroundStyle(color.opacity(0.8))
                         .offset(x: 30/2)
                     
                     
@@ -70,7 +70,7 @@ public struct ProgressStepperView: View {
 
                                 Circle()
                                     .frame(width: 30 - 5)
-                                    .foregroundColor(.white)
+                                    .foregroundStyle(.white)
                                     .opacity(isSelected ? 1 : 0)
                                     .animation(.easeIn.delay(0), value: currentStep)
                                 
@@ -78,7 +78,7 @@ public struct ProgressStepperView: View {
                                 Text("\(x)")
                                     .font(.headline)
                                     .fontWeight(.heavy)
-                                    .foregroundColor(selected(step: x) ? color : .white)
+                                    .foregroundStyle(selected(step: x) ? color : .white)
                                     .animation(.easeIn.delay(0), value: currentStep)
                             }
                             

@@ -17,7 +17,7 @@ public struct PullList<Content: View>: View {
     var onPullThreshold: () -> Void = {}
     let iconAction: () -> Void
     
-    @State var thresholdCrossed = false
+    @State private var thresholdCrossed = false
     
     public init(@ViewBuilder content: () -> Content, title: String, icon: String, onPull: @escaping () -> Void = {}, iconAction: @escaping () -> Void = {}) {
         
@@ -37,7 +37,7 @@ public struct PullList<Content: View>: View {
     private let actionThreshold: CGFloat = -80
     @State private var hasTriggeredHaptic = false
     
-    public var searchIcon: some View {
+    public func searchIcon(containerWidth: CGFloat) -> some View {
         let circleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) * 1))
         let handleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 0.05))
 
@@ -51,9 +51,7 @@ public struct PullList<Content: View>: View {
                 .frame(width: 50, height: 50)
                 .offset(x: 2, y: 2)
                 .padding(12)
-                .opacity(offsetY <= 0 ? 1 : 0) // Modified opacity based on offsetY
-
-//                .opacity(circleProgress) // Added opacity modifier
+                .opacity(offsetY <= 0 ? 1 : 0)
 
             // Circle
             Circle()
@@ -61,7 +59,7 @@ public struct PullList<Content: View>: View {
                 .stroke(Color.white, style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
                 .frame(width: 20, height: 20)
                 .rotationEffect(.degrees(-90))
-            
+
 
             // Handle
             RoundedRectangle(cornerRadius: 2)
@@ -71,14 +69,8 @@ public struct PullList<Content: View>: View {
                 .rotationEffect(.degrees(60.0 + 70 * handleProgress))
                 .opacity(handleProgress)
         }
-        #if canImport(UIKit)
-        .position(x: UIScreen.main.bounds.width / 2, y: offsetY <= 0 ? max(offsetY * -1.25, 0) : 0)
-        #else
-        .position(x: (NSScreen.main?.frame.width ?? 0) / 2, y: offsetY <= 0 ? max(offsetY * -1.25, 0) : 0)
-        #endif
-        .opacity(offsetY <= 0 ? 1 : 0) // Modified opacity based on offsetY
-
-        // Adjusted the position calculation
+        .position(x: containerWidth / 2, y: offsetY <= 0 ? max(offsetY * -1.25, 0) : 0)
+        .opacity(offsetY <= 0 ? 1 : 0)
     }
     
     
@@ -132,7 +124,7 @@ public struct PullList<Content: View>: View {
                 .coordinateSpace(name: "scroll")
                 .listStyle(.plain)
                 
-                searchIcon
+                searchIcon(containerWidth: root.size.width)
                     .frame(maxWidth: .infinity, alignment: .top)
                     .opacity((offsetY) / actionThreshold)
 //                    .offset(y: -proxy.safeAreaInsets.top)

@@ -35,7 +35,7 @@ public struct StepperInput: View {
             if let label = label {
                 Text(label)
                     .font(theme.typography.subheadline)
-                    .foregroundColor(theme.colors.secondary)
+                    .foregroundStyle(theme.colors.secondary)
             }
 
             HStack(spacing: 0) {
@@ -50,7 +50,7 @@ public struct StepperInput: View {
                     Image(systemName: "minus")
                         .font(theme.typography.headline)
                         .fontWeight(theme.typography.emphasisWeight)
-                        .foregroundColor(canDecrement ? theme.colors.primary : theme.colors.secondary.opacity(0.4))
+                        .foregroundStyle(canDecrement ? theme.colors.primary : theme.colors.secondary.opacity(0.4))
                         .frame(width: 48, height: 48)
                 }
                 .buttonStyle(.plain)
@@ -60,7 +60,7 @@ public struct StepperInput: View {
                 Text("\(value)")
                     .font(theme.typography.title2)
                     .fontWeight(theme.typography.heavyWeight)
-                    .foregroundColor(theme.colors.onSurface)
+                    .foregroundStyle(theme.colors.onSurface)
                     .frame(minWidth: 64)
                     .contentTransition(.numericText())
 
@@ -75,7 +75,7 @@ public struct StepperInput: View {
                     Image(systemName: "plus")
                         .font(theme.typography.headline)
                         .fontWeight(theme.typography.emphasisWeight)
-                        .foregroundColor(canIncrement ? theme.colors.primary : theme.colors.secondary.opacity(0.4))
+                        .foregroundStyle(canIncrement ? theme.colors.primary : theme.colors.secondary.opacity(0.4))
                         .frame(width: 48, height: 48)
                 }
                 .buttonStyle(.plain)

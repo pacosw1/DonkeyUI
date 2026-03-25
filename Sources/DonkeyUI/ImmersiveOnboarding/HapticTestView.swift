@@ -62,7 +62,7 @@ public struct HapticTestView: View {
                     ForEach(Array(log.enumerated()), id: \.offset) { _, entry in
                         Text(entry)
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)

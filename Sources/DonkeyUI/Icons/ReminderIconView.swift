@@ -29,7 +29,7 @@ public struct ReminderIconView: View {
             Text(optionLabel)
                 .font(.caption)
                 .fontWeight(.regular)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
             
             
                 

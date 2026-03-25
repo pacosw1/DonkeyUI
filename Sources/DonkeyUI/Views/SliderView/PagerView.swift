@@ -16,7 +16,7 @@ public struct PagerView: View {
     var swipeAction: (Bool) -> Void
     @Binding var page: Int
     var views: [SwipableView] = []
-    @State var dragging: Bool = false
+    @State private var dragging: Bool = false
     
     public init(swipeAction: @escaping (Bool) -> Void, page: Binding<Int>, views: [SwipableView] = []) {
         self.swipeAction = swipeAction

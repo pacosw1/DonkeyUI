@@ -67,12 +67,12 @@ public struct BannerView: View {
         HStack(spacing: theme.spacing.md) {
             Image(systemName: type.icon)
                 .font(theme.typography.body)
-                .foregroundColor(type.foregroundColor(from: theme))
+                .foregroundStyle(type.foregroundColor(from: theme))
 
             Text(message)
                 .font(theme.typography.subheadline)
                 .fontWeight(theme.typography.defaultWeight)
-                .foregroundColor(theme.colors.onSurface)
+                .foregroundStyle(theme.colors.onSurface)
                 .lineLimit(3)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -83,7 +83,7 @@ public struct BannerView: View {
                     Text(actionLabel)
                         .font(theme.typography.subheadline)
                         .fontWeight(theme.typography.emphasisWeight)
-                        .foregroundColor(type.foregroundColor(from: theme))
+                        .foregroundStyle(type.foregroundColor(from: theme))
                 }
                 .buttonStyle(.plain)
             }
@@ -93,7 +93,7 @@ public struct BannerView: View {
                     Image(systemName: "xmark")
                         .font(theme.typography.caption)
                         .fontWeight(.semibold)
-                        .foregroundColor(theme.colors.secondary)
+                        .foregroundStyle(theme.colors.secondary)
                         .padding(theme.spacing.xs)
                 }
                 .buttonStyle(.plain)

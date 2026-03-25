@@ -25,7 +25,7 @@ public struct SettingsSection: View {
                 Text(header.uppercased())
                     .font(theme.typography.caption)
                     .fontWeight(theme.typography.emphasisWeight)
-                    .foregroundColor(theme.colors.secondary)
+                    .foregroundStyle(theme.colors.secondary)
                     .padding(.horizontal, theme.spacing.lg)
                     .padding(.bottom, theme.spacing.sm)
             }
@@ -48,7 +48,7 @@ public struct SettingsSection: View {
             if let footer = footer {
                 Text(footer)
                     .font(theme.typography.caption)
-                    .foregroundColor(theme.colors.secondary)
+                    .foregroundStyle(theme.colors.secondary)
                     .padding(.horizontal, theme.spacing.lg)
                     .padding(.top, theme.spacing.sm)
             }
@@ -104,7 +104,7 @@ public struct SettingsSection: View {
 
                     Text(item.title)
                         .font(theme.typography.body)
-                        .foregroundColor(theme.colors.destructive)
+                        .foregroundStyle(theme.colors.destructive)
 
                     Spacer()
                 }

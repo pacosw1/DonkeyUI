@@ -19,11 +19,11 @@ public struct ProgressIcon: View {
     
     var shape: any Shape = Circle()
     var progress: CGFloat = 0.5
-    @State var offset: Angle = .degrees(0)
+    @State private var offset: Angle = .degrees(0)
     
     var icon: String = "trophy.fill"
     var iconSize: CGFloat = 200
-    @State var height: CGFloat = 0.0
+    @State private var height: CGFloat = 0.0
     let color: Color
     
     public var body: some View {
@@ -34,7 +34,7 @@ public struct ProgressIcon: View {
                         .resizable()
                         .renderingMode(.template)
                         .aspectRatio(contentMode: .fit)
-                        .foregroundColor(.gray.opacity(0.15))
+                        .foregroundStyle(.gray.opacity(0.15))
                         .height(height: $height)
                     
 

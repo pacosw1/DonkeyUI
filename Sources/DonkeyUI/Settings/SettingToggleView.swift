@@ -39,7 +39,7 @@ public struct SettingToggleView: View {
             if caption != "" {
                 Text(caption)
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundStyle(.gray)
                     .padding(.horizontal, 10)
             }
         }

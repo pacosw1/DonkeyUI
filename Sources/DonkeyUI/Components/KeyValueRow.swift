@@ -28,13 +28,13 @@ public struct KeyValueRow: View {
             if let systemIcon = systemIcon {
                 Image(systemName: systemIcon)
                     .font(theme.typography.callout)
-                    .foregroundColor(theme.colors.primary)
+                    .foregroundStyle(theme.colors.primary)
                     .frame(width: 24, alignment: .center)
             }
 
             Text(label)
                 .font(theme.typography.body)
-                .foregroundColor(theme.colors.secondary)
+                .foregroundStyle(theme.colors.secondary)
                 .lineLimit(1)
 
             Spacer(minLength: theme.spacing.sm)
@@ -42,7 +42,7 @@ public struct KeyValueRow: View {
             Text(value)
                 .font(theme.typography.body)
                 .fontWeight(theme.typography.emphasisWeight)
-                .foregroundColor(theme.colors.onSurface)
+                .foregroundStyle(theme.colors.onSurface)
                 .multilineTextAlignment(.trailing)
                 .lineLimit(2)
 
@@ -61,7 +61,7 @@ public struct KeyValueRow: View {
                 } label: {
                     Image(systemName: showCopied ? "checkmark" : "doc.on.doc")
                         .font(theme.typography.caption)
-                        .foregroundColor(showCopied ? theme.colors.success : theme.colors.secondary)
+                        .foregroundStyle(showCopied ? theme.colors.success : theme.colors.secondary)
                         .frame(width: 24, height: 24)
                         .contentTransition(.symbolEffect(.replace))
                 }

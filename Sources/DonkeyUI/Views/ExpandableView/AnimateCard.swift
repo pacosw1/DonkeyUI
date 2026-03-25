@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct AnimateCard: View {
-    @State var offsetX = 0.0
-    @State var offsetY = 0.0
+    @State private var offsetX = 0.0
+    @State private var offsetY = 0.0
 
     var body: some View {
         VStack {

@@ -114,12 +114,12 @@ struct TextRevealContent: View {
             Text(visible)
                 .font(font)
                 .fontWeight(weight)
-                .foregroundColor(color)
+                .foregroundStyle(color)
             +
             Text(remaining)
                 .font(font)
                 .fontWeight(weight)
-                .foregroundColor(.clear)
+                .foregroundStyle(.clear)
         )
         .multilineTextAlignment(alignment)
         .frame(maxWidth: .infinity, alignment: textFrameAlignment)
@@ -161,7 +161,7 @@ struct TextRevealContent: View {
             result = result + Text(separator + word)
                 .font(font)
                 .fontWeight(weight)
-                .foregroundColor(color.opacity(wordProgress))
+                .foregroundStyle(color.opacity(wordProgress))
         }
         return result
             .multilineTextAlignment(alignment)
@@ -175,7 +175,7 @@ struct TextRevealContent: View {
         Text(text)
             .font(font)
             .fontWeight(weight)
-            .foregroundColor(color)
+            .foregroundStyle(color)
             .multilineTextAlignment(alignment)
             .frame(maxWidth: .infinity, alignment: textFrameAlignment)
             .fixedSize(horizontal: false, vertical: true)

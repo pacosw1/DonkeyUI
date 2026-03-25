@@ -27,12 +27,10 @@ public struct PullSearchModifier: ViewModifier {
         }
     }
     
-    public var searchIcon: some View {
+    public func searchIcon(containerWidth: CGFloat) -> some View {
         let circleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) * 1))
         let handleProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 0.2))
-//        let backgroundProgress = min(1.0, max(0.0, (offsetY / actionThreshold) - 0.4))
 
-//        _ = max(0.0, handleProgress - 0.8) * 5
         let backgroundColor: Color = offsetY <= actionThreshold ? .blue : .gray
 
 
@@ -43,9 +41,7 @@ public struct PullSearchModifier: ViewModifier {
                 .frame(width: 50, height: 50)
                 .offset(x: 2, y: 2)
                 .padding(12)
-                .opacity(offsetY <= 0 ? 1 : 0) // Modified opacity based on offsetY
-
-//                .opacity(circleProgress) // Added opacity modifier
+                .opacity(offsetY <= 0 ? 1 : 0)
 
             // Circle
             Circle()
@@ -53,7 +49,7 @@ public struct PullSearchModifier: ViewModifier {
                 .stroke(Color.white, lineWidth: 4)
                 .frame(width: 20, height: 20)
                 .rotationEffect(.degrees(-90))
-            
+
 
             // Handle
             RoundedRectangle(cornerRadius: 2)
@@ -63,44 +59,39 @@ public struct PullSearchModifier: ViewModifier {
                 .rotationEffect(.degrees(120.0 + 15.0 * handleProgress))
                 .opacity(handleProgress)
 
-//                                .opacity(offsetY < -60 ? Double((offsetY + 60) / -40) : 0)
             // Arrow
-            
-        }
-        #if canImport(UIKit)
-        .position(x: UIScreen.main.bounds.width / 2, y: offsetY <= 0 ? max(offsetY * -1, 0) : 0)
-        #else
-        .position(x: (NSScreen.main?.frame.width ?? 0) / 2, y: offsetY <= 0 ? max(offsetY * -1, 0) : 0)
-        #endif
-        .opacity(offsetY <= 0 ? 1 : 0) // Modified opacity based on offsetY
 
-        // Adjusted the position calculation
+        }
+        .position(x: containerWidth / 2, y: offsetY <= 0 ? max(offsetY * -1, 0) : 0)
+        .opacity(offsetY <= 0 ? 1 : 0)
     }
 
     public func body(content: Content) -> some View {
-        ZStack {
-            ScrollView {
-                        VStack {
-                            content
-                        }.background(GeometryReader { proxy -> Color in
-                            DispatchQueue.main.async {
-                                offsetY = -proxy.frame(in: .named("scroll")).origin.y
-                                
-                                if offsetY <= actionThreshold {
-                                    onPullThreshold()
-                                }
+        GeometryReader { geometry in
+            ZStack {
+                ScrollView {
+                    VStack {
+                        content
+                    }.background(GeometryReader { proxy -> Color in
+                        DispatchQueue.main.async {
+                            offsetY = -proxy.frame(in: .named("scroll")).origin.y
+
+                            if offsetY <= actionThreshold {
+                                onPullThreshold()
                             }
-                            return Color.clear
-                        })
-                
-                    }.coordinateSpace(name: "scroll")
-            
-            searchIcon
-                .frame(maxWidth: .infinity, alignment: .top)
-                .opacity((offsetY) / actionThreshold)
-                .ignoresSafeArea()
+                        }
+                        return Color.clear
+                    })
+
+                }.coordinateSpace(name: "scroll")
+
+                searchIcon(containerWidth: geometry.size.width)
+                    .frame(maxWidth: .infinity, alignment: .top)
+                    .opacity((offsetY) / actionThreshold)
+                    .ignoresSafeArea()
             }
         }
+    }
 }
 
 
@@ -147,11 +138,11 @@ struct SearchBar: View {
             #else
             .background(Color(NSColor.controlBackgroundColor))
             #endif
-            .cornerRadius(8)
+            .clipShape(.rect(cornerRadius: 8))
             .overlay(
                 HStack {
                     Image(systemName: "magnifyingglass")
-                        .foregroundColor(.gray)
+                        .foregroundStyle(.gray)
                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                         .padding(.leading, 8)
 
@@ -160,7 +151,7 @@ struct SearchBar: View {
                             text = ""
                         }) {
                             Image(systemName: "multiply.circle.fill")
-                                .foregroundColor(.gray)
+                                .foregroundStyle(.gray)
                                 .padding(.trailing, 8)
                         }
                     }

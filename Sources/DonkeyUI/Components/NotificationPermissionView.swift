@@ -46,12 +46,12 @@ public struct NotificationPermissionView: View {
                 Text(title)
                     .font(theme.typography.title2)
                     .fontWeight(theme.typography.heavyWeight)
-                    .foregroundColor(theme.colors.onBackground)
+                    .foregroundStyle(theme.colors.onBackground)
                     .multilineTextAlignment(.center)
 
                 Text(description)
                     .font(theme.typography.body)
-                    .foregroundColor(theme.colors.secondary)
+                    .foregroundStyle(theme.colors.secondary)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -63,11 +63,11 @@ public struct NotificationPermissionView: View {
                     HStack(spacing: theme.spacing.md) {
                         Image(systemName: "checkmark.circle.fill")
                             .font(theme.typography.callout)
-                            .foregroundColor(theme.colors.success)
+                            .foregroundStyle(theme.colors.success)
 
                         Text(feature)
                             .font(theme.typography.body)
-                            .foregroundColor(theme.colors.onBackground)
+                            .foregroundStyle(theme.colors.onBackground)
                     }
                 }
             }
@@ -95,7 +95,7 @@ public struct NotificationPermissionView: View {
                     Text("Not Now")
                         .font(theme.typography.callout)
                         .fontWeight(theme.typography.emphasisWeight)
-                        .foregroundColor(theme.colors.secondary)
+                        .foregroundStyle(theme.colors.secondary)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, theme.spacing.md)
                 }

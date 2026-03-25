@@ -23,7 +23,7 @@ struct FeedbackSentView: View {
                         .fontWeight(.heavy)
                     Text("Its vital to improve the app")
                         .font(.callout)
-                        .foregroundColor(.gray)
+                        .foregroundStyle(.gray)
                 }
                 
                 Spacer()

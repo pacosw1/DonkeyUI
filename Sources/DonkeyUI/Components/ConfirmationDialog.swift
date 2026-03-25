@@ -46,20 +46,20 @@ public struct DonkeyConfirmationDialog: View {
                     // Icon
                     Image(systemName: isDestructive ? "exclamationmark.triangle.fill" : "questionmark.circle.fill")
                         .font(.system(size: 40))
-                        .foregroundColor(isDestructive ? theme.colors.destructive : theme.colors.primary)
+                        .foregroundStyle(isDestructive ? theme.colors.destructive : theme.colors.primary)
 
                     // Text
                     VStack(spacing: theme.spacing.sm) {
                         Text(title)
                             .font(theme.typography.title3)
                             .fontWeight(theme.typography.emphasisWeight)
-                            .foregroundColor(theme.colors.onSurface)
+                            .foregroundStyle(theme.colors.onSurface)
                             .multilineTextAlignment(.center)
 
                         if let message = message {
                             Text(message)
                                 .font(theme.typography.body)
-                                .foregroundColor(theme.colors.secondary)
+                                .foregroundStyle(theme.colors.secondary)
                                 .multilineTextAlignment(.center)
                                 .fixedSize(horizontal: false, vertical: true)
                         }

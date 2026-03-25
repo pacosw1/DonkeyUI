@@ -24,9 +24,9 @@ public struct FloatingBottomSheet<CustomView>: ViewModifier where CustomView: Vi
     @Environment(\.colorScheme) var colorScheme
 
     
-    @State var contentHeight: CGFloat = 0.0
-    
-    @State var proxyHeight: CGFloat = 0.0
+    @State private var contentHeight: CGFloat = 0.0
+
+    @State private var proxyHeight: CGFloat = 0.0
     @GestureState private var translation: CGSize = CGSize()
 
     

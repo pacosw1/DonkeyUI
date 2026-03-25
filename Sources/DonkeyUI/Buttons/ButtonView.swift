@@ -123,7 +123,7 @@ public struct ButtonView: View {
                 HStack(alignment: .center, spacing: 4) {
                     if (icon != nil) {
                         Image(systemName: icon!)
-                            .foregroundColor(labelColor)
+                            .foregroundStyle(labelColor)
                             .fontWeight(fontWeight)
                             .font(font)
                     }
@@ -131,7 +131,7 @@ public struct ButtonView: View {
                     Text(label)
                         .font(font)
                         .fontWeight(fontWeight)
-                        .foregroundColor(labelColor)
+                        .foregroundStyle(labelColor)
                         .opacity(isLoading ? 0 : 1)
                 }
             }

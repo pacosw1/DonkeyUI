@@ -36,7 +36,7 @@ public struct CloseButton: View {
             action()
         } label: {
             Image(systemName: "xmark.circle.fill")
-                .foregroundColor(.gray.opacity(0.5))
+                .foregroundStyle(.gray.opacity(0.5))
                 .font(getSizeInFont)
         }
         .accessibilityLabel("Close")

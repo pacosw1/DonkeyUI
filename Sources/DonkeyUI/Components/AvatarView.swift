@@ -96,7 +96,7 @@ public struct AvatarView: View {
 
             Text(text)
                 .font(.system(size: size.fontSize, weight: .semibold, design: .rounded))
-                .foregroundColor(resolvedColor)
+                .foregroundStyle(resolvedColor)
         }
     }
 
@@ -107,7 +107,7 @@ public struct AvatarView: View {
 
             Image(systemName: systemIcon)
                 .font(.system(size: size.fontSize * 0.85))
-                .foregroundColor(resolvedColor)
+                .foregroundStyle(resolvedColor)
         }
     }
 

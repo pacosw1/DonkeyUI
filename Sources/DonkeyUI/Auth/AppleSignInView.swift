@@ -62,7 +62,7 @@ public struct AppleSignInView: View {
                 Text(appName)
                     .font(theme.typography.largeTitle)
                     .fontWeight(theme.typography.heavyWeight)
-                    .foregroundColor(theme.colors.onBackground)
+                    .foregroundStyle(theme.colors.onBackground)
             }
 
             // Feature highlights
@@ -75,7 +75,7 @@ public struct AppleSignInView: View {
                                 .frame(width: 24)
                             Text(feature)
                                 .font(theme.typography.subheadline)
-                                .foregroundColor(theme.colors.onBackground)
+                                .foregroundStyle(theme.colors.onBackground)
                         }
                     }
                 }
@@ -109,7 +109,7 @@ public struct AppleSignInView: View {
                         onSkip()
                     }
                     .font(theme.typography.footnote)
-                    .foregroundColor(theme.colors.secondary)
+                    .foregroundStyle(theme.colors.secondary)
                 }
             }
 

@@ -57,7 +57,7 @@ public struct ImageRevealBlock: ContentBlock, View {
             Image(systemName: name)
                 .font(.system(size: 64))
                 .fontWeight(.light)
-                .foregroundColor(color)
+                .foregroundStyle(color)
                 .frame(width: 120, height: 120)
                 .bgOverlay(
                     bgColor: color.opacity(0.1),

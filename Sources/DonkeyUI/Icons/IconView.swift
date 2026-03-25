@@ -55,7 +55,7 @@ public struct IconView: View {
     
     public var body: some View {
         Image(systemName: image)
-            .foregroundColor(inverted ? color.opacity(0.9) : .white)
+            .foregroundStyle(inverted ? color.opacity(0.9) : .white)
             .font(.system(size: fontSize))
             .frame(width: size.rawValue, height: size.rawValue)
             .bgOverlay(bgColor: inverted ? .clear : color.opacity(0.8), radius: 12)
