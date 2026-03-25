@@ -6,21 +6,21 @@
 //  Computes the correct APNs topic and platform string for each device type
 //  (iOS, watchOS, macOS) so the server can route pushes with the right topic.
 //
+//  Also provides a stable `installationId` (UUID persisted per app install)
+//  so the server can identify which device originated a sync and exclude it
+//  from push notifications for that change.
+//
 //  Usage:
 //  // In AppDelegate or WKApplicationDelegate:
 //  func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
 //      let tokenString = DonkeyPushRegistration.tokenString(from: deviceToken)
-//      let topic = DonkeyPushRegistration.apnsTopic(bundleId: Bundle.main.bundleIdentifier!)
-//      let platform = DonkeyPushRegistration.platform
+//      let payload = DonkeyPushRegistration.deviceRegistrationPayload(
+//          token: tokenString,
+//          deviceName: UIDevice.current.name
+//      )
 //
 //      Task {
-//          try await api.registerDevice(
-//              token: tokenString,
-//              platform: platform,
-//              apnsTopic: topic,
-//              deviceModel: DonkeyPushRegistration.deviceModel,
-//              osVersion: DonkeyPushRegistration.osVersion
-//          )
+//          try await api.registerDevice(payload)
 //      }
 //  }
 //
@@ -35,8 +35,25 @@ import UIKit
 import WatchKit
 #endif
 
-/// Helpers for registering push tokens with the correct platform and APNs topic.
+/// Helpers for registering push tokens with the correct platform, APNs topic,
+/// and a stable installation ID for server-side device identification.
 public enum DonkeyPushRegistration {
+
+    // MARK: - Installation ID
+
+    private static let installationIdKey = "donkey.installationId"
+
+    /// Stable UUID that identifies this app installation.
+    /// Generated once on first access and persisted in UserDefaults.
+    /// Use this to let the server exclude the originating device from sync pushes.
+    public static var installationId: String {
+        if let existing = UserDefaults.standard.string(forKey: installationIdKey) {
+            return existing
+        }
+        let id = UUID().uuidString
+        UserDefaults.standard.set(id, forKey: installationIdKey)
+        return id
+    }
 
     // MARK: - Platform Detection
 
@@ -104,5 +121,28 @@ public enum DonkeyPushRegistration {
         #else
         ProcessInfo.processInfo.operatingSystemVersionString
         #endif
+    }
+
+    // MARK: - Registration Payload
+
+    /// Builds a dictionary with all fields needed for device registration.
+    ///
+    /// - Parameters:
+    ///   - token: Hex-encoded APNs device token (from `tokenString(from:)`).
+    ///   - deviceName: User-facing device name (e.g. `UIDevice.current.name`).
+    /// - Returns: Dictionary suitable for JSON serialization and sending to the server.
+    public static func deviceRegistrationPayload(
+        token: String,
+        deviceName: String
+    ) -> [String: String?] {
+        [
+            "token": token,
+            "platform": platform,
+            "installation_id": installationId,
+            "device_name": deviceName,
+            "device_model": deviceModel,
+            "os_version": osVersion,
+            "app_version": Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        ]
     }
 }

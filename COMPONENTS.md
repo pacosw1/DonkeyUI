@@ -2492,6 +2492,41 @@ syncQueue.pendingCount  // Int
 
 ---
 
+### DonkeyPushRegistration
+
+Platform-aware push token registration helper. Computes the correct APNs topic and platform string for each device type (iOS, watchOS, macOS). Provides a stable `installationId` (UUID persisted per app install) so the server can exclude the originating device from sync push notifications.
+
+```swift
+public static var installationId: String
+public static var platform: String
+public static var deviceModel: String
+public static var osVersion: String
+public static func tokenString(from deviceToken: Data) -> String
+public static func apnsTopic(bundleId: String) -> String
+public static func complicationTopic(bundleId: String) -> String?
+public static func deviceRegistrationPayload(token: String, deviceName: String) -> [String: String?]
+```
+
+**Usage:**
+```swift
+func application(_ application: UIApplication,
+                 didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+    let token = DonkeyPushRegistration.tokenString(from: deviceToken)
+    let payload = DonkeyPushRegistration.deviceRegistrationPayload(
+        token: token,
+        deviceName: UIDevice.current.name
+    )
+
+    Task { try await api.registerDevice(payload) }
+}
+
+// Access individual properties
+let topic = DonkeyPushRegistration.apnsTopic(bundleId: Bundle.main.bundleIdentifier!)
+let installId = DonkeyPushRegistration.installationId
+```
+
+---
+
 ## Shader Effects (iOS 17+)
 
 Metal GPU shader effects as SwiftUI view modifiers. Runs on the GPU at 60/120fps with negligible CPU cost.
