@@ -2415,6 +2415,70 @@ tracker.onboardingCompleted()
 
 ---
 
+### DonkeySyncChangeTracker
+
+Tracks local DB mutations with debouncing and intelligent coalescing, then flushes to a callback. Sits between your local database writes and `DonkeySyncQueue` to prevent echo-back from server pulls and collapse rapid edits into minimal sync items.
+
+```swift
+public init(
+    debounceInterval: TimeInterval = 1.5,
+    flushHandler: @escaping @MainActor (_ inserts: [(String, UUID)], _ updates: [(String, UUID)], _ deletes: [(String, UUID)]) -> Void
+)
+```
+
+**Usage:**
+```swift
+let tracker = DonkeySyncChangeTracker(debounceInterval: 1.5) { inserts, updates, deletes in
+    for (type, id) in inserts { syncQueue.enqueue(.upsert(entityType: type, entityID: id.uuidString, ...)) }
+    for (type, id) in deletes { syncQueue.enqueue(.delete(entityType: type, entityID: id.uuidString)) }
+}
+
+// Record changes from your DB write methods
+tracker.recordChange("task", id: taskUUID, action: .insert)
+tracker.recordChange("task", id: taskUUID, action: .update)
+
+// Suppress during server pull to prevent echo-back
+tracker.suppress()
+applyServerChanges()
+tracker.unsuppress()
+
+// Flush immediately on app background
+tracker.flushImmediately()
+```
+
+**Coalescing rules:**
+- insert → update = insert (still new)
+- insert → delete = no-op (cancel out — never reached server)
+- update → delete = delete
+- delete → insert = update (re-created with same ID)
+- same action repeated = latest wins
+
+---
+
+### SyncIndicatorView
+
+Compact toolbar sync status icon. Only visible when offline, syncing, or on error — invisible when up to date. Pairs with `SyncState` from `DonkeySyncQueue` and `NetworkMonitor.isConnected`.
+
+```swift
+public init(state: SyncState, isConnected: Bool = true)
+```
+
+**Usage:**
+```swift
+NavigationStack {
+    ContentView()
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                SyncIndicatorView(state: syncQueue.state, isConnected: network.isConnected)
+            }
+        }
+}
+```
+
+**States:** orange cloud-slash (offline), spinning arrows (syncing), red warning (error), hidden (up to date).
+
+---
+
 ### DonkeySyncQueue
 
 Persistent sync queue with debounced batching, entity coalescing, exponential backoff retries, and network-aware flush. Pairs with donkeygo's `POST /api/v1/sync/batch` endpoint. Never loses data — queue survives app kills via `SyncQueueStore` persistence protocol.
