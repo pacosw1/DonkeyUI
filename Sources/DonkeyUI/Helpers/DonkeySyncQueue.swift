@@ -186,12 +186,14 @@ public final class DonkeySyncQueue {
 
     private let store: SyncQueueStore
     private let flushHandler: @Sendable ([SyncQueueItem], String) async throws -> SyncFlushResult
+    private let pullHandler: (@Sendable () async -> Void)?
     private let conflictResolver: SyncConflictResolver?
     private let debounceInterval: TimeInterval
     private let maxWaitInterval: TimeInterval
     private let maxBatchSize: Int
     private let maxRetryAttempts: Int
     private let baseRetryDelay: TimeInterval
+    private let pollInterval: TimeInterval
 
     // MARK: - Observable State
 
@@ -208,7 +210,9 @@ public final class DonkeySyncQueue {
     private var debounceTask: Task<Void, Never>?
     private var maxWaitTask: Task<Void, Never>?
     private var retryTask: Task<Void, Never>?
+    private var pollTask: Task<Void, Never>?
     private var isFlushing = false
+    private var isPulling = false
     private var retryAttempt = 0
     private var networkCancellable: AnyCancellable?
 
@@ -223,7 +227,9 @@ public final class DonkeySyncQueue {
     ///   - maxBatchSize: Max items per server request (default: 500, matches server limit).
     ///   - maxRetryAttempts: Max retry attempts on network failure (default: 10).
     ///   - baseRetryDelay: Base delay for exponential backoff in seconds (default: 5).
+    ///   - pollInterval: Seconds between automatic pull polls while app is active (default: 60). Set to 0 to disable.
     ///   - conflictResolver: Optional custom conflict resolver. Defaults to last-write-wins.
+    ///   - pullHandler: Optional handler to pull remote changes. Called on foreground, network restore, and poll timer.
     ///   - flushHandler: Your server sync function. Receives batch items and an idempotency key.
     public init(
         store: SyncQueueStore,
@@ -232,7 +238,9 @@ public final class DonkeySyncQueue {
         maxBatchSize: Int = 500,
         maxRetryAttempts: Int = 10,
         baseRetryDelay: TimeInterval = 5,
+        pollInterval: TimeInterval = 60,
         conflictResolver: SyncConflictResolver? = nil,
+        pullHandler: (@Sendable () async -> Void)? = nil,
         flushHandler: @escaping @Sendable ([SyncQueueItem], String) async throws -> SyncFlushResult
     ) {
         self.store = store
@@ -241,7 +249,9 @@ public final class DonkeySyncQueue {
         self.maxBatchSize = maxBatchSize
         self.maxRetryAttempts = maxRetryAttempts
         self.baseRetryDelay = baseRetryDelay
+        self.pollInterval = pollInterval
         self.conflictResolver = conflictResolver
+        self.pullHandler = pullHandler
         self.flushHandler = flushHandler
 
         Task { await loadPersistedQueue() }
@@ -375,11 +385,25 @@ public final class DonkeySyncQueue {
         }
     }
 
+    /// Pull remote changes via the configured pullHandler.
+    /// Safe to call from push notifications, manual refresh, etc.
+    public func pull() async {
+        guard let pullHandler, !isPulling else { return }
+        guard NetworkMonitor.shared.isConnected else { return }
+
+        isPulling = true
+        defer { isPulling = false }
+
+        logger.debug("Pulling remote changes")
+        await pullHandler()
+    }
+
     /// Clear the queue (e.g. on sign out).
     public func clear() async {
         debounceTask?.cancel()
         maxWaitTask?.cancel()
         retryTask?.cancel()
+        stopPolling()
         queue.removeAll()
         pendingCount = 0
         state = .idle
@@ -441,17 +465,41 @@ public final class DonkeySyncQueue {
         }
     }
 
+    // MARK: - Polling
+
+    /// Start the periodic pull timer. Called automatically on foreground.
+    public func startPolling() {
+        guard pullHandler != nil, pollInterval > 0 else { return }
+        guard pollTask == nil else { return }
+
+        logger.debug("Starting poll timer (interval: \(Int(self.pollInterval))s)")
+        pollTask = Task {
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(pollInterval))
+                guard !Task.isCancelled else { break }
+                await pull()
+            }
+        }
+    }
+
+    /// Stop the periodic pull timer. Called automatically on background.
+    public func stopPolling() {
+        pollTask?.cancel()
+        pollTask = nil
+    }
+
     // MARK: - Lifecycle & Network
 
     private func observeAppLifecycle() {
         #if os(iOS)
-        // Flush on background with extended execution time
+        // Flush + stop polling on background
         NotificationCenter.default.addObserver(
             forName: UIApplication.willResignActiveNotification,
             object: nil, queue: .main
         ) { [weak self] _ in
             guard let self else { return }
             Task { @MainActor in
+                self.stopPolling()
                 // Request background time so the flush can complete the network request
                 // before iOS suspends the app (~30s grace period).
                 var bgTaskID: UIBackgroundTaskIdentifier = .invalid
@@ -467,7 +515,7 @@ public final class DonkeySyncQueue {
             }
         }
 
-        // Flush on foreground (catch up after sleep)
+        // Flush + pull + start polling on foreground
         NotificationCenter.default.addObserver(
             forName: UIApplication.didBecomeActiveNotification,
             object: nil, queue: .main
@@ -475,13 +523,42 @@ public final class DonkeySyncQueue {
             guard let self else { return }
             Task { @MainActor in
                 await self.flush()
+                await self.pull()
+                self.startPolling()
+            }
+        }
+        #endif
+
+        #if os(macOS)
+        // Pull + start polling on activate
+        NotificationCenter.default.addObserver(
+            forName: NSApplication.didBecomeActiveNotification,
+            object: nil, queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            Task { @MainActor in
+                await self.flush()
+                await self.pull()
+                self.startPolling()
+            }
+        }
+
+        // Stop polling on deactivate
+        NotificationCenter.default.addObserver(
+            forName: NSApplication.willResignActiveNotification,
+            object: nil, queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            Task { @MainActor in
+                self.stopPolling()
+                await self.flush()
             }
         }
         #endif
     }
 
     private func observeNetworkRestore() {
-        // When network comes back, flush pending items
+        // When network comes back, flush pending items + pull changes
         var wasDisconnected = false
         networkCancellable = NetworkMonitor.shared.$isConnected
             .receive(on: DispatchQueue.main)
@@ -489,11 +566,14 @@ public final class DonkeySyncQueue {
                 guard let self else { return }
                 if !connected {
                     wasDisconnected = true
+                    self.stopPolling()
                 } else if wasDisconnected {
                     wasDisconnected = false
-                    logger.info("Network restored — flushing queue")
+                    logger.info("Network restored — flushing queue + pulling changes")
                     Task { @MainActor in
                         await self.flush()
+                        await self.pull()
+                        self.startPolling()
                     }
                 }
             }
