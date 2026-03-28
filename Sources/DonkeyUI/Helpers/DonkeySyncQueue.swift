@@ -538,7 +538,8 @@ public final class DonkeySyncQueue {
         #endif
 
         #if os(macOS)
-        // Pull + start polling on activate
+        // Pull on activate (macOS apps stay fully running when unfocused,
+        // so polling keeps running — just pull to catch up on refocus)
         NotificationCenter.default.addObserver(
             forName: NSApplication.didBecomeActiveNotification,
             object: nil, queue: .main
@@ -548,18 +549,6 @@ public final class DonkeySyncQueue {
                 await self.flush()
                 await self.pull()
                 self.startPolling()
-            }
-        }
-
-        // Stop polling on deactivate
-        NotificationCenter.default.addObserver(
-            forName: NSApplication.willResignActiveNotification,
-            object: nil, queue: .main
-        ) { [weak self] _ in
-            guard let self else { return }
-            Task { @MainActor in
-                self.stopPolling()
-                await self.flush()
             }
         }
         #endif
