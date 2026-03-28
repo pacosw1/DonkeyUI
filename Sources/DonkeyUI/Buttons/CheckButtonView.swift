@@ -68,6 +68,7 @@ public struct CheckButtonView: View {
                     .foregroundStyle(.white)
                     .fontWeight(.heavy)
                     .font(.system(size: checkSize))
+                    .symbolEffect(.bounce, value: active)
             )
             .opacity(active ? 1 : 0)
             .animation(.interactiveSpring(), value: active)
