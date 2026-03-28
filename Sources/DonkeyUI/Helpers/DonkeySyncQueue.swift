@@ -238,7 +238,7 @@ public final class DonkeySyncQueue {
         maxBatchSize: Int = 500,
         maxRetryAttempts: Int = 10,
         baseRetryDelay: TimeInterval = 5,
-        pollInterval: TimeInterval = 60,
+        pollInterval: TimeInterval = 5,
         conflictResolver: SyncConflictResolver? = nil,
         pullHandler: (@Sendable () async -> Void)? = nil,
         flushHandler: @escaping @Sendable ([SyncQueueItem], String) async throws -> SyncFlushResult
