@@ -257,6 +257,14 @@ public final class DonkeySyncQueue {
         Task { await loadPersistedQueue() }
         observeAppLifecycle()
         observeNetworkRestore()
+
+        // App may already be active when the queue is created — start polling now
+        if pullHandler != nil {
+            Task {
+                await pull()
+                startPolling()
+            }
+        }
     }
 
     // MARK: - Public API
