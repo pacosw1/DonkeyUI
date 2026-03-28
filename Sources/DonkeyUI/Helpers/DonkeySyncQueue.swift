@@ -393,7 +393,9 @@ public final class DonkeySyncQueue {
         debounceTask = Task {
             try? await Task.sleep(for: .seconds(debounceInterval))
             guard !Task.isCancelled else { return }
-            await flush()
+            // Launch flush in an independent task so cancelling the debounce
+            // timer (e.g. from a new enqueue) doesn't cancel an in-flight flush.
+            Task { await flush() }
         }
 
         // Start max-wait timer on first item if not running
@@ -401,7 +403,7 @@ public final class DonkeySyncQueue {
             maxWaitTask = Task {
                 try? await Task.sleep(for: .seconds(maxWaitInterval))
                 guard !Task.isCancelled else { return }
-                await flush()
+                Task { await flush() }
             }
         }
     }
@@ -435,7 +437,7 @@ public final class DonkeySyncQueue {
                 return
             }
 
-            await flush()
+            Task { await flush() }
         }
     }
 
