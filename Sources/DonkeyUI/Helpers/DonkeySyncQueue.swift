@@ -444,15 +444,26 @@ public final class DonkeySyncQueue {
     // MARK: - Lifecycle & Network
 
     private func observeAppLifecycle() {
-        #if canImport(UIKit)
-        // Flush on background
+        #if os(iOS)
+        // Flush on background with extended execution time
         NotificationCenter.default.addObserver(
             forName: UIApplication.willResignActiveNotification,
             object: nil, queue: .main
         ) { [weak self] _ in
             guard let self else { return }
             Task { @MainActor in
+                // Request background time so the flush can complete the network request
+                // before iOS suspends the app (~30s grace period).
+                var bgTaskID: UIBackgroundTaskIdentifier = .invalid
+                bgTaskID = UIApplication.shared.beginBackgroundTask(withName: "DonkeySyncFlush") {
+                    // Expiration handler — iOS is about to suspend, end the task
+                    UIApplication.shared.endBackgroundTask(bgTaskID)
+                    bgTaskID = .invalid
+                }
                 await self.flush()
+                if bgTaskID != .invalid {
+                    UIApplication.shared.endBackgroundTask(bgTaskID)
+                }
             }
         }
 
