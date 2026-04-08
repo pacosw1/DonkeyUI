@@ -62,6 +62,33 @@ public struct PaywallReview: Identifiable {
     }
 }
 
+// MARK: - Paywall Strings
+
+/// Strings rendered by `PaywallScreen`. Defaults are English; apps that
+/// need localized paywalls build their own `PaywallStrings` with
+/// translated values and pass it to the screen's initializer.
+public struct PaywallStrings: Sendable {
+    public var ctaLabel: String
+    public var alreadyPremium: String
+    public var privacyLink: String
+    public var termsLink: String
+    public var restorePurchases: String
+
+    public init(
+        ctaLabel: String = "Continue",
+        alreadyPremium: String = "You are already a premium user",
+        privacyLink: String = "Privacy",
+        termsLink: String = "Terms",
+        restorePurchases: String = "Restore Purchases"
+    ) {
+        self.ctaLabel = ctaLabel
+        self.alreadyPremium = alreadyPremium
+        self.privacyLink = privacyLink
+        self.termsLink = termsLink
+        self.restorePurchases = restorePurchases
+    }
+}
+
 // MARK: - PaywallScreen
 
 public struct PaywallScreen: View {
@@ -70,7 +97,7 @@ public struct PaywallScreen: View {
     @Binding var selectedPlanId: String?
     let isLoading: Bool
     let isPremium: Bool
-    let ctaLabel: String
+    let strings: PaywallStrings
     let privacyURL: URL?
     let termsURL: URL?
     let onPurchase: (PaywallPlanOption) -> Void
@@ -85,7 +112,7 @@ public struct PaywallScreen: View {
         selectedPlanId: Binding<String?>,
         isLoading: Bool = false,
         isPremium: Bool = false,
-        ctaLabel: String = "Continue",
+        strings: PaywallStrings = PaywallStrings(),
         privacyURL: URL? = nil,
         termsURL: URL? = nil,
         onPurchase: @escaping (PaywallPlanOption) -> Void,
@@ -97,12 +124,43 @@ public struct PaywallScreen: View {
         self._selectedPlanId = selectedPlanId
         self.isLoading = isLoading
         self.isPremium = isPremium
-        self.ctaLabel = ctaLabel
+        self.strings = strings
         self.privacyURL = privacyURL
         self.termsURL = termsURL
         self.onPurchase = onPurchase
         self.onRestore = onRestore
         self.onDismiss = onDismiss
+    }
+
+    // Back-compat convenience initializer that preserves the previous
+    // `ctaLabel: String = "Continue"` API so existing call sites keep
+    // compiling without changes.
+    public init(
+        config: PaywallConfig,
+        plans: [PaywallPlanOption],
+        selectedPlanId: Binding<String?>,
+        isLoading: Bool = false,
+        isPremium: Bool = false,
+        ctaLabel: String,
+        privacyURL: URL? = nil,
+        termsURL: URL? = nil,
+        onPurchase: @escaping (PaywallPlanOption) -> Void,
+        onRestore: @escaping () -> Void,
+        onDismiss: (() -> Void)? = nil
+    ) {
+        self.init(
+            config: config,
+            plans: plans,
+            selectedPlanId: selectedPlanId,
+            isLoading: isLoading,
+            isPremium: isPremium,
+            strings: PaywallStrings(ctaLabel: ctaLabel),
+            privacyURL: privacyURL,
+            termsURL: termsURL,
+            onPurchase: onPurchase,
+            onRestore: onRestore,
+            onDismiss: onDismiss
+        )
     }
 
     private var selectedPlan: PaywallPlanOption? {
@@ -316,14 +374,14 @@ public struct PaywallScreen: View {
 
                 // CTA button
                 if isPremium {
-                    Text("You are already a premium user")
+                    Text(strings.alreadyPremium)
                         .fontWeight(.bold)
                         .foregroundStyle(theme.colors.secondary)
                         .font(theme.typography.caption)
                 }
 
                 ThemedButton(
-                    ctaLabel,
+                    strings.ctaLabel,
                     role: .primary,
                     fullWidth: true,
                     isLoading: isLoading,
@@ -399,16 +457,16 @@ public struct PaywallScreen: View {
         HStack(spacing: theme.spacing.lg) {
             Spacer()
             if let privacyURL {
-                Link("Privacy", destination: privacyURL)
+                Link(strings.privacyLink, destination: privacyURL)
                     .font(theme.typography.caption)
                     .foregroundStyle(theme.colors.secondary)
             }
 
-            Button("Restore Purchases", action: onRestore)
+            Button(strings.restorePurchases, action: onRestore)
                 .font(theme.typography.caption)
 
             if let termsURL {
-                Link("Terms", destination: termsURL)
+                Link(strings.termsLink, destination: termsURL)
                     .font(theme.typography.caption)
                     .foregroundStyle(theme.colors.secondary)
             }

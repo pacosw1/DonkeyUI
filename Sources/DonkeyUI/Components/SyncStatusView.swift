@@ -81,10 +81,92 @@ public struct SyncStatusData {
     }
 }
 
+/// Strings rendered by `SyncStatusView` and `SyncStatusRow`. All fields
+/// have sensible English defaults so existing call sites continue to
+/// compile without changes; apps that want localized strings can build a
+/// `SyncStatusStrings` with their own translations and pass it in.
+///
+/// The `syncingItemsFormat` / `lastSyncedFormat` / `signedInAsFormat`
+/// entries expect `printf`-style `%@` placeholders and go through
+/// `String(format:)` so the translated strings control word order.
+public struct SyncStatusStrings: Sendable {
+    public var statusSectionTitle: String
+    public var storageSectionTitle: String
+    public var itemCountsSectionTitle: String
+
+    public var statusTitleSyncing: String
+    public var statusTitleError: String
+    public var statusTitleUpToDate: String
+    public var statusTitleCloudSync: String
+
+    public var statusSubtitleSyncing: String
+    public var statusSubtitleUnableToSync: String
+    public var statusSubtitleConnected: String
+    /// Expects one `%@` — the relative date.
+    public var lastSyncedFormat: String
+    /// Expects two `%d` placeholders — completed and total.
+    public var syncingItemsFormat: String
+
+    public var storageUsedLabel: String
+    public var upgradeButton: String
+
+    public var syncNowButton: String
+    public var fullSyncButton: String
+
+    /// Expects one `%@` — the user identifier (email, username, etc.).
+    public var signedInAsFormat: String
+
+    public var rowCloudSyncTitle: String
+    public var rowTapToViewDetails: String
+
+    public init(
+        statusSectionTitle: String = "Status",
+        storageSectionTitle: String = "Storage",
+        itemCountsSectionTitle: String = "Synced Items",
+        statusTitleSyncing: String = "Syncing...",
+        statusTitleError: String = "Sync Error",
+        statusTitleUpToDate: String = "Up to Date",
+        statusTitleCloudSync: String = "Cloud Sync",
+        statusSubtitleSyncing: String = "Uploading changes to server",
+        statusSubtitleUnableToSync: String = "Unable to sync",
+        statusSubtitleConnected: String = "Connected",
+        lastSyncedFormat: String = "Last synced %@",
+        syncingItemsFormat: String = "Syncing %d of %d items...",
+        storageUsedLabel: String = "Storage Used",
+        upgradeButton: String = "Upgrade",
+        syncNowButton: String = "Sync Now",
+        fullSyncButton: String = "Full Sync",
+        signedInAsFormat: String = "Signed in as %@",
+        rowCloudSyncTitle: String = "Cloud Sync",
+        rowTapToViewDetails: String = "Tap to view details"
+    ) {
+        self.statusSectionTitle = statusSectionTitle
+        self.storageSectionTitle = storageSectionTitle
+        self.itemCountsSectionTitle = itemCountsSectionTitle
+        self.statusTitleSyncing = statusTitleSyncing
+        self.statusTitleError = statusTitleError
+        self.statusTitleUpToDate = statusTitleUpToDate
+        self.statusTitleCloudSync = statusTitleCloudSync
+        self.statusSubtitleSyncing = statusSubtitleSyncing
+        self.statusSubtitleUnableToSync = statusSubtitleUnableToSync
+        self.statusSubtitleConnected = statusSubtitleConnected
+        self.lastSyncedFormat = lastSyncedFormat
+        self.syncingItemsFormat = syncingItemsFormat
+        self.storageUsedLabel = storageUsedLabel
+        self.upgradeButton = upgradeButton
+        self.syncNowButton = syncNowButton
+        self.fullSyncButton = fullSyncButton
+        self.signedInAsFormat = signedInAsFormat
+        self.rowCloudSyncTitle = rowCloudSyncTitle
+        self.rowTapToViewDetails = rowTapToViewDetails
+    }
+}
+
 // MARK: - SyncStatusView
 
 public struct SyncStatusView: View {
     let data: SyncStatusData
+    let strings: SyncStatusStrings
     let onSync: (() async -> Void)?
     let onFullSync: (() async -> Void)?
     let onUpgrade: (() -> Void)?
@@ -93,11 +175,13 @@ public struct SyncStatusView: View {
 
     public init(
         data: SyncStatusData,
+        strings: SyncStatusStrings = SyncStatusStrings(),
         onSync: (() async -> Void)? = nil,
         onFullSync: (() async -> Void)? = nil,
         onUpgrade: (() -> Void)? = nil
     ) {
         self.data = data
+        self.strings = strings
         self.onSync = onSync
         self.onFullSync = onFullSync
         self.onUpgrade = onUpgrade
@@ -121,7 +205,7 @@ public struct SyncStatusView: View {
     // MARK: - Status Section
 
     private var statusSection: some View {
-        Section("Status") {
+        Section(strings.statusSectionTitle) {
             HStack(spacing: 12) {
                 statusIcon
                 VStack(alignment: .leading, spacing: 2) {
@@ -138,7 +222,7 @@ public struct SyncStatusView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     ProgressView(value: progress)
                         .tint(theme.colors.accent)
-                    Text("Syncing \(completed) of \(total) items...")
+                    Text(String(format: strings.syncingItemsFormat, completed, total))
                         .font(theme.typography.caption2)
                         .foregroundStyle(theme.colors.secondary)
                 }
@@ -180,34 +264,34 @@ public struct SyncStatusView: View {
 
     private var statusTitle: String {
         switch data.state {
-        case .syncing: return "Syncing..."
-        case .error: return "Sync Error"
-        case .upToDate: return "Up to Date"
-        case .idle: return "Cloud Sync"
+        case .syncing: return strings.statusTitleSyncing
+        case .error: return strings.statusTitleError
+        case .upToDate: return strings.statusTitleUpToDate
+        case .idle: return strings.statusTitleCloudSync
         }
     }
 
     private var statusSubtitle: String {
         switch data.state {
-        case .syncing: return "Uploading changes to server"
+        case .syncing: return strings.statusSubtitleSyncing
         case .error(_, let lastSynced):
             if let date = lastSynced {
-                return "Last synced \(date.formatted(.relative(presentation: .named)))"
+                return String(format: strings.lastSyncedFormat, date.formatted(.relative(presentation: .named)))
             }
-            return "Unable to sync"
+            return strings.statusSubtitleUnableToSync
         case .upToDate(let date):
-            return "Last synced \(date.formatted(.relative(presentation: .named)))"
-        case .idle: return "Connected"
+            return String(format: strings.lastSyncedFormat, date.formatted(.relative(presentation: .named)))
+        case .idle: return strings.statusSubtitleConnected
         }
     }
 
     // MARK: - Storage Section
 
     private func storageSection(_ storage: SyncStorageInfo) -> some View {
-        Section("Storage") {
+        Section(strings.storageSectionTitle) {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Text("Storage Used")
+                    Text(strings.storageUsedLabel)
                         .font(theme.typography.subheadline)
                     Spacer()
                     Text(formatBytes(storage.usedBytes))
@@ -228,7 +312,7 @@ public struct SyncStatusView: View {
                     )
                     Spacer()
                     if storage.tier == "free", let onUpgrade {
-                        Button("Upgrade") { onUpgrade() }
+                        Button(strings.upgradeButton) { onUpgrade() }
                             .font(theme.typography.caption)
                             .fontWeight(.semibold)
                     }
@@ -246,7 +330,7 @@ public struct SyncStatusView: View {
     // MARK: - Item Counts Section
 
     private var itemCountsSection: some View {
-        Section("Synced Items") {
+        Section(strings.itemCountsSectionTitle) {
             ForEach(data.items) { item in
                 HStack {
                     Image(systemName: item.systemIcon)
@@ -283,7 +367,7 @@ public struct SyncStatusView: View {
                 } label: {
                     HStack {
                         Image(systemName: "arrow.triangle.2.circlepath")
-                        Text("Sync Now")
+                        Text(strings.syncNowButton)
                     }
                 }
                 .disabled(isSyncing)
@@ -295,14 +379,14 @@ public struct SyncStatusView: View {
                 } label: {
                     HStack {
                         Image(systemName: "arrow.2.squarepath")
-                        Text("Full Sync")
+                        Text(strings.fullSyncButton)
                     }
                 }
                 .disabled(isSyncing)
             }
         } footer: {
             if let user = data.userLabel {
-                Text("Signed in as \(user)")
+                Text(String(format: strings.signedInAsFormat, user))
                     .font(theme.typography.caption2)
             }
         }
@@ -327,12 +411,18 @@ public struct SyncStatusView: View {
 /// A compact sync status row for use in settings lists. Shows dot + label + last synced.
 public struct SyncStatusRow: View {
     let state: SyncState
+    let strings: SyncStatusStrings
     let onTap: (() -> Void)?
 
     @Environment(\.donkeyTheme) var theme
 
-    public init(state: SyncState, onTap: (() -> Void)? = nil) {
+    public init(
+        state: SyncState,
+        strings: SyncStatusStrings = SyncStatusStrings(),
+        onTap: (() -> Void)? = nil
+    ) {
         self.state = state
+        self.strings = strings
         self.onTap = onTap
     }
 
@@ -340,7 +430,7 @@ public struct SyncStatusRow: View {
         HStack(spacing: 12) {
             statusDot
             VStack(alignment: .leading, spacing: 2) {
-                Text("Cloud Sync")
+                Text(strings.rowCloudSyncTitle)
                     .font(theme.typography.subheadline)
                 subtitleView
             }
@@ -374,7 +464,7 @@ public struct SyncStatusRow: View {
     private var subtitleView: some View {
         switch state {
         case .syncing:
-            Text("Syncing...")
+            Text(strings.statusTitleSyncing)
                 .font(theme.typography.caption)
                 .foregroundStyle(theme.colors.secondary)
         case .error(let msg, _):
@@ -382,11 +472,11 @@ public struct SyncStatusRow: View {
                 .font(theme.typography.caption)
                 .foregroundStyle(theme.colors.warning)
         case .upToDate(let date):
-            Text("Last synced \(date.formatted(.relative(presentation: .named)))")
+            Text(String(format: strings.lastSyncedFormat, date.formatted(.relative(presentation: .named))))
                 .font(theme.typography.caption)
                 .foregroundStyle(theme.colors.secondary)
         case .idle:
-            Text("Tap to view details")
+            Text(strings.rowTapToViewDetails)
                 .font(theme.typography.caption)
                 .foregroundStyle(theme.colors.secondary)
         }
