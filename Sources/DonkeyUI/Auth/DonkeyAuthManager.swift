@@ -47,13 +47,13 @@ public struct DonkeyAuthUser: Codable, Sendable {
 // MARK: - Auth Callbacks
 
 /// Server sync callback. Called after successful Apple Sign In.
-/// Parameters: (user, identityToken) → return updated name from server if available.
+/// Parameters: (user, identityToken, authorizationCode) → return updated name from server if available.
 public struct AuthCallbacks: Sendable {
-    public let onSignIn: @Sendable (DonkeyAuthUser, String) async -> String?
+    public let onSignIn: @Sendable (DonkeyAuthUser, String, String?) async -> String?
     public let onSignOut: @Sendable () async -> Void
 
     public init(
-        onSignIn: @escaping @Sendable (DonkeyAuthUser, String) async -> String? = { _, _ in nil },
+        onSignIn: @escaping @Sendable (DonkeyAuthUser, String, String?) async -> String? = { _, _, _ in nil },
         onSignOut: @escaping @Sendable () async -> Void = {}
     ) {
         self.onSignIn = onSignIn
@@ -197,6 +197,7 @@ public final class DonkeyAuthManager {
                 isLoading = false
                 return
             }
+            let authorizationCode = credential.authorizationCode.flatMap { String(data: $0, encoding: .utf8) }
 
             let localUser = DonkeyAuthUser(id: appleUserID, email: email, name: name)
             user = localUser
@@ -207,7 +208,7 @@ public final class DonkeyAuthManager {
             // Server sync (non-blocking — user is already signed in locally)
             Task {
                 defer { isLoading = false }
-                let serverName = await callbacks.onSignIn(localUser, idToken)
+                let serverName = await callbacks.onSignIn(localUser, idToken, authorizationCode)
                 if let serverName, !serverName.isEmpty, name == nil {
                     let updated = DonkeyAuthUser(id: appleUserID, email: email, name: serverName)
                     self.user = updated
