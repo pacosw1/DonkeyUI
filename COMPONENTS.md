@@ -2363,6 +2363,45 @@ Text("This text reveals beautifully")
 
 ## Event Tracking
 
+### DonkeyDiagnosticsReporter
+
+Native diagnostics client for app-local failures and operational context.
+
+```swift
+public init(
+    baseURL: URL,
+    path: String = "/api/v1/diagnostics/events",
+    session: URLSession = .shared,
+    defaults: UserDefaults = .standard,
+    keyPrefix: String = "donkey.diagnostics",
+    maxBreadcrumbs: Int = 40,
+    headersProvider: (@Sendable () async -> [String: String])? = nil,
+    installationIDProvider: (@Sendable () -> String?)? = nil
+)
+```
+
+**Usage:**
+```swift
+let diagnostics = DonkeyDiagnosticsReporter(
+    baseURL: URL(string: "https://api.example.com")!,
+    headersProvider: {
+        ["Authorization": "Bearer \(token)"]
+    },
+    installationIDProvider: {
+        installationID
+    }
+)
+
+await diagnostics.markLaunch()
+await diagnostics.trackScreen("Home")
+await diagnostics.report(category: "sync_failed", message: "Push failed")
+await diagnostics.reportNetworkFailure(method: "GET", url: "https://api.example.com/feed", statusCode: 500)
+await diagnostics.reportPerformance(category: "sync_duration", durationMs: 2400)
+await diagnostics.measure(category: "chat_stream", thresholdMs: 1500) {
+    try await runStreamingChat()
+}
+```
+
 ### DonkeyEventTracker
 
 Batched event tracking with auto-flush. No hardcoded API.

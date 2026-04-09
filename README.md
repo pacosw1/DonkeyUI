@@ -87,7 +87,7 @@ dependencies: [
 - **`Double/Int`** — Currency formatting (`balanceString`), percentage labels.
 
 ### Diagnostics
-- **`DonkeyDiagnosticsReporter`** — Sends app-local errors, probable previous-run crash signals, and slow-operation diagnostics to your backend with app version, build, language, device model, and OS version metadata.
+- **`DonkeyDiagnosticsReporter`** — Native diagnostics client for handled errors, probable previous-run crash signals, slow operations, request failures, and breadcrumb context. Sends app version, build, language, device model, OS version, session ID, installation ID, and persisted breadcrumbs to your backend.
 
 ## Usage
 
