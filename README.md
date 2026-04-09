@@ -86,6 +86,9 @@ dependencies: [
 - **`Date`** — `startOfDay`, `endOfDay`, `tomorrow`, `yesterday`, `distanceInText()`, formatting helpers.
 - **`Double/Int`** — Currency formatting (`balanceString`), percentage labels.
 
+### Diagnostics
+- **`DonkeyDiagnosticsReporter`** — Sends app-local errors, probable previous-run crash signals, and slow-operation diagnostics to your backend with app version, build, language, device model, and OS version metadata.
+
 ## Usage
 
 ```swift
