@@ -88,6 +88,7 @@ dependencies: [
 
 ### Diagnostics
 - **`DonkeyDiagnosticsReporter`** — Native diagnostics client for handled errors, probable previous-run crash signals, slow operations, request failures, and breadcrumb context. Sends app version, build, language, device model, OS version, session ID, installation ID, and persisted breadcrumbs to your backend.
+- **`DonkeyMetricKitReporter`** — Bridges Apple MetricKit crash, hang, and performance payload delivery into the diagnostics pipeline so payload JSON reaches your backend automatically.
 
 ## Usage
 

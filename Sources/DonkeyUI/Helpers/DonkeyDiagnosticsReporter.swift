@@ -184,8 +184,26 @@ public actor DonkeyDiagnosticsReporter {
         error: Error? = nil,
         metadata: [String: String] = [:]
     ) async {
-        await submit(
+        await reportDiagnostic(
             type: .error,
+            category: category,
+            message: message,
+            level: level,
+            error: error,
+            metadata: metadata
+        )
+    }
+
+    public func reportDiagnostic(
+        type: DonkeyDiagnosticEventType,
+        category: String,
+        message: String,
+        level: DonkeyDiagnosticsLevel = .error,
+        error: Error? = nil,
+        metadata: [String: String] = [:]
+    ) async {
+        await submit(
+            type: type,
             category: category,
             message: message,
             level: level,

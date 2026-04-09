@@ -2402,6 +2402,17 @@ await diagnostics.measure(category: "chat_stream", thresholdMs: 1500) {
 }
 ```
 
+### DonkeyMetricKitReporter
+
+Bridges Apple MetricKit payload delivery into `DonkeyDiagnosticsReporter`.
+
+```swift
+@available(iOS 15.0, macOS 12.0, *)
+public final class DonkeyMetricKitReporter: NSObject, MXMetricManagerSubscriber {
+    public init(diagnosticsReporter: DonkeyDiagnosticsReporter)
+}
+```
+
 ### DonkeyEventTracker
 
 Batched event tracking with auto-flush. No hardcoded API.
