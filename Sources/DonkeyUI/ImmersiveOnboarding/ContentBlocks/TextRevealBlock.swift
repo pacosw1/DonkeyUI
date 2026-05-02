@@ -194,11 +194,16 @@ struct TextRevealContent: View {
 // MARK: - Environment Key for Reveal Progress
 
 /// Environment key that passes reveal progress (0...1) from the engine to content block views.
-struct ImmersiveRevealProgressKey: EnvironmentKey {
-    static let defaultValue: Double = 0.0
+///
+/// Made public so callers can drive `TextRevealBlock` (and the other
+/// `*RevealBlock`s) standalone — i.e. without hosting an
+/// `OnboardingSection` / `RevealEngine` — by injecting their own
+/// 0 → 1 progress via `.environment(\.immersiveRevealProgress, x)`.
+public struct ImmersiveRevealProgressKey: EnvironmentKey {
+    public static let defaultValue: Double = 0.0
 }
 
-extension EnvironmentValues {
+public extension EnvironmentValues {
     var immersiveRevealProgress: Double {
         get { self[ImmersiveRevealProgressKey.self] }
         set { self[ImmersiveRevealProgressKey.self] = newValue }
