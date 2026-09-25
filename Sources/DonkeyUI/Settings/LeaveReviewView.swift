@@ -9,7 +9,6 @@ import SwiftUI
 
 public struct LeaveReviewView: View {
     public init(url: String) {
-        self.showError = false
         self.url = url
     }
 
